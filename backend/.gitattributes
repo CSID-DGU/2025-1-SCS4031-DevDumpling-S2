@@ -1,0 +1,27 @@
+# Handle line endings automatically for files detected as text
+* text=auto
+
+# These files are text and should be normalized (Convert CRLF => LF)
+*.java text
+*.gradle text
+*.properties text
+*.xml text
+*.yml text
+*.md text
+*.txt text
+*.json text
+
+# These files should have specific line endings
+gradlew text eol=lf
+*.sh text eol=lf
+
+# These files are binary and should be left untouched
+*.jar binary
+*.war binary
+*.ear binary
+*.class binary
+*.dll binary
+*.exe binary
+*.png binary
+*.jpg binary
+*.gif binary
