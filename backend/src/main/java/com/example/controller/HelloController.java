@@ -5,9 +5,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // React 프론트엔드를 위한 CORS 설정
+@CrossOrigin(origins = "*")
 public class HelloController {
 
+    @GetMapping("/")
+    public String root() {
+        return "Hello World from Root";
+    }
+    
     @GetMapping("/hello")
     public String hello() {
         return "Hello World";
