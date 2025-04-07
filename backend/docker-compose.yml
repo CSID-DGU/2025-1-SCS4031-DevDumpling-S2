@@ -4,6 +4,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: myapp
@@ -27,6 +28,7 @@ services:
   backend:
     build: .
     container_name: spring-backend
+    restart: always
     depends_on:
       - mysql
     ports:
