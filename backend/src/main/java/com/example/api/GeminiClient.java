@@ -15,7 +15,7 @@ public class GeminiClient {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    private final String API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
+    private final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
     public String summarize(String content) {
         String prompt = "아래는 금융 기사야. 핵심 내용을 5줄 이내로 요약해줘.\n\n기사:\n" + content;
