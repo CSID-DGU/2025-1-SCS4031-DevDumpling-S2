@@ -10,6 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,12 +23,19 @@ public class RssArticleService {
     private final ArticleRepository articleRepository;
     private final GeminiClient geminiClient;
     private final QuizService quizService;
+    private final ArticleProcessingQueue processingQueue;
 
     public boolean existsByTitle(String title) {
         return articleRepository.existsByTitle(title);
     }
 
-    public Article save(Article article) {
+    @Transactional
+    public void save(Article article) {
+        articleRepository.save(article);
+        processingQueue.addArticle(article);
+    }
+
+    public Article processArticle(Article article) {
         try {
             log.info("[기사 서비스] 저장 시작 - {}", article.getTitle());
 
@@ -43,9 +51,6 @@ public class RssArticleService {
 
             // Gemini API 호출은 본문이 있을 때만 진행
             if (!article.getContent().equals("본문 크롤링 실패")) {
-                // API 호출 전 3초 대기 (rate limit 방지)
-                Thread.sleep(3000);
-                
                 try {
                     String summary = geminiClient.summarize(article.getContent());
                     article.setSummary(summary);
@@ -65,9 +70,6 @@ public class RssArticleService {
                         article.setSummary("요약 실패");
                     }
                 }
-
-                // 설명 생성 전 3초 대기
-                Thread.sleep(3000);
 
                 try {
                     String explanation = geminiClient.explainSimply(article.getContent());
@@ -96,8 +98,6 @@ public class RssArticleService {
             Article saved = articleRepository.save(article);
             try {
                 if (!article.getContent().equals("본문 크롤링 실패")) {
-                    // 퀴즈 생성 전 3초 대기
-                    Thread.sleep(3000);
                     quizService.generateQuizzesForArticle(saved);
                 }
             } catch (Exception e) {
