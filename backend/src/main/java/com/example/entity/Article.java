@@ -18,6 +18,7 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
     @Lob
@@ -33,4 +34,7 @@ public class Article {
 
     @Column(columnDefinition = "TEXT")
     private String explanation;
+
+    @Column(columnDefinition = "TEXT")
+    private String termExplanations; // JSON 형태로 저장: [{"term": "용어", "explanation": "설명"}, ...]
 }

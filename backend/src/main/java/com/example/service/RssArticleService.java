@@ -33,81 +33,27 @@ public class RssArticleService {
     public void save(Article article) {
         articleRepository.save(article);
         processingQueue.addArticle(article);
+        // 퀴즈 생성 요청
+        quizService.generateQuizzesForArticle(article);
     }
 
-    public Article processArticle(Article article) {
+    @Transactional
+    public void processArticle(Article article) {
         try {
-            log.info("[기사 서비스] 저장 시작 - {}", article.getTitle());
-
-            // 기사 URL에서 본문 크롤링
-            String content = fetchContentFromUrl(article.getSourceUrl());
-            if (content != null && !content.isBlank()) {
-                article.setContent(content);
-                log.info("[기사 서비스] 본문 크롤링 성공: {}", article.getTitle());
-            } else {
-                log.warn("[기사 서비스] 본문 크롤링 실패: {}", article.getTitle());
-                article.setContent("본문 크롤링 실패");
-            }
-
-            // Gemini API 호출은 본문이 있을 때만 진행
-            if (!article.getContent().equals("본문 크롤링 실패")) {
-                try {
-                    String summary = geminiClient.summarize(article.getContent());
-                    article.setSummary(summary);
-                } catch (Exception e) {
-                    if (e.getMessage().contains("429")) {
-                        log.warn("[기사 서비스] Gemini API 할당량 초과. 60초 대기 후 재시도");
-                        Thread.sleep(60000);
-                        try {
-                            String summary = geminiClient.summarize(article.getContent());
-                            article.setSummary(summary);
-                        } catch (Exception retryE) {
-                            log.warn("[기사 서비스] 요약 생성 재시도 실패: {} - {}", article.getTitle(), retryE.getMessage());
-                            article.setSummary("요약 실패 - API 할당량 초과");
-                        }
-                    } else {
-                        log.warn("[기사 서비스] 요약 생성 실패: {} - {}", article.getTitle(), e.getMessage());
-                        article.setSummary("요약 실패");
-                    }
-                }
-
-                try {
-                    String explanation = geminiClient.explainSimply(article.getContent());
-                    article.setExplanation(explanation);
-                } catch (Exception e) {
-                    if (e.getMessage().contains("429")) {
-                        log.warn("[기사 서비스] Gemini API 할당량 초과. 60초 대기 후 재시도");
-                        Thread.sleep(60000);
-                        try {
-                            String explanation = geminiClient.explainSimply(article.getContent());
-                            article.setExplanation(explanation);
-                        } catch (Exception retryE) {
-                            log.warn("[기사 서비스] 설명 생성 재시도 실패: {} - {}", article.getTitle(), retryE.getMessage());
-                            article.setExplanation("설명 실패 - API 할당량 초과");
-                        }
-                    } else {
-                        log.warn("[기사 서비스] 설명 생성 실패: {} - {}", article.getTitle(), e.getMessage());
-                        article.setExplanation("설명 실패");
-                    }
-                }
-            } else {
-                article.setSummary("본문 크롤링 실패");
-                article.setExplanation("본문 크롤링 실패");
-            }
-
-            Article saved = articleRepository.save(article);
-            try {
-                if (!article.getContent().equals("본문 크롤링 실패")) {
-                    quizService.generateQuizzesForArticle(saved);
-                }
-            } catch (Exception e) {
-                log.warn("[기사 서비스] 퀴즈 생성 실패: {} - {}", article.getTitle(), e.getMessage());
-            }
-            return saved;
-
+            // 모든 정보를 한 번에 생성
+            GeminiClient.ArticleAnalysis analysis = geminiClient.analyzeArticle(article.getContent());
+            
+            article.setTitle(analysis.getTitle());
+            article.setSummary(analysis.getSummary());
+            article.setExplanation(analysis.getExplanation());
+            article.setTermExplanations(analysis.getTermExplanationsJson());
+            
+            articleRepository.save(article);
         } catch (Exception e) {
-            log.error("[기사 서비스] 기사 저장 실패: {} - {}", article.getTitle(), e.getMessage());
-            return null;
+            log.error("기사 처리 중 오류 발생: {}", e.getMessage(), e);
+            article.setSummary("요약 생성 실패");
+            article.setExplanation("설명 생성 실패");
+            articleRepository.save(article);
         }
     }
 
