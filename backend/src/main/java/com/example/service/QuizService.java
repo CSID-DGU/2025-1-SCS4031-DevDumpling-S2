@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -96,5 +97,18 @@ public class QuizService {
             log.error("[퀴즈 서비스] 퀴즈 파싱 실패: {}", e.getMessage());
             return null;
         }
+    }
+
+    public List<Quiz> findByArticleId(Long articleId) {
+        return quizRepository.findByArticleId(articleId);
+    }
+
+    public List<Quiz> findByUserType(UserType userType) {
+        return quizRepository.findByUserType(userType);
+    }
+
+    public Quiz findByArticleIdAndUserType(Long articleId, UserType userType) {
+        return quizRepository.findByArticleIdAndUserType(articleId, userType)
+                .orElseThrow(() -> new RuntimeException("퀴즈를 찾을 수 없습니다."));
     }
 }

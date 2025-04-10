@@ -58,36 +58,42 @@ public class GeminiClient {
     }
 
     private ArticleAnalysis parseArticleAnalysis(String response) {
+        if (response == null) {
+            log.error("[Gemini] 응답이 null입니다.");
+            return null;
+        }
+
         try {
-            log.debug("[Gemini] 응답 내용: {}", response);
             String[] lines = response.split("\n");
-            String title = "";
-            String summary = "";
+            String title = null;
+            String summary = null;
             StringBuilder explanation = new StringBuilder();
             StringBuilder jsonBuilder = new StringBuilder();
-            
-            boolean isTermSection = false;
-            boolean isJsonSection = false;
-            
+            boolean isJson = false;
+
             for (String line : lines) {
-                line = line.trim();
-                if (line.isEmpty()) continue;
+                // 제목 파싱 (## 제목: 또는 제목: 형식 모두 처리)
+                if (line.matches(".*제목:.*")) {
+                    title = line.replaceAll("^[#\\s]*제목:\\s*", "").trim();
+                    continue;
+                }
                 
+                // 요약 파싱 (## 요약: 또는 요약: 형식 모두 처리)
+                if (line.matches(".*요약:.*")) {
+                    summary = line.replaceAll("^[#\\s]*요약:\\s*", "").trim();
+                    continue;
+                }
+
                 // 마크다운 볼드(**) 및 헤더(##) 형식 처리
                 line = line.replaceAll("\\*\\*", "").trim();
                 
-                if (line.matches("^##?\\s*제목:.*")) {
-                    title = line.replaceFirst("^##?\\s*제목:\\s*", "").trim();
-                } else if (line.startsWith("요약:")) {
-                    summary = line.substring("요약:".length()).trim();
-                } else if (line.startsWith("용어_JSON:") || line.startsWith("[") || line.startsWith("```json")) {
-                    isJsonSection = true;
-                    isTermSection = false;
+                if (line.startsWith("용어_JSON:") || line.startsWith("[") || line.startsWith("```json")) {
+                    isJson = true;
                     if (!line.startsWith("[")) {
                         continue;
                     }
                     jsonBuilder.append(line).append("\n");
-                } else if (isJsonSection) {
+                } else if (isJson) {
                     if (line.startsWith("```")) continue;
                     jsonBuilder.append(line).append("\n");
                 } else if (line.startsWith("핵심 내용:") || line.startsWith("상세 설명:")) {
@@ -95,12 +101,11 @@ public class GeminiClient {
                 }
             }
 
-            // 필수 필드 검증
-            if (title.isEmpty() || summary.isEmpty()) {
+            if (title == null || summary == null) {
                 log.error("[Gemini] 필수 필드 누락 - 제목: {}, 요약: {}", title, summary);
                 return null;
             }
-            
+
             return new ArticleAnalysis(
                 title,
                 summary,
