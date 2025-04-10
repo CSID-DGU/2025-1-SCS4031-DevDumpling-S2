@@ -36,6 +36,10 @@ public class QuizController {
     public ResponseEntity<Quiz> getQuizByArticleAndUserType(
             @PathVariable Long articleId,
             @PathVariable UserType userType) {
-        return ResponseEntity.ok(quizService.findByArticleIdAndUserType(articleId, userType));
+        Quiz quiz = quizService.findByArticleIdAndUserType(articleId, userType);
+        if (quiz == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(quiz);
     }
 } 

@@ -32,9 +32,7 @@ public class RssArticleService {
     @Transactional
     public void save(Article article) {
         articleRepository.save(article);
-        processingQueue.addArticle(article);
-        // 퀴즈 생성 요청
-        quizService.generateQuizzesForArticle(article);
+        processingQueue.addArticle(article);  // 큐에서 처리 후 퀴즈 생성
     }
 
     @Transactional

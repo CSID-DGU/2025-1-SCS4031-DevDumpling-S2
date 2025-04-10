@@ -45,6 +45,13 @@ public class QuizService {
                 else if (quizText.startsWith("절약 성향형")) userType = UserType.D;
                 
                 if (userType != null) {
+                    // 이미 해당 기사와 유형의 퀴즈가 있는지 확인
+                    List<Quiz> existingQuizzes = quizRepository.findByArticleIdAndUserType(article.getId(), userType);
+                    if (!existingQuizzes.isEmpty()) {
+                        log.info("[퀴즈 서비스] 이미 존재하는 퀴즈 - 기사: {}, 유형: {}", article.getTitle(), userType);
+                        continue;
+                    }
+
                     Quiz quiz = parseQuizResponse(quizText.trim());
                     if (quiz != null) {
                         quiz.setArticle(article);
@@ -108,7 +115,7 @@ public class QuizService {
     }
 
     public Quiz findByArticleIdAndUserType(Long articleId, UserType userType) {
-        return quizRepository.findByArticleIdAndUserType(articleId, userType)
-                .orElseThrow(() -> new RuntimeException("퀴즈를 찾을 수 없습니다."));
+        List<Quiz> quizzes = quizRepository.findByArticleIdAndUserType(articleId, userType);
+        return quizzes.isEmpty() ? null : quizzes.get(0);  // 가장 최근 퀴즈(ID가 가장 큰 것) 반환
     }
 }
