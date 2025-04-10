@@ -18,6 +18,10 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
+gemini:
+  api:
+    key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
+
 server:
   port: 8080
   address: 0.0.0.0 
