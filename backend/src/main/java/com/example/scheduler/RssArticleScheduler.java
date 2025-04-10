@@ -27,7 +27,6 @@ public class RssArticleScheduler {
 
     private static final List<String> RSS_URLS = Arrays.asList(
             "https://rss.etnews.com/Section901.xml",
-            "https://www.mk.co.kr/rss/30000001/",
             "http://www.hani.co.kr/rss/economy/"
     );
 
@@ -37,10 +36,25 @@ public class RssArticleScheduler {
         "펀드", "증권", "금리", "환율", "자산", "저축", "보험", "대출"
     );
 
+    private boolean containsFinanceKeyword(String title) {
+        if (title == null) return false;
+        String lowerTitle = title.toLowerCase();
+        boolean contains = FINANCE_KEYWORDS.stream()
+                .anyMatch(keyword -> lowerTitle.contains(keyword.toLowerCase()));
+        
+        if (contains) {
+            log.info("[RSS 스컨셔드러] 금융 키워드 포함 기사 발견: {}", title);
+        }
+        return contains;
+    }
+
     @Scheduled(cron = "0 0 9 * * ?", zone = "Asia/Seoul")
     public void fetchRssArticlesDaily() {
         try {
             int totalSaved = 0;
+            int filteredCount = 0;
+            int duplicateCount = 0;
+            int saveFailedCount = 0;
 
             for (String rssUrl : RSS_URLS) {
                 log.info("[RSS 스컨셔드러] RSS URL 처리 시작: {}", rssUrl);
@@ -52,20 +66,47 @@ public class RssArticleScheduler {
                     String link = getElementContent(item, "link");
                     String pubDate = getElementContent(item, "pubDate");
 
-                    if (!rssArticleService.existsByTitle(title)) {
-                        Article article = Article.builder()
-                                .title(title)
-                                .sourceUrl(link)
-                                .publishDate(parsePublishDate(pubDate))
-                                .build();
+                    if (title == null || link == null) {
+                        log.warn("[RSS 스컨셔드러] 필수 데이터 누락 - 제목: {}, 링크: {}", title, link);
+                        continue;
+                    }
 
-                        Article saved = rssArticleService.save(article);
-                        if (saved != null) totalSaved++;
+                    if (rssArticleService.existsByTitle(title)) {
+                        duplicateCount++;
+                        log.info("[RSS 스컨셔드러] 중복 기사 발견: {}", title);
+                        continue;
+                    }
+
+                    if (containsFinanceKeyword(title)) {
+                        try {
+                            Article article = Article.builder()
+                                    .title(title)
+                                    .sourceUrl(link)
+                                    .publishDate(parsePublishDate(pubDate))
+                                    .build();
+
+                            Article saved = rssArticleService.save(article);
+                            if (saved != null) {
+                                totalSaved++;
+                                log.info("[RSS 스컨셔드러] 기사 저장 성공: {}", title);
+                            } else {
+                                saveFailedCount++;
+                                log.error("[RSS 스컨셔드러] 기사 저장 실패: {}", title);
+                            }
+                        } catch (Exception e) {
+                            saveFailedCount++;
+                            log.error("[RSS 스컨셔드러] 기사 저장 중 예외 발생: {} - {}", title, e.getMessage());
+                        }
+                    } else {
+                        filteredCount++;
                     }
                 }
             }
 
             log.info("[RSS 스컨셔드러] 총 저장된 기사 수: {}", totalSaved);
+            log.info("[RSS 스컨셔드러] 필터링된 기사 수: {}", filteredCount);
+            log.info("[RSS 스컨셔드러] 중복된 기사 수: {}", duplicateCount);
+            log.info("[RSS 스컨셔드러] 저장 실패한 기사 수: {}", saveFailedCount);
 
         } catch (Exception e) {
             log.error("[RSS 스컨셔드러] 기사 수집 실패", e);
@@ -88,13 +129,16 @@ public class RssArticleScheduler {
     }
 
     private LocalDateTime parsePublishDate(String pubDate) {
-        if (pubDate == null) return LocalDateTime.now();
+        if (pubDate == null) {
+            log.warn("[RSS 스컨셔드러] 날짜가 null입니다.");
+            return LocalDateTime.now();
+        }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
             ZonedDateTime zonedDateTime = ZonedDateTime.parse(pubDate, formatter);
             return zonedDateTime.toLocalDateTime();
         } catch (Exception e) {
-            log.warn("[RSS 스컨셔드러] 날짜 파싱 실패: {}", pubDate);
+            log.warn("[RSS 스컨셔드러] 날짜 파싱 실패: {} - {}", pubDate, e.getMessage());
             return LocalDateTime.now();
         }
     }
