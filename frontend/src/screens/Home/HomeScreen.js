@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import PostCard from '../../components/common/PostCard';
-
+import Header from '../../components/layout/Header'
 const DUMMY_POSTS = [
   {
     id: 1,
@@ -14,14 +14,11 @@ const DUMMY_POSTS = [
 
 export default function HomeScreen() {
   return (
-    <View className="flex-1 bg-fineed-background">
-      {/* Header */}
-      <View className="bg-fineed-background p-4 pt-12">
-        <Text style={{ fontFamily: 'Almarai-ExtraBold' }} className="text-fineed-green text-2xl">FINEED</Text>
-      </View>
+    <View className="flex-1 bg-Fineed-background">
+      <Header />
 
       {/* Category Tabs */}
-      <View className="flex-row p-4 bg-fineed-background">
+      <View className="flex-row p-4 bg-Fineed-background">
 
         <TouchableOpacity className="px-4 py-2 bg-gray-200 rounded-full">
           <Text className="text-gray-700">저축</Text>
