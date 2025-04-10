@@ -14,14 +14,14 @@ const DUMMY_POSTS = [
 
 export default function HomeScreen() {
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-fineed-background">
       {/* Header */}
-      <View className="bg-blue-500 p-4 pt-12">
-        <Text className="text-white text-2xl font-bold">FINEED</Text>
+      <View className="bg-fineed-background p-4 pt-12">
+        <Text style={{ fontFamily: 'Almarai-ExtraBold' }} className="text-fineed-green text-2xl">FINEED</Text>
       </View>
 
       {/* Category Tabs */}
-      <View className="flex-row p-4 bg-white">
+      <View className="flex-row p-4 bg-fineed-background">
 
         <TouchableOpacity className="px-4 py-2 bg-gray-200 rounded-full">
           <Text className="text-gray-700">저축</Text>

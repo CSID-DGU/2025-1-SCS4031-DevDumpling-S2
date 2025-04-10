@@ -1,6 +1,12 @@
 {
   "expo": {
     "name": "frontend",
+    "fonts": [
+      {
+        "asset": "assets/fonts/Almarai-ExtraBold.ttf",
+        "family": "Almarai-ExtraBold"
+      }
+    ],
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",

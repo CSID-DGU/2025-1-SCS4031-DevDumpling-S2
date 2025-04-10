@@ -1,0 +1,899 @@
+/* 메인 페이지 */
+
+position: relative;
+width: 393px;
+height: 852px;
+
+background: #efefef;
+
+/* Rectangle 6 */
+
+position: absolute;
+width: 159px;
+height: 140px;
+left: calc(50% - 159px / 2 - 90px);
+top: 462px;
+
+background: #f9f9f9;
+box-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.1);
+border-radius: 20px;
+
+/* Rectangle 7 */
+
+position: absolute;
+width: 159px;
+height: 140px;
+left: calc(50% - 159px / 2 + 82px);
+top: 462px;
+
+background: #f9f9f9;
+box-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.1);
+border-radius: 20px;
+
+/* Rectangle 4 */
+
+position: absolute;
+width: 339px;
+height: 80px;
+left: calc(50% - 339px / 2);
+top: 333px;
+
+background: #f9f9f9;
+box-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.1);
+border-radius: 20px;
+
+/* 맞춤 퀴즈 */
+
+position: absolute;
+width: 78px;
+height: 22px;
+left: 36px;
+top: 433px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 22px;
+display: flex;
+align-items: center;
+
+color: #014029;
+
+/* 추천 기사 */
+
+position: absolute;
+width: 78px;
+height: 22px;
+left: 205px;
+top: 433px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 22px;
+display: flex;
+align-items: center;
+
+color: #014029;
+
+/* ETF · 미래에셋자산운용 */
+
+position: absolute;
+width: 78px;
+height: 9px;
+left: 41px;
+top: 347px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #6d6d6d;
+
+/* 적금 · 케이뱅크 */
+
+position: absolute;
+width: 50px;
+height: 9px;
+left: 213px;
+top: 476px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #6d6d6d;
+
+/* 금융 상품 평점 보러 가기 > */
+
+position: absolute;
+width: 85px;
+height: 9px;
+left: 266px;
+top: 347px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: right;
+
+color: #6d6d6d;
+
+/* 금융 기사 더 보러 가기 > */
+
+position: absolute;
+width: 78px;
+height: 9px;
+left: 239px;
+top: 587px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #6d6d6d;
+
+/* 최고 연 7.20% 기본 연 1.20% (세전) */
+
+position: absolute;
+width: 109px;
+height: 9px;
+left: 213px;
+top: 511px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #6d6d6d;
+
+/* Tiger 미국S&P500 */
+
+position: absolute;
+width: 121px;
+height: 17px;
+left: 38px;
+top: 364px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 15px;
+line-height: 17px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 궁금한 적금 */
+
+position: absolute;
+width: 72px;
+height: 17px;
+left: 213px;
+top: 489px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 15px;
+line-height: 17px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 금융 퀴즈 풀러 가기 */
+
+position: absolute;
+width: 58px;
+height: 34px;
+left: 78px;
+top: 553px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 15px;
+line-height: 17px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* Group 3 */
+
+position: absolute;
+width: 80px;
+height: 64px;
+left: 67px;
+top: 485px;
+
+/* test */
+
+position: absolute;
+width: 58px;
+height: 58px;
+left: 89px;
+top: 485px;
+
+background: url(test.png);
+
+/* coin */
+
+position: absolute;
+width: 37px;
+height: 38px;
+left: 67px;
+top: 511px;
+
+background: url(coin.png);
+
+/* Rectangle 2 */
+
+position: absolute;
+width: 237px;
+height: 153px;
+left: calc(50% - 237px / 2 - 51px);
+top: 132px;
+
+background: #f9f9f9;
+box-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.1);
+border-radius: 20px;
+
+/* Rectangle 3 */
+
+position: absolute;
+width: 83px;
+height: 153px;
+left: calc(50% - 83px / 2 + 122px);
+top: 132px;
+
+background: #f9f9f9;
+box-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.1);
+border-radius: 20px;
+
+/* FINEED */
+
+position: absolute;
+width: 92px;
+height: 27px;
+left: 28px;
+top: 62px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 800;
+font-size: 24px;
+line-height: 27px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #014029;
+
+/* 로그인 */
+
+position: absolute;
+width: 34px;
+height: 13px;
+left: 319px;
+top: 69px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 12px;
+line-height: 13px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 로그인하고 챌린지에 함께해보세요 🤗 */
+
+position: absolute;
+width: 56px;
+height: 54px;
+left: 291px;
+top: 182px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 10px;
+line-height: 13px;
+/* or 130% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 로그인하면 이 상품의 평점을 볼 수 있어요! */
+
+position: absolute;
+width: 136px;
+height: 9px;
+left: 40px;
+top: 392px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #6d6d6d;
+
+/* 로그인하면 맞춤 추천 금융 상품을 받아볼 수 있어요! */
+
+position: absolute;
+width: 109px;
+height: 18px;
+left: 224px;
+top: 549px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #6d6d6d;
+
+/* 지금 뜨고 있는 챌린지 */
+
+position: absolute;
+width: 177px;
+height: 22px;
+left: 36px;
+top: 103px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 22px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 다른 사람들의 평점은 어떨까? */
+
+position: absolute;
+width: 244px;
+height: 22px;
+left: 36px;
+top: 304px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 22px;
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* Ellipse 1 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 142px;
+top: 271px;
+
+background: #d9d9d9;
+
+/* Ellipse 2 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 120px;
+top: 271px;
+
+background: #1f5869;
+
+/* Ellipse 3 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 131px;
+top: 271px;
+
+background: #d9d9d9;
+
+/* Ellipse 4 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 164px;
+top: 271px;
+
+background: #d9d9d9;
+
+/* Ellipse 5 */
+
+position: absolute;
+width: 7px;
+height: 7px;
+left: 153px;
+top: 271px;
+
+background: #d9d9d9;
+
+/* 참여중인 챌린지 */
+
+position: absolute;
+width: 53px;
+height: 9px;
+left: 292px;
+top: 145px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #6d6d6d;
+
+/* 1위 · 저축 챌린지 */
+
+position: absolute;
+width: 54px;
+height: 9px;
+left: 41px;
+top: 145px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+
+color: #6d6d6d;
+
+/* 자세히 보기 > */
+
+position: absolute;
+width: 44px;
+height: 9px;
+left: 207px;
+top: 145px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: right;
+
+color: #6d6d6d;
+
+/* 좋아요 130 | 89명 참여 중 */
+
+position: absolute;
+width: 79px;
+height: 9px;
+left: 106px;
+top: 257px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 300;
+font-size: 8px;
+line-height: 9px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #6d6d6d;
+
+/* Time */
+
+position: absolute;
+width: 37px;
+height: 22px;
+left: 52px;
+top: 25px;
+
+font-family: "SF Pro";
+font-style: normal;
+font-weight: 590;
+font-size: 17px;
+line-height: 22px;
+/* identical to box height, or 129% */
+text-align: center;
+
+color: #000000;
+
+/* Cellular Connection */
+
+position: absolute;
+width: 19.2px;
+height: 12.23px;
+left: 284.67px;
+top: 29.89px;
+
+background: #000000;
+
+/* Wifi */
+
+position: absolute;
+width: 17.14px;
+height: 12.33px;
+left: 310.87px;
+top: 29.84px;
+
+background: #000000;
+
+/* Battery */
+
+position: absolute;
+width: 27.33px;
+height: 13px;
+left: 335.01px;
+top: 29.5px;
+
+/* Border */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 25px;
+left: calc(50% - 25px / 2 + 151.01px);
+top: 3.46%;
+bottom: 95.01%;
+
+mix-blend-mode: normal;
+opacity: 0.35;
+border: 1px solid #000000;
+border-radius: 4.3px;
+
+/* Cap */
+
+position: absolute;
+width: 1.33px;
+left: calc(50% - 1.33px / 2 + 165.17px);
+top: 4.02%;
+bottom: 95.5%;
+
+background: #000000;
+mix-blend-mode: normal;
+opacity: 0.4;
+
+/* Capacity */
+
+position: absolute;
+width: 21px;
+left: calc(50% - 21px / 2 + 151.01px);
+top: 3.7%;
+bottom: 95.25%;
+
+background: #000000;
+border-radius: 2.5px;
+
+/* airplane */
+
+position: absolute;
+width: 99px;
+height: 99px;
+left: 76px;
+top: 138px;
+
+background: url(airplane.png);
+
+/* plane-ticket */
+
+position: absolute;
+width: 55px;
+height: 55px;
+left: 155.97px;
+top: 170px;
+
+background: url(plane-ticket.png);
+transform: rotate(20.17deg);
+
+/* 떠나자! 여행 자금 모으기 */
+
+position: absolute;
+width: 151px;
+height: 17px;
+left: 73px;
+top: 236px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 15px;
+line-height: 17px;
+/* identical to box height */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* Rectangle 1 */
+
+position: absolute;
+width: 339px;
+height: 150px;
+left: calc(50% - 339px / 2);
+top: 651px;
+
+background: #f9f9f9;
+box-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.1);
+border-radius: 20px;
+
+/* 커뮤니티 */
+
+position: absolute;
+width: 74px;
+height: 22px;
+left: 36px;
+top: 622px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 800;
+font-size: 20px;
+line-height: 22px;
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #014029;
+
+/* HOT게시판 */
+
+position: absolute;
+width: 49px;
+height: 13px;
+left: 43px;
+top: 666px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 한달 50만원으로 살아보기 챌린지 결과 ㄷㄷㄷ */
+
+position: absolute;
+width: 185px;
+height: 13px;
+left: 110px;
+top: 666px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 2차전지 아직 늦지 않았을까? */
+
+position: absolute;
+width: 117px;
+height: 13px;
+left: 110px;
+top: 693px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 무지출 챌린지 하면 진짜 돈 모일까? */
+
+position: absolute;
+width: 144px;
+height: 13px;
+left: 110px;
+top: 720px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 신용점수 퀴즈 풀었는데 충격 받음;; */
+
+position: absolute;
+width: 141px;
+height: 13px;
+left: 110px;
+top: 747px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 아무도 안 물어봤지만 내 최애 재테크 방법 */
+
+position: absolute;
+width: 168px;
+height: 13px;
+left: 110px;
+top: 774px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+
+color: #000000;
+
+/* 투자게시판 */
+
+position: absolute;
+width: 46px;
+height: 13px;
+left: 43px;
+top: 693px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 챌린지게시판 */
+
+position: absolute;
+width: 56px;
+height: 13px;
+left: 43px;
+top: 720px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 퀴즈게시판 */
+
+position: absolute;
+width: 46px;
+height: 13px;
+left: 43px;
+top: 747px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
+
+/* 자유게시판 */
+
+position: absolute;
+width: 46px;
+height: 13px;
+left: 43px;
+top: 774px;
+
+font-family: "Almarai";
+font-style: normal;
+font-weight: 700;
+font-size: 10px;
+line-height: 13px;
+/* identical to box height, or 130% */
+display: flex;
+align-items: center;
+text-align: center;
+
+color: #000000;
