@@ -76,7 +76,11 @@ public class ArticleProcessingQueue {
                 article.setTermExplanations(analysis.getTermExplanationsJson());
                 articleRepository.save(article);
                 log.info("[큐] 기사 처리 완료: {}", article.getTitle());
+                
+                // 기사 분석이 완료된 후 퀴즈 생성
+                Thread.sleep(10000);  // API 호출 간격 유지
                 quizService.generateQuizzesForArticle(article);
+                log.info("[큐] 퀴즈 생성 완료: {}", article.getTitle());
             }
         } catch (Exception e) {
             log.error("[큐] 기사 처리 중 에러 발생: {}", article.getTitle(), e);
