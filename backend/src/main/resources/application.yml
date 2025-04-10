@@ -20,7 +20,7 @@ mybatis:
 
 gemini:
   api:
-    key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
+    key: -
 
 server:
   port: 8080
