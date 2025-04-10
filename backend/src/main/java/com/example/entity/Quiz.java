@@ -19,6 +19,7 @@ public class Quiz {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "article_id")
     private Article article; // 기사
 
     @Enumerated(EnumType.STRING)
@@ -28,8 +29,11 @@ public class Quiz {
     private String question; // 퀴즈 질문
     
     @Column(length = 20)
-    private String type; // 퀴즈 유형
-    private String options; // 객관식 보기: "보기1|보기2|보기3|보기4" 형태
+    private String quizType; // "OX" 또는 "MULTIPLE_CHOICE"
+
+    @Column(columnDefinition = "TEXT")
+    private String options; // 4지선다의 경우 JSON 형태로 저장
+
     private String answer; // 정답
 
     @Column(columnDefinition = "TEXT")

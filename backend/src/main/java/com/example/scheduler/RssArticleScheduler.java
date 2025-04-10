@@ -79,19 +79,26 @@ public class RssArticleScheduler {
 
                     if (containsFinanceKeyword(title)) {
                         try {
+                            // 기사 내용 크롤링
+                            String content = rssArticleService.fetchContentFromUrl(link);
+                            if (content == null || content.trim().isEmpty()) {
+                                log.warn("[RSS 스케줄러] 기사 내용을 가져올 수 없음: {}", link);
+                                continue;
+                            }
+
                             Article article = Article.builder()
                                     .title(title)
+                                    .content(content)
                                     .sourceUrl(link)
                                     .publishDate(parsePublishDate(pubDate))
                                     .build();
 
-                            Article saved = rssArticleService.save(article);
-                            if (saved != null) {
+                            if (!rssArticleService.existsByTitle(article.getTitle())) {
+                                log.info("[스케줄러] 새로운 기사 저장: {}", article.getTitle());
+                                rssArticleService.save(article);
                                 totalSaved++;
-                                log.info("[RSS 스컨셔드러] 기사 저장 성공: {}", title);
                             } else {
-                                saveFailedCount++;
-                                log.error("[RSS 스컨셔드러] 기사 저장 실패: {}", title);
+                                log.info("[스케줄러] 이미 존재하는 기사: {}", article.getTitle());
                             }
                         } catch (Exception e) {
                             saveFailedCount++;

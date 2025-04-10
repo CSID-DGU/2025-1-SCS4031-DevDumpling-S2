@@ -1,58 +1,106 @@
 package com.example.service;
 
 import com.example.entity.Article;
+import com.example.repository.ArticleRepository;
+import com.example.api.GeminiClient;
+import com.example.api.GeminiClient.ArticleAnalysis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
+import jakarta.annotation.PostConstruct;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleProcessingQueue {
-
-    private final RssArticleService rssArticleService;
     private final BlockingQueue<Article> queue = new LinkedBlockingQueue<>();
-    private volatile boolean isProcessing = false;
+    private final ArticleRepository articleRepository;
+    private final GeminiClient geminiClient;
+    private final QuizService quizService;
+    private Thread processingThread;
+    private volatile boolean isRunning = true;
+
+    @PostConstruct
+    public void init() {
+        startProcessing();
+        log.info("[큐] 처리 스레드 초기화 완료");
+    }
 
     public void addArticle(Article article) {
         try {
             queue.put(article);
-            if (!isProcessing) {
-                startProcessing();
-            }
+            log.info("[큐] 기사 추가됨: {}", article.getTitle());
         } catch (InterruptedException e) {
-            log.error("[큐 서비스] 기사 추가 실패: {}", e.getMessage());
+            log.error("[큐] 기사 추가 실패: {}", article.getTitle(), e);
             Thread.currentThread().interrupt();
         }
     }
 
-    @Async
     public void startProcessing() {
-        isProcessing = true;
+        if (processingThread == null || !processingThread.isAlive()) {
+            isRunning = true;
+            processingThread = new Thread(() -> {
+                while (isRunning) {
+                    try {
+                        Article article = queue.take();
+                        log.info("[큐] 기사 처리 시작: {}", article.getTitle());
+                        
+                        // API 호출 간격 증가 (10초)
+                        Thread.sleep(10000);
+                        
+                        processArticle(article);
+                    } catch (InterruptedException e) {
+                        log.error("[큐] 처리 중단됨", e);
+                        Thread.currentThread().interrupt();
+                        break;
+                    } catch (Exception e) {
+                        log.error("[큐] 기사 처리 실패", e);
+                    }
+                }
+            });
+            processingThread.setDaemon(true);
+            processingThread.start();
+            log.info("[큐] 처리 시작됨");
+        }
+    }
+
+    private void processArticle(Article article) {
         try {
-            while (!queue.isEmpty()) {
-                Article article = queue.take();
+            GeminiClient.ArticleAnalysis analysis = geminiClient.analyzeArticle(article.getContent());
+            if (analysis != null) {
+                article.setExplanation(analysis.getExplanation());
+                article.setSummary(analysis.getSummary());
+                article.setTermExplanations(analysis.getTermExplanationsJson());
+                articleRepository.save(article);
+                log.info("[큐] 기사 처리 완료: {}", article.getTitle());
+                quizService.generateQuizzesForArticle(article);
+            }
+        } catch (Exception e) {
+            log.error("[큐] 기사 처리 중 에러 발생: {}", article.getTitle(), e);
+            if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getStatusCode().value() == 429) {
+                log.warn("[큐] Rate limit 발생. 30초 후 재시도 예정: {}", article.getTitle());
                 try {
-                    // API 호출 전 3초 대기 (rate limit 방지)
-                    Thread.sleep(3000);
-                    rssArticleService.processArticle(article);
-                } catch (Exception e) {
-                    log.error("[큐 서비스] 기사 처리 실패: {} - {}", article.getTitle(), e.getMessage());
+                    Thread.sleep(30000); // 30초 대기
+                    addArticle(article); // 큐에 다시 추가
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        } catch (InterruptedException e) {
-            log.error("[큐 서비스] 처리 중단: {}", e.getMessage());
-            Thread.currentThread().interrupt();
-        } finally {
-            isProcessing = false;
         }
     }
 
-    public int getQueueSize() {
-        return queue.size();
+    public void stopProcessing() {
+        isRunning = false;
+        if (processingThread != null) {
+            processingThread.interrupt();
+            try {
+                processingThread.join(5000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 } 
