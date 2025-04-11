@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'fineed-green': '#014029',
-        'fineed-background': '#EFEFEF',
+        'Fineed-green': '#014029',
+        'Fineed-background': '#EFEFEF',
       },
     },
   },

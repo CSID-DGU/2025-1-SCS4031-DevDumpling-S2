@@ -1,43 +1,34 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import PostCard from '../../components/common/PostCard';
-import Header from '../../components/layout/Header'
-const DUMMY_POSTS = [
-  {
-    id: 1,
-    title: '리액트네이티브 개어려워요..',
-    content: '리액트네이티브 개어려워요..',
-    author: '예성짱짱맨',
-    likes: 128
-  },
-
-];
+import { View, ScrollView, Text } from 'react-native';
+import Header from '../../components/layout/Header';
+import ChallengeSection from '../../components/common/ChallengeSection';
+import RatingSection from '../../components/common/RatingSection';
+import QuizAndNews from '../../components/common/QuizAndNews';
+import CommunitySection from '../../components/common/CommunitySection';
 
 export default function HomeScreen() {
   return (
-    <View className="flex-1 bg-Fineed-background">
+    <View className="flex-1 bg-[#EFEFEF]">
       <Header />
+      <ScrollView className="flex-1 px-4 pt-4 space-y-6">
+        {/* 지금 뜨고 있는 챌린지 */}
+        <Text className="text-[20px] font-bold text-[#0A4C2C]">지금 뜨고 있는 챌린지</Text>
+        <ChallengeSection />
 
-      {/* Category Tabs */}
-      <View className="flex-row p-4 bg-Fineed-background">
+        {/* 다른 사람들의 평점 */}
+        <Text className="text-[20px] font-bold text-black mt-6">다른 사람들의 평점은 어떨까?</Text>
+        <RatingSection />
 
-        <TouchableOpacity className="px-4 py-2 bg-gray-200 rounded-full">
-          <Text className="text-gray-700">저축</Text>
-        </TouchableOpacity>
-      </View>
+        {/* 맞춤 퀴즈 & 추천 기사 */}
+        <View className="flex-row justify-between mt-6">
+          <Text className="text-[20px] font-bold text-black">맞춤 퀴즈</Text>
+          <Text className="text-[20px] font-bold text-black">추천 기사</Text>
+        </View>
+        <QuizAndNews />
 
-      {/* Posts List */}
-      <ScrollView className="flex-1 px-4 pt-4">
-        {DUMMY_POSTS.map(post => (
-          <PostCard key={post.id} {...post} />
-        ))}
+        {/* 커뮤니티 */}
+        <Text className="text-[20px] font-bold text-[#0A4C2C] mt-6">커뮤니티</Text>
+        <CommunitySection />
       </ScrollView>
-
-      {/* Floating Action Button */}
-      <TouchableOpacity
-        className="absolute bottom-6 right-6 w-14 h-14 bg-blue-500 rounded-full items-center justify-center shadow-lg"
-      >
-        <Text className="text-white text-3xl">+</Text>
-      </TouchableOpacity>
     </View>
   );
 }
