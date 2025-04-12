@@ -43,7 +43,7 @@ public class GeminiClient {
     }
 
     private String buildPrompt(String content) {
-        return "다음 금융 기사를 금융/경제에 대한 정보를 중심으로 분석해서 아래 형식에 맞게 정확히 답변해줘. 각 섹션의 형식을 엄격히 지켜줘:\n\n" +
+        return "다음 금융 기사를 고등학생 수준에서 금융/경제에 대한 정보를 중심으로 분석하고 아래 형식에 맞게 정확히 답변해줘. 각 섹션의 형식을 엄격히 지켜줘:\n\n" +
                 content + "\n\n" +
                 "형식:\n" +
                 "제목: [20자 이내의 핵심적인 제목]\n" +
