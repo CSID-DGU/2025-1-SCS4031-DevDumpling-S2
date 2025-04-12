@@ -27,13 +27,14 @@ public class RssArticleScheduler {
 
     private static final List<String> RSS_URLS = Arrays.asList(
             "https://rss.etnews.com/Section901.xml",
-            "http://www.hani.co.kr/rss/economy/"
+            "http://www.hani.co.kr/rss/economy/",
+            "https://www.hankyung.com/feed/finance"
     );
 
     // 금융 관련 키워드 필터
     private static final List<String> FINANCE_KEYWORDS = Arrays.asList(
-        "금융", "투자", "은행", "ETF", "코스피", "코스닥", "주식", "채권",
-        "펀드", "증권", "금리", "환율", "자산", "저축", "보험", "대출"
+        "금융", "투자", "은행", "ETF", "코스피", "코스닥", "주식", 
+        "펀드", "환율", "저축", "대출", "금융감독원", "코인", "나스닥"
     );
 
     private boolean containsFinanceKeyword(String title) {
@@ -56,57 +57,72 @@ public class RssArticleScheduler {
             int duplicateCount = 0;
             int saveFailedCount = 0;
 
+            log.info("[RSS 스케줄러] 처리할 RSS URL 목록: {}", RSS_URLS);
+
             for (String rssUrl : RSS_URLS) {
-                log.info("[RSS 스컨셔드러] RSS URL 처리 시작: {}", rssUrl);
-                Elements items = fetchItemsWithJsoup(rssUrl);
-                log.info("[RSS 스컨셔드러] 추출된 item 수: {}", items.size());
+                log.info("[RSS 스케줄러] RSS URL 처리 시작: {}", rssUrl);
+                try {
+                    Elements items = fetchItemsWithJsoup(rssUrl);
+                    log.info("[RSS 스케줄러] 추출된 item 수: {}", items.size());
 
-                for (Element item : items) {
-                    String title = getElementContent(item, "title");
-                    String link = getElementContent(item, "link");
-                    String pubDate = getElementContent(item, "pubDate");
-
-                    if (title == null || link == null) {
-                        log.warn("[RSS 스컨셔드러] 필수 데이터 누락 - 제목: {}, 링크: {}", title, link);
+                    if (items.isEmpty()) {
+                        log.warn("[RSS 스케줄러] {}에서 아이템을 추출하지 못했습니다.", rssUrl);
                         continue;
                     }
 
-                    if (rssArticleService.existsByTitle(title)) {
-                        duplicateCount++;
-                        log.info("[RSS 스컨셔드러] 중복 기사 발견: {}", title);
-                        continue;
-                    }
+                    for (Element item : items) {
+                        String title = getElementContent(item, "title");
+                        String link = getElementContent(item, "link");
+                        String pubDate = getElementContent(item, "pubDate");
 
-                    if (containsFinanceKeyword(title)) {
-                        try {
-                            // 기사 내용 크롤링
-                            String content = rssArticleService.fetchContentFromUrl(link);
-                            if (content == null || content.trim().isEmpty()) {
-                                log.warn("[RSS 스케줄러] 기사 내용을 가져올 수 없음: {}", link);
-                                continue;
-                            }
-
-                            Article article = Article.builder()
-                                    .title(title)
-                                    .content(content)
-                                    .sourceUrl(link)
-                                    .publishDate(parsePublishDate(pubDate))
-                                    .build();
-
-                            if (!rssArticleService.existsByTitle(article.getTitle())) {
-                                log.info("[스케줄러] 새로운 기사 저장: {}", article.getTitle());
-                                rssArticleService.save(article);
-                                totalSaved++;
-                            } else {
-                                log.info("[스케줄러] 이미 존재하는 기사: {}", article.getTitle());
-                            }
-                        } catch (Exception e) {
-                            saveFailedCount++;
-                            log.error("[RSS 스컨셔드러] 기사 저장 중 예외 발생: {} - {}", title, e.getMessage());
+                        if (title == null || link == null) {
+                            log.warn("[RSS 스컨셔드러] 필수 데이터 누락 - 제목: {}, 링크: {}", title, link);
+                            continue;
                         }
-                    } else {
-                        filteredCount++;
+
+                        if (rssArticleService.existsByTitle(title)) {
+                            duplicateCount++;
+                            log.info("[RSS 스컨셔드러] 중복 기사 발견: {}", title);
+                            continue;
+                        }
+
+                        if (containsFinanceKeyword(title)) {
+                            try {
+                                // 기사 내용 크롤링
+                                String content = fetchContentFromUrl(link);
+                                if (content == null || content.trim().isEmpty()) {
+                                    log.warn("[RSS 스케줄러] 기사 내용을 가져올 수 없음: {}", link);
+                                    continue;
+                                }
+
+                                Article article = Article.builder()
+                                        .title(title)
+                                        .content(content)
+                                        .sourceUrl(link)
+                                        .publishDate(parsePublishDate(pubDate))
+                                        .status(Article.ProcessingStatus.PENDING)
+                                        .explanation("")
+                                        .summary("")
+                                        .termExplanations("[]")
+                                        .build();
+
+                                if (!rssArticleService.existsByTitle(article.getTitle())) {
+                                    log.info("[스케줄러] 새로운 기사 저장: {}", article.getTitle());
+                                    rssArticleService.save(article);
+                                    totalSaved++;
+                                } else {
+                                    log.info("[스케줄러] 이미 존재하는 기사: {}", article.getTitle());
+                                }
+                            } catch (Exception e) {
+                                saveFailedCount++;
+                                log.error("[RSS 스컨셔드러] 기사 저장 중 예외 발생: {} - {}", title, e.getMessage());
+                            }
+                        } else {
+                            filteredCount++;
+                        }
                     }
+                } catch (Exception e) {
+                    log.error("[RSS 스컨셔드러] RSS URL 처리 중 예외 발생: {} - {}", rssUrl, e.getMessage());
                 }
             }
 
@@ -141,29 +157,87 @@ public class RssArticleScheduler {
             return LocalDateTime.now();
         }
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-            ZonedDateTime zonedDateTime = ZonedDateTime.parse(pubDate, formatter);
-            return zonedDateTime.toLocalDateTime();
+            // 한국경제 RSS의 날짜 형식 처리
+            if (pubDate.contains("+0900")) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+                ZonedDateTime zonedDateTime = ZonedDateTime.parse(pubDate, formatter);
+                return zonedDateTime.toLocalDateTime();
+            } else {
+                // 다른 형식의 날짜 처리
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH);
+                ZonedDateTime zonedDateTime = ZonedDateTime.parse(pubDate, formatter);
+                return zonedDateTime.toLocalDateTime();
+            }
         } catch (Exception e) {
             log.warn("[RSS 스컨셔드러] 날짜 파싱 실패: {} - {}", pubDate, e.getMessage());
             return LocalDateTime.now();
         }
     }
-    /**
-    private LocalDateTime parsePublishDate(String pubDate) {
+
+    private String fetchContentFromUrl(String url) {
         try {
-            if (pubDate == null) return LocalDateTime.now();
+            Document doc = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                    .timeout(30000)
+                    .get();
+
+            Elements contentElements;
+            if (url.contains("etnews.com")) {
+                // 이티뉴스 기사 본문
+                contentElements = doc.select("#articleBody");
+                if (contentElements.isEmpty()) {
+                    contentElements = doc.select("#content");
+                }
+            } else if (url.contains("hani.co.kr")) {
+                // 한겨레 기사 본문
+                contentElements = doc.select("div.text");
+                if (contentElements.isEmpty()) {
+                    contentElements = doc.select("div.article-text");
+                }
+            } else if (url.contains("mk.co.kr")) {
+                // 매일경제 기사 본문
+                contentElements = doc.select("div#article_body");
+            } else if (url.contains("hankyung.com")) {
+                // 한국경제 기사 본문
+                contentElements = doc.select("div.article-body");
+                if (contentElements.isEmpty()) {
+                    contentElements = doc.select("div.article-content");
+                }
+            } else {
+                contentElements = new Elements();
+            }
+
+            if (contentElements.isEmpty()) {
+                log.warn("[RSS 스컨셔드러] 본문 요소를 찾을 수 없음: {}", url);
+                return null;
+            }
+
+            String content = contentElements.text();
+            content = cleanContent(content);
             
-            // 네이버 뉴스 RSS의 날짜 형식에 맞춰 파싱
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-            Date date = sdf.parse(pubDate);
-            return date.toInstant()
-                    .atZone(ZoneId.of("Asia/Seoul"))
-                    .toLocalDateTime();
+            if (content.isBlank()) {
+                log.warn("[RSS 스컨셔드러] 본문이 비어있음: {}", url);
+                return null;
+            }
+
+            return content;
         } catch (Exception e) {
-            log.warn("[RSS 스케줄러] 날짜 파싱 실패: {} - {}", pubDate, e.getMessage());
-            return LocalDateTime.now();
+            log.error("[RSS 스컨셔드러] 본문 크롤링 실패: {} - {}", url, e.getMessage());
+            return null;
         }
     }
-    **/
+
+    private String cleanContent(String content) {
+        if (content == null) return null;
+        return content
+                .replaceAll("기사를 읽어드립니다.*?audio element\\.", "")
+                .replaceAll("\\[.*?\\]", "")
+                .replaceAll("▶.*", "")
+                .replaceAll("©.*", "")
+                .replaceAll("\\s+", " ")
+                .replaceAll("^\\s+|\\s+$", "")
+                .trim();
+    }
 }
