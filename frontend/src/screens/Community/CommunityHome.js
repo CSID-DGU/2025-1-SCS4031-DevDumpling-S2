@@ -1,5 +1,5 @@
-import { View, ScrollView, Text, TouchableOpacity, Pressable } from 'react-native';
-import Header from '../components/layout/Header';
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import Header from '../../components/layout/Header';
 
 
 export default function CommunityHomeScreen({ navigation }) {
@@ -34,30 +34,29 @@ export default function CommunityHomeScreen({ navigation }) {
 
             {/* 카테고리 탭 */}
             <View className="flex-row justify-center mb-4">
-                <View className="bg-[#014029] px-4 py-2 rounded-full">
-                    <Text className="text-white text-sm font-semibold">커뮤니티</Text>
+                <View className="bg-[#014029] px-4 py-2 rounded-full w-full max-w-[200px] self-center">
+                    <Text className="text-white text-center text-sm font-semibold">커뮤니티</Text>
                 </View>
             </View>
 
             {/* 게시판 카드 리스트 */}
-            <ScrollView className="space-y-3">
+            <ScrollView className="space-y-4">
                 {boards.map((board, index) => (
-                    <Pressable
+                    <TouchableOpacity
                         key={index}
                         className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md"
                         onPress={() => board.route && navigation.navigate(board.route)}
                     >
                         <Text className="text-base font-bold mb-1">{board.title}</Text>
                         <Text className="text-sm text-[#6D6D6D]">{board.description}</Text>
-                        <Text className="text-xs text-[#6D6D6D] mt-2">알락꼬리꼬마도요</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 ))}
             </ScrollView>
 
             {/* 메인으로 돌아가기 링크 */}
-            <Pressable className="mt-6 items-center">
+            <TouchableOpacity className="mt-6 mb-8 items-center">
                 <Text className="text-sm text-[#6D6D6D] underline">메인으로 돌아가기</Text>
-            </Pressable>
+            </TouchableOpacity>
         </View>
     );
 }
