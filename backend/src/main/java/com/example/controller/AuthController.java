@@ -3,10 +3,13 @@ package com.example.controller;
 import com.example.entity.User;
 import com.example.security.JwtTokenProvider;
 import com.example.service.KakaoService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,21 @@ public class AuthController {
 
     private final KakaoService kakaoService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${kakao.client.id}")
+    private String clientId;
+
+    @Value("${kakao.redirect-uri}")
+    private String redirectUri;
+
+    @GetMapping("/kakao/login")
+    public void kakaoLogin(HttpServletResponse response) throws IOException {
+        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize" +
+                "?client_id=" + clientId +
+                "&redirect_uri=" + redirectUri +
+                "&response_type=code";
+        response.sendRedirect(kakaoAuthUrl);
+    }
 
     @GetMapping("/kakao/callback")
     public ResponseEntity<?> kakaoCallback(@RequestParam String code) {
