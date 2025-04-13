@@ -1,4 +1,4 @@
-import { View, ScrollView, Text } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions } from 'react-native';
 import Header from '../../components/layout/Header';
 import ChallengeSection from '../../components/common/ChallengeSection';
 import RatingSection from '../../components/common/RatingSection';
@@ -6,28 +6,42 @@ import QuizAndNews from '../../components/common/QuizAndNews';
 import CommunitySection from '../../components/common/CommunitySection';
 
 export default function HomeScreen() {
+  const { width } = useWindowDimensions();
+  const horizontalPadding = width > 380 ? 16 : 12;
+
   return (
     <View className="flex-1 bg-[#EFEFEF]">
       <Header />
-      <ScrollView className="flex-1 px-4 pt-4 space-y-6">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          paddingHorizontal: horizontalPadding,
+          paddingTop: 16,
+          paddingBottom: 24
+        }}
+      >
         {/* 지금 뜨고 있는 챌린지 */}
-        <Text className="text-[20px] font-bold text-[#0A4C2C]">지금 뜨고 있는 챌린지</Text>
-        <ChallengeSection />
+        <View className="mb-8">
+          <Text className="text-[20px] font-bold text-black mb-2">지금 뜨고 있는 챌린지</Text>
+          <ChallengeSection />
+        </View>
 
         {/* 다른 사람들의 평점 */}
-        <Text className="text-[20px] font-bold text-black mt-6">다른 사람들의 평점은 어떨까?</Text>
-        <RatingSection />
+        <View className="mb-8">
+          <Text className="text-[20px] font-bold text-black mb-2">다른 사람들의 평점은 어떨까?</Text>
+          <RatingSection />
+        </View>
 
         {/* 맞춤 퀴즈 & 추천 기사 */}
-        <View className="flex-row justify-between mt-6">
-          <Text className="text-[20px] font-bold text-black">맞춤 퀴즈</Text>
-          <Text className="text-[20px] font-bold text-black">추천 기사</Text>
+        <View className="mb-8">
+          <QuizAndNews />
         </View>
-        <QuizAndNews />
 
         {/* 커뮤니티 */}
-        <Text className="text-[20px] font-bold text-[#0A4C2C] mt-6">커뮤니티</Text>
-        <CommunitySection />
+        <View className="mb-4">
+          <Text className="text-[20px] font-bold text-Fineed-green mb-2">커뮤니티</Text>
+          <CommunitySection />
+        </View>
       </ScrollView>
     </View>
   );

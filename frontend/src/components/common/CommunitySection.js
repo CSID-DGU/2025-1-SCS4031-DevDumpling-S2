@@ -1,6 +1,8 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 
 export default function CommunitySection() {
+    const { width } = useWindowDimensions();
+
     const posts = [
         ['HOT게시판', '일일 50만원으로 살아남기 챌린지 꿀팁ㅌㅌㅌ'],
         ['투자게시판', '2차전지 어제 논 왔었음?!?'],
@@ -10,11 +12,15 @@ export default function CommunitySection() {
     ];
 
     return (
-        <View className="bg-white rounded-[15px] p-4 shadow-md mt-2 mb-6">
+        <View className="bg-white rounded-[15px] p-5 shadow-md mt-3 mb-8">
             {posts.map(([title, sub], idx) => (
-                <TouchableOpacity key={idx} className={idx < posts.length - 1 ? "py-3 border-b border-[#F0F0F0]" : "py-3"}>
+                <TouchableOpacity
+                    key={idx}
+                    className={idx < posts.length - 1 ? "py-3 border-b border-[#F0F0F0]" : "py-3"}
+                    style={{ paddingHorizontal: width > 380 ? 5 : 2 }}
+                >
                     <Text className="text-[14px] font-bold text-black">{title}</Text>
-                    <Text className="text-[12px] text-[#6D6D6D] mt-1">{sub}</Text>
+                    <Text className="text-[12px] text-[#6D6D6D] mt-2">{sub}</Text>
                 </TouchableOpacity>
             ))}
         </View>
