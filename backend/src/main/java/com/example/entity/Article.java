@@ -32,10 +32,12 @@ public class Article {
     private LocalDateTime publishDate;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String summary;
+    @NotNull(message = "요약은 필수입니다.")
+    private String summary = "처리 중...";
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String explanation;
+    @NotNull(message = "설명은 필수입니다.")
+    private String explanation = "처리 중...";
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String termExplanations; // JSON 형태로 저장: [{"term": "용어", "explanation": "설명"}, ...]

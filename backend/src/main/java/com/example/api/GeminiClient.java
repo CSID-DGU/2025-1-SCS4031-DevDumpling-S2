@@ -64,47 +64,84 @@ public class GeminiClient {
         }
 
         try {
+            log.info("[Gemini] 응답 파싱 시작:\n{}", response);
+            
             String[] lines = response.split("\n");
             String title = null;
             String summary = null;
             StringBuilder explanation = new StringBuilder();
             StringBuilder jsonBuilder = new StringBuilder();
             boolean isJson = false;
+            boolean isExplanation = false;
 
             for (String line : lines) {
-                // 제목 파싱 (## 제목: 또는 제목: 형식 모두 처리)
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                // 제목 파싱
                 if (line.matches(".*제목:.*")) {
                     title = line.replaceAll("^[#\\s]*제목:\\s*", "").trim();
+                    log.info("[Gemini] 제목 파싱: {}", title);
                     continue;
                 }
                 
-                // 요약 파싱 (## 요약: 또는 요약: 형식 모두 처리)
+                // 요약 파싱
                 if (line.matches(".*요약:.*")) {
                     summary = line.replaceAll("^[#\\s]*요약:\\s*", "").trim();
+                    log.info("[Gemini] 요약 파싱: {}", summary);
                     continue;
                 }
 
                 // 마크다운 볼드(**) 및 헤더(##) 형식 처리
                 line = line.replaceAll("\\*\\*", "").trim();
                 
+                // JSON 데이터 파싱
                 if (line.startsWith("용어_JSON:") || line.startsWith("[") || line.startsWith("```json")) {
                     isJson = true;
+                    isExplanation = false;
                     if (!line.startsWith("[")) {
                         continue;
                     }
                     jsonBuilder.append(line).append("\n");
+                    continue;
                 } else if (isJson) {
-                    if (line.startsWith("```")) continue;
+                    if (line.startsWith("```")) {
+                        isJson = false;
+                        continue;
+                    }
                     jsonBuilder.append(line).append("\n");
-                } else if (line.startsWith("핵심 내용:") || line.startsWith("상세 설명:")) {
+                    continue;
+                }
+
+                // 설명 파싱
+                if (line.startsWith("핵심 내용:") || line.startsWith("상세 설명:")) {
+                    isExplanation = true;
+                    explanation.append(line).append("\n");
+                } else if (isExplanation) {
                     explanation.append(line).append("\n");
                 }
             }
 
-            if (title == null || summary == null) {
-                log.error("[Gemini] 필수 필드 누락 - 제목: {}, 요약: {}", title, summary);
-                return null;
+            // 필수 필드 검증
+            if (title == null || title.isEmpty()) {
+                log.error("[Gemini] 제목이 누락되었습니다.");
+                title = "제목 없음";
             }
+            if (summary == null || summary.isEmpty()) {
+                log.error("[Gemini] 요약이 누락되었습니다.");
+                summary = "요약 없음";
+            }
+            if (explanation.length() == 0) {
+                log.warn("[Gemini] 설명이 누락되었습니다.");
+                explanation.append("설명 없음");
+            }
+            if (jsonBuilder.length() == 0) {
+                log.warn("[Gemini] 용어 설명이 누락되었습니다.");
+                jsonBuilder.append("[]");
+            }
+
+            log.info("[Gemini] 파싱 완료 - 제목: {}, 요약 길이: {}, 설명 길이: {}, JSON 길이: {}", 
+                title, summary.length(), explanation.length(), jsonBuilder.length());
 
             return new ArticleAnalysis(
                 title,

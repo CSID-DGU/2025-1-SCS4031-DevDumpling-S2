@@ -33,8 +33,8 @@ public class RssArticleScheduler {
 
     // 금융 관련 키워드 필터
     private static final List<String> FINANCE_KEYWORDS = Arrays.asList(
-        "금융", "투자", "은행", "ETF", "코스피", "코스닥", "주식", 
-        "펀드", "환율", "저축", "대출", "금융감독원", "코인", "나스닥"
+        "투자"//, "금융", "은행", "ETF", "코스피", "코스닥", "주식", 
+        //"펀드", "환율", "저축", "대출", "금융감독원", "코인", "나스닥"
     );
 
     private boolean containsFinanceKeyword(String title) {
@@ -101,8 +101,8 @@ public class RssArticleScheduler {
                                         .sourceUrl(link)
                                         .publishDate(parsePublishDate(pubDate))
                                         .status(Article.ProcessingStatus.PENDING)
-                                        .explanation("")
-                                        .summary("")
+                                        .explanation("처리 중...")
+                                        .summary("처리 중...")
                                         .termExplanations("[]")
                                         .build();
 
