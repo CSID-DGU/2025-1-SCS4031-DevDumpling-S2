@@ -1,37 +1,47 @@
 package com.example.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "USER")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(name = "user")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String email;
+    @Column(nullable = false, unique = true)
+    private String kakaoId;
 
-    @Column(length = 100)
-    private String password;
-
-    @Column(length = 50)
+    @Column(nullable = false)
     private String nickname;
 
-    @Column(length = 20)
-    private String loginType;
-    private LocalDateTime registerDate;
-
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserType userType;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public enum UserType {
         A, B, C, D
