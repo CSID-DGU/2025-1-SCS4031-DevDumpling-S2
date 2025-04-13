@@ -1,7 +1,7 @@
 import { Text, View, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './src/screens/Home/HomeScreen';
-import CommunityHome from './src/screens/CommunityHome';
+import CommunityHome from './src/screens/Community/CommunityHome';
 import "./global.css";
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
