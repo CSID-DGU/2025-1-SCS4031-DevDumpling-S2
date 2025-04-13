@@ -1,6 +1,8 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const Header = () => {
+    const navigation = useNavigation();
     return (
         <View className="flex-row justify-between items-center px-[27px] pt-[57px] pb-[12px]">
             <Text
@@ -9,7 +11,7 @@ const Header = () => {
             >
                 FINEED
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text
                     style={{ fontFamily: 'Pretendard-Regular' }}
                     className="text-[14px] leading-[22px] text-black"
