@@ -1,5 +1,6 @@
-import { View, ScrollView, Text, Pressable } from 'react-native';
-import Header from '../../components/layout/Header';
+import { View, ScrollView, Text, TouchableOpacity, Pressable } from 'react-native';
+import Header from '../components/layout/Header';
+
 
 export default function CommunityHomeScreen({ navigation }) {
     const boards = [
@@ -30,7 +31,7 @@ export default function CommunityHomeScreen({ navigation }) {
         <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
             {/* 상단 헤더 */}
             <Header />
-            
+
             {/* 카테고리 탭 */}
             <View className="flex-row justify-center mb-4">
                 <View className="bg-[#014029] px-4 py-2 rounded-full">
@@ -50,7 +51,7 @@ export default function CommunityHomeScreen({ navigation }) {
                         <Text className="text-sm text-[#6D6D6D]">{board.description}</Text>
                         <Text className="text-xs text-[#6D6D6D] mt-2">알락꼬리꼬마도요</Text>
                     </Pressable>
-                ))}                      
+                ))}
             </ScrollView>
 
             {/* 메인으로 돌아가기 링크 */}

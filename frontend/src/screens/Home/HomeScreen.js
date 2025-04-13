@@ -1,13 +1,15 @@
-import { View, ScrollView, Text, useWindowDimensions } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
 import ChallengeSection from '../../components/common/ChallengeSection';
 import RatingSection from '../../components/common/RatingSection';
 import QuizAndNews from '../../components/common/QuizAndNews';
 import CommunitySection from '../../components/common/CommunitySection';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const horizontalPadding = width > 380 ? 16 : 12;
+  const navigation = useNavigation();
 
   return (
     <View className="flex-1 bg-[#EFEFEF]">
@@ -39,7 +41,9 @@ export default function HomeScreen() {
 
         {/* 커뮤니티 */}
         <View className="mb-4">
-          <Text className="text-[20px] font-bold text-Fineed-green mb-2">커뮤니티</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Community')}>
+            <Text className="text-[20px] font-bold text-Fineed-green mb-2">커뮤니티</Text>
+          </TouchableOpacity>
           <CommunitySection />
         </View>
       </ScrollView>
