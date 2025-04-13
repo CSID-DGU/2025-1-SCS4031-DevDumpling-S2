@@ -32,13 +32,7 @@ export default function App() {
         <Stack.Screen
           name="Community"
           component={CommunityHome}
-          options={{
-            title: '커뮤니티',
-            headerStyle: {
-              backgroundColor: '#014029', // Fineed-green 색상
-            },
-            headerTintColor: '#fff',
-          }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
