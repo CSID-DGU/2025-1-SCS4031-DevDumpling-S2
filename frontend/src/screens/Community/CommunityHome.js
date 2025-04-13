@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions,TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
 
 
@@ -26,6 +26,8 @@ export default function CommunityHomeScreen({ navigation }) {
             route: "FreeBoard",
         },
     ];
+    const { width } = useWindowDimensions();
+    const horizontalPadding = width > 380 ? 16 : 12;
 
     return (
         <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
@@ -40,11 +42,17 @@ export default function CommunityHomeScreen({ navigation }) {
             </View>
 
             {/* 게시판 카드 리스트 */}
-            <ScrollView className="space-y-4">
+            <ScrollView
+                className="flex-1"
+                contentContainerStyle={{
+                    paddingHorizontal: horizontalPadding,
+                    paddingTop: 16,
+                    paddingBottom: 24
+              }}>
                 {boards.map((board, index) => (
                     <TouchableOpacity
                         key={index}
-                        className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md"
+                        className={`bg-[#F9F9F9] p-4 rounded-2xl shadow-md ${index !== boards.length - 1 ? "mb-5" : ""}`}
                         onPress={() => board.route && navigation.navigate(board.route)}
                     >
                         <Text className="text-base font-bold mb-1">{board.title}</Text>
@@ -54,7 +62,8 @@ export default function CommunityHomeScreen({ navigation }) {
             </ScrollView>
 
             {/* 메인으로 돌아가기 링크 */}
-            <TouchableOpacity className="mt-6 mb-8 items-center">
+            <TouchableOpacity className="mb-8 items-center"
+            onPress={() => navigation.navigate('Home')}>
                 <Text className="text-sm text-[#6D6D6D] underline">메인으로 돌아가기</Text>
             </TouchableOpacity>
         </View>
