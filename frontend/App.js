@@ -2,6 +2,7 @@ import { Text, View, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './src/screens/Home/HomeScreen';
 import CommunityHome from './src/screens/Community/CommunityHome';
+import FreeBoard from './src/screens/Community/FreeBoard';
 import Login from './src/screens/Login';
 import "./global.css";
 import { useFonts } from 'expo-font';
@@ -38,6 +39,11 @@ export default function App() {
         <Stack.Screen
           name="Login"
           component={Login}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FreeBoard"
+          component={FreeBoard}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

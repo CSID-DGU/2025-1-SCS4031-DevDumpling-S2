@@ -1,5 +1,6 @@
 import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function CommunityHomeScreen({ navigation }) {
@@ -7,18 +8,22 @@ export default function CommunityHomeScreen({ navigation }) {
         {
             title: "HOT게시판",
             description: "🔥 지금 가장 인기 있는 글 모음!",
+            route: "HotBoard",
         },
         {
             title: "투자게시판",
             description: "💰 투자 정보 & 전략 공유 공간",
+            route: "InvestBoard",
         },
         {
             title: "챌린지게시판",
             description: "💪 챌린지 이야기를 나누며 함께 목표를 이루어요!",
+            route: "ChallengeBoard",
         },
         {
             title: "퀴즈게시판",
             description: "🧠 금융 퀴즈 & 지식 공유 공간",
+            route: "QuizBoard",
         },
         {
             title: "자유게시판",
