@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.entity.User;
 import com.example.repository.UserRepository;
+import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class KakaoService {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${kakao.client.id}")
@@ -74,16 +76,18 @@ public class KakaoService {
     public User processKakaoLogin(Map<String, Object> userInfo) {
         String kakaoId = String.valueOf(userInfo.get("id"));
         Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
-        
         String nickname = (String) properties.get("nickname");
 
-        User user = userRepository.findByKakaoId(kakaoId)
-                .orElseGet(() -> User.builder()
-                        .kakaoId(kakaoId)
-                        .nickname(nickname)
-                        .userType(User.UserType.A)
-                        .build());
+        // 이미 존재하는 사용자인지 확인
+        if (!userRepository.existsByKakaoId(kakaoId)) {
+            // 새로운 사용자 생성 및 더미 데이터 생성
+            return userService.createUser(kakaoId, nickname);
+        }
 
+        // 기존 사용자 정보 업데이트
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.setNickname(nickname);
         return userRepository.save(user);
     }
 } 
