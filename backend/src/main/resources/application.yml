@@ -1,37 +1,74 @@
+# 공통 설정
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql:3306/myapp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/myapp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: root
   jpa:
     hibernate:
       ddl-auto: update 
-    show-sql: true
+    show-sql: false  # 프로덕션에서는 SQL 로깅 비활성화
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc.batch_size: 10
+        default_batch_fetch_size: 10
 
+# 서버 설정
+server:
+  port: 8080
+  address: 0.0.0.0
+  tomcat:
+    max-threads: 20
+    min-spare-threads: 5
+    max-connections: 50
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.example: INFO
+    org.springframework.web: INFO
+    org.hibernate: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    max-size: 5MB
+    max-history: 2
+
+# DB 관련 설정
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
 
-gemini:
-  api:
-    key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
-
-kakao:
-  client:
-    id: 4e1ac7afeed94bade75bed0f11753757
-    secret: wt0F9Puoyy9a7wGvBloJwQagmMWBSaLp
-  redirect-uri: http://15.164.214.204:8080/api/auth/kakao/callback
-
+# 보안 설정
 jwt:
   secret: your-secret-key-here-must-be-at-least-256-bits-long
   token-validity-in-seconds: 86400
 
-server:
-  port: 8080
-  address: 0.0.0.0 
+# 카카오 설정 (로컬 기본값)
+kakao:
+  client:
+    id: 4e1ac7afeed94bade75bed0f11753757
+    secret: wt0F9Puoyy9a7wGvBloJwQagmMWBSaLp
+  redirect-uri: http://localhost:8080/api/auth/kakao/callback
+
+# AI 설정
+gemini:
+  api:
+    key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
+
+---
+# AWS 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: aws
+  datasource:
+    url: jdbc:mysql://mysql:3306/myapp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+
+kakao:
+  redirect-uri: http://52.78.59.11:8080/api/auth/kakao/callback 
