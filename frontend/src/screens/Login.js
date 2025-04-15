@@ -12,10 +12,9 @@ export default function Login() {
     const [webViewUrl, setWebViewUrl] = useState('');
     const authCodeProcessed = React.useRef({});
 
-    const API_URL = 'http://10.0.2.2:8080'; // 에뮬레이터
-    //const API_URL = 'http://172.17.0.1:8080'; // 기본 도커 브릿지 네트워크의 호스트 IP (환경에 따라 다를 수 있음)
-    //const API_URL = 'http://backend:8080'; // Docker Compose 사용 시 서비스 이름
-    //const API_URL = 'http://10.83.23.208:8080'; // 본인 로컬 IP 주소
+    const API_URL = 'http://15.164.214.204:8080';//백엔드 주소 
+    //const API_URL = 'http://10.0.2.2:8080'; // 에뮬레이터
+    //const API_URL = 'http://10.83.23.208:8080'; // 본인 로컬 IP 주소(신예성 아이폰 연결할때)
 
     const handleKakaoLogin = async () => {
         authCodeProcessed.current = {};
