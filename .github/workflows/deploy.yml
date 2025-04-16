@@ -29,7 +29,7 @@ jobs:
           proxy_timeout: 180s     # 프록시 타임아웃 증가
           retries: 3             # 연결 재시도 횟수
 
-      # 3. EC2에서 명령어 실행
+      # 3. EC2에서 명령어 실행 및 로그 확인
       - name: Execute remote ssh commands
         uses: appleboy/ssh-action@master
         with:
@@ -39,6 +39,25 @@ jobs:
           command_timeout: 30m    # SSH 명령어 타임아웃 증가
           script_stop: true      # 스크립트 실행 중 에러 발생 시 중지
           script: |
+            echo "===== 시작: 현재 실행 중인 도커 컨테이너 확인 ====="
+            docker ps -a
+            
+            echo "===== 시작: 도커 로그 확인 ====="
+            docker logs $(docker ps -q -f name=backend) --tail 100 2>&1 || true
+            
+            echo "===== 시작: 컨테이너 중지 및 재시작 ====="
             cd ~/backend
             docker-compose -f docker-compose.aws.yml down
             docker-compose -f docker-compose.aws.yml up -d --build
+            
+            echo "===== 대기: 컨테이너 시작 대기 (30초) ====="
+            sleep 30
+            
+            echo "===== 종료: 최종 도커 상태 및 로그 확인 ====="
+            docker ps -a
+            docker logs $(docker ps -q -f name=backend) --tail 100 2>&1 || true
+            
+            echo "===== 시작: 시스템 리소스 사용량 확인 ====="
+            df -h
+            free -m
+            top -b -n 1 | head -n 20
