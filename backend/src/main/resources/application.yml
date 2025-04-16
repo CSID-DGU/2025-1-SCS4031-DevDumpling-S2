@@ -7,12 +7,13 @@ spring:
     password: root
   jpa:
     hibernate:
-      ddl-auto: update 
+      ddl-auto: update
     show-sql: false  # 프로덕션에서는 SQL 로깅 비활성화
     properties:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+        globally_quoted_identifiers: true
         jdbc.batch_size: 10
         default_batch_fetch_size: 10
 
@@ -29,9 +30,9 @@ server:
 logging:
   level:
     root: INFO
-    com.example: INFO
-    org.springframework.web: INFO
-    org.hibernate: INFO
+    com.example: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   file:

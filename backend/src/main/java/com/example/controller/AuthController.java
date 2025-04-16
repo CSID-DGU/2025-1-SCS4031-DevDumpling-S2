@@ -52,11 +52,20 @@ public class AuthController {
             // 4. JWT 토큰 생성
             String jwtToken = jwtTokenProvider.createToken(user.getKakaoId(), Collections.singletonList("ROLE_USER"));
             
+            // 5. 응답 데이터 구성
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("kakaoId", user.getKakaoId());
+            userData.put("nickname", user.getNickname());
+            userData.put("profileImage", user.getProfileImage());
+            userData.put("userType", user.getUserType());
+            userData.put("createdAt", user.getCreatedAt());
+            userData.put("updatedAt", user.getUpdatedAt());
+
             Map<String, Object> response = new HashMap<>();
-            response.put("user", user);
+            response.put("user", userData);
             response.put("token", jwtToken);
             
-            // 5. 응답 반환
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("카카오 로그인 실패: " + e.getMessage());
