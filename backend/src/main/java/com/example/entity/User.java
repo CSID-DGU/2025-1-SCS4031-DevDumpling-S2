@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Table(name = "user")
 public class User {
     @Id
@@ -21,6 +23,10 @@ public class User {
 
     @Column(nullable = false)
     private String nickname;
+
+    @JsonProperty("profileImage")
+    @Column(name = "profile_image", nullable = true)
+    private String profileImage;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
