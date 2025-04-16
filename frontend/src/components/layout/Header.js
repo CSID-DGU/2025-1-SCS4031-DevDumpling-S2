@@ -96,6 +96,16 @@ const Header = () => {
                             {userName}님
                         </Text>
                     ) : null}
+
+                    <TouchableOpacity onPress={() => navigation.navigate('Mypage')}>
+                        <Text
+                            style={{ fontFamily: 'Pretendard-Regular' }}
+                            className="text-[14px] leading-[22px] text-black"
+                        >
+                            마이페이지
+                        </Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity onPress={handleLogout}>
                         <Text
                             style={{ fontFamily: 'Pretendard-Regular' }}
