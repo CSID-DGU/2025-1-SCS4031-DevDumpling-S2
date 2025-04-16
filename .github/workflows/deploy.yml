@@ -24,8 +24,10 @@ jobs:
           source: backend/
           target: /home/ubuntu/
           strip_components: 1
-          timeout: 120s
-          command_timeout: 20m
+          timeout: 600s           # 타임아웃 시간 증가 (10분)
+          command_timeout: 30m    # 명령어 타임아웃 증가
+          proxy_timeout: 180s     # 프록시 타임아웃 증가
+          retries: 3             # 연결 재시도 횟수
 
       # 3. EC2에서 명령어 실행
       - name: Execute remote ssh commands
@@ -34,6 +36,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 30m    # SSH 명령어 타임아웃 증가
+          script_stop: true      # 스크립트 실행 중 에러 발생 시 중지
           script: |
             cd ~/backend
             docker-compose -f docker-compose.aws.yml down
