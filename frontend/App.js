@@ -4,6 +4,7 @@ import HomeScreen from './src/screens/Home/HomeScreen';
 import CommunityHome from './src/screens/Community/CommunityHome';
 import FreeBoard from './src/screens/Community/FreeBoard';
 import Login from './src/screens/Login';
+import Mypage from './src/screens/Mypage';
 import "./global.css";
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
@@ -46,7 +47,13 @@ export default function App() {
           component={FreeBoard}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Mypage"
+          component={Mypage}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
+
     </NavigationContainer>
   );
 }

@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User createUser(String kakaoId, String nickname) {
+    public User createUser(String kakaoId, String nickname, String profileImage) {
         // 이미 존재하는 사용자인지 확인
         if (userRepository.existsByKakaoId(kakaoId)) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
@@ -56,6 +56,7 @@ public class UserService implements UserDetailsService {
         User user = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(nickname)
+                .profileImage(profileImage)
                 .userType(User.UserType.A)
                 .build();
         user = userRepository.save(user);
