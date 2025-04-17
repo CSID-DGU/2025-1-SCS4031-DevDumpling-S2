@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,86 +26,118 @@ public class QuizService {
     @Transactional
     public void generateQuizzesForArticle(Article article) {
         try {
-            String content = article.getContent();
+            log.info("[퀴즈 서비스] 퀴즈 생성 시작 - 기사: {}", article.getTitle());
             
-            // 한 번의 API 호출로 모든 유형의 퀴즈 생성
-            String response = geminiClient.generateQuiz(content, null, 0);
+            // 한 번의 Gemini 호출로 모든 유형의 퀴즈 생성
+            String response = geminiClient.generateQuiz(article.getContent(), "ALL", 4);
+            
             if (response == null) {
-                log.error("[퀴즈 서비스] 퀴즈 생성 실패: {}", article.getTitle());
+                log.error("[퀴즈 서비스] Gemini 응답이 null입니다.");
                 return;
             }
-            
-            // 각 유형별 퀴즈 파싱
-            String[] quizzes = response.split("\\[(?=금융 초보형|신용 도전형|투자 지향형|절약 성향형)");
-            for (String quizText : quizzes) {
-                if (quizText.trim().isEmpty()) continue;
-                
-                UserType userType = null;
-                if (quizText.startsWith("금융 초보형")) userType = UserType.A;
-                else if (quizText.startsWith("신용 도전형")) userType = UserType.B;
-                else if (quizText.startsWith("투자 지향형")) userType = UserType.C;
-                else if (quizText.startsWith("절약 성향형")) userType = UserType.D;
-                
-                if (userType != null) {
-                    // 이미 해당 기사와 유형의 퀴즈가 있는지 확인
-                    List<Quiz> existingQuizzes = quizRepository.findByArticleIdAndUserType(article.getId(), userType);
-                    if (!existingQuizzes.isEmpty()) {
-                        log.info("[퀴즈 서비스] 이미 존재하는 퀴즈 - 기사: {}, 유형: {}", article.getTitle(), userType);
-                        continue;
-                    }
 
-                    Quiz quiz = parseQuizResponse(quizText.trim());
-                    if (quiz != null) {
-                        quiz.setArticle(article);
-                        quiz.setUserType(userType);
-                        quiz.setQuizType(quizText.contains("1)") ? "MULTIPLE_CHOICE" : "OX");
-                        quizRepository.save(quiz);
-                        log.info("[퀴즈 서비스] 퀴즈 생성 완료 - 유형: {}, 사용자 타입: {}", quiz.getQuizType(), userType);
-                    }
+            // 각 유형별 퀴즈 파싱
+            String[] quizSections = response.split("\\[");
+            for (int i = 1; i < quizSections.length; i++) {
+                String section = quizSections[i].trim();
+                if (section.isEmpty()) continue;
+
+                // 유형 추출
+                String type = section.substring(0, section.indexOf("]")).trim();
+                section = section.substring(section.indexOf("]") + 1).trim();
+
+                // UserType 설정
+                UserType userType;
+                switch (type) {
+                    case "금융 초보형":
+                        userType = UserType.A;
+                        break;
+                    case "신용 도전형":
+                        userType = UserType.B;
+                        break;
+                    case "투자 지향형":
+                        userType = UserType.C;
+                        break;
+                    case "절약 성향형":
+                        userType = UserType.D;
+                        break;
+                    default:
+                        log.warn("[퀴즈 서비스] 알 수 없는 유형: {}", type);
+                        continue;
                 }
+
+                // 이미 해당 유형의 퀴즈가 있는지 확인
+                if (quizRepository.existsByArticleAndUserType(article, userType)) {
+                    log.info("[퀴즈 서비스] 이미 존재하는 유형의 퀴즈입니다 - userType: {}", userType);
+                    continue;
+                }
+
+                // 문제 추출
+                String question = "";
+                int questionStart = section.indexOf("문제:");
+                int questionEnd = section.indexOf("#");
+                if (questionStart != -1) {
+                    question = section.substring(questionStart + 3, 
+                                              questionEnd != -1 ? questionEnd : section.indexOf("정답:")).trim();
+                }
+
+                // 보기 추출 (4지선다인 경우)
+                String[] options = new String[0];
+                if (section.contains("1)")) {
+                    int optionsStart = section.indexOf("1)");
+                    int optionsEnd = section.indexOf("정답:");
+                    if (optionsStart != -1 && optionsEnd != -1) {
+                        String optionsText = section.substring(optionsStart, optionsEnd).trim();
+                        options = optionsText.split("\\n");
+                        for (int j = 0; j < options.length; j++) {
+                            options[j] = options[j].substring(options[j].indexOf(")") + 1).trim();
+                        }
+                    }
+                } else {
+                    // O/X 문제인 경우
+                    options = new String[]{"O", "X"};
+                }
+
+                // 정답 추출
+                String answer = "";
+                int answerStart = section.indexOf("정답:");
+                int answerEnd = section.indexOf("해설:");
+                if (answerStart != -1 && answerEnd != -1) {
+                    answer = section.substring(answerStart + 3, answerEnd).trim();
+                }
+
+                // 해설 추출
+                String explanation = "";
+                int explanationStart = section.indexOf("해설:");
+                if (explanationStart != -1) {
+                    explanation = section.substring(explanationStart + 3).trim();
+                }
+
+                Quiz quiz = new Quiz();
+                quiz.setArticle(article);
+                quiz.setUserType(userType);
+                quiz.setQuestion(question);
+                quiz.setQuizType(options.length > 2 ? "MULTIPLE_CHOICE" : "OX");
+                quiz.setOptions(Arrays.toString(options));
+                quiz.setAnswer(answer);
+                quiz.setExplanation(explanation);
+
+                quizRepository.save(quiz);
+                log.info("[퀴즈 서비스] 퀴즈 저장 완료 - userType: {}, quizType: {}", userType, quiz.getQuizType());
             }
+            
+            log.info("[퀴즈 서비스] 퀴즈 생성 완료 - 기사: {}", article.getTitle());
+
         } catch (Exception e) {
-            log.error("[퀴즈 서비스] 퀴즈 생성 중 에러 발생: {}", article.getTitle(), e);
+            log.error("[퀴즈 서비스] 퀴즈 생성 중 오류 발생: {}", e.getMessage(), e);
         }
     }
 
-    private Quiz parseQuizResponse(String response) {
-        try {
-            Quiz quiz = new Quiz();
-            String[] lines = response.split("\n");
-            
-            StringBuilder optionsBuilder = new StringBuilder();
-            boolean isCollectingOptions = false;
-            
-            for (String line : lines) {
-                line = line.trim();
-                if (line.isEmpty()) continue;
-                
-                if (line.startsWith("문제:")) {
-                    quiz.setQuestion(line.substring("문제:".length()).trim());
-                } else if (line.matches("^[1-4]\\).*")) {
-                    isCollectingOptions = true;
-                    optionsBuilder.append(line).append("\n");
-                } else if (line.startsWith("정답:")) {
-                    isCollectingOptions = false;
-                    quiz.setAnswer(line.substring("정답:".length()).trim());
-                } else if (line.startsWith("해설:")) {
-                    quiz.setExplanation(line.substring("해설:".length()).trim());
-                }
-            }
-            
-            if (optionsBuilder.length() > 0) {
-                quiz.setOptions(optionsBuilder.toString().trim());
-                quiz.setQuizType("MULTIPLE_CHOICE");
-            } else {
-                quiz.setQuizType("OX");
-            }
-            
-            return quiz;
-        } catch (Exception e) {
-            log.error("[퀴즈 서비스] 퀴즈 파싱 실패: {}", e.getMessage());
-            return null;
-        }
+    private boolean isInvalidField(String field) {
+        return field == null || 
+               field.trim().isEmpty() || 
+               field.equals("처리 중...") || 
+               field.equals("기사 처리에 실패했습니다.");
     }
 
     public List<Quiz> findByArticleId(Long articleId) {

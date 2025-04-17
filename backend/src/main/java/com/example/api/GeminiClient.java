@@ -30,7 +30,6 @@ public class GeminiClient {
     @Getter
     @AllArgsConstructor
     public static class ArticleAnalysis {
-        private String title;
         private String summary;
         private String explanation;
         private String termExplanationsJson;
@@ -43,18 +42,21 @@ public class GeminiClient {
     }
 
     private String buildPrompt(String content) {
-        return "다음 금융 기사를 고등학생 수준에서 금융/경제에 대한 정보를 중심으로 분석하고 아래 형식에 맞게 정확히 답변해줘. 각 섹션의 형식을 엄격히 지켜줘:\n\n" +
+        return "다음 금융 기사를 고등학생 수준에서 금융/경제에 대한 정보를 중심으로 분석하고 아래 JSON 형식으로 정확히 답변해줘:\n\n" +
                 content + "\n\n" +
-                "형식:\n" +
-                "제목: [20자 이내의 핵심적인 제목]\n" +
-                "요약: [200자 이내의 핵심 내용 요약]\n" +
-                "핵심 내용: [한 문장으로 된 핵심 내용]\n" +
-                "상세 설명: [5-6문장으로 된 쉬운 설명]\n" +
-                "용어_JSON: [\n" +
-                "  {\"term\": \"용어1\", \"explanation\": \"설명1\"},\n" +
-                "  {\"term\": \"용어2\", \"explanation\": \"설명2\"},\n" +
-                "  {\"term\": \"용어3\", \"explanation\": \"설명3\"}\n" +
-                "]";
+                "응답 형식 (JSON):\n" +
+                "{\n" +
+                "  \"summary\": \"200자 이내의 핵심 내용 요약\",\n" +
+                "  \"explanation\": \"5-6문장으로 된 쉬운 설명\",\n" +
+                "  \"terms\": [\n" +
+                "    {\"term\": \"용어1\", \"explanation\": \"설명1\"},\n" +
+                "    {\"term\": \"용어2\", \"explanation\": \"설명2\"}\n" +
+                "  ]\n" +
+                "}\n\n" +
+                "주의사항:\n" +
+                "1. 반드시 위 JSON 형식을 지켜서 응답해주세요.\n" +
+                "2. 마크다운 문법(**, ## 등)을 사용하지 마세요.\n" +
+                "3. terms 배열은 반드시 [] 형식을 유지해주세요.";
     }
 
     private ArticleAnalysis parseArticleAnalysis(String response) {
@@ -66,129 +68,57 @@ public class GeminiClient {
         try {
             log.info("[Gemini] 응답 파싱 시작:\n{}", response);
             
-            String[] lines = response.split("\n");
-            String title = null;
-            String summary = null;
-            StringBuilder explanation = new StringBuilder();
-            StringBuilder jsonBuilder = new StringBuilder();
-            boolean isJson = false;
-            boolean isExplanation = false;
-
-            for (String line : lines) {
-                line = line.trim();
-                if (line.isEmpty()) continue;
-
-                // 제목 파싱
-                if (line.matches(".*제목:.*")) {
-                    title = line.replaceAll("^[#\\s]*제목:\\s*", "").trim();
-                    log.info("[Gemini] 제목 파싱: {}", title);
-                    continue;
-                }
-                
-                // 요약 파싱
-                if (line.matches(".*요약:.*")) {
-                    summary = line.replaceAll("^[#\\s]*요약:\\s*", "").trim();
-                    log.info("[Gemini] 요약 파싱: {}", summary);
-                    continue;
-                }
-
-                // 마크다운 볼드(**) 및 헤더(##) 형식 처리
-                line = line.replaceAll("\\*\\*", "").trim();
-                
-                // JSON 데이터 파싱
-                if (line.startsWith("용어_JSON:") || line.startsWith("[") || line.startsWith("```json")) {
-                    isJson = true;
-                    isExplanation = false;
-                    if (!line.startsWith("[")) {
-                        continue;
-                    }
-                    jsonBuilder.append(line).append("\n");
-                    continue;
-                } else if (isJson) {
-                    if (line.startsWith("```")) {
-                        isJson = false;
-                        continue;
-                    }
-                    jsonBuilder.append(line).append("\n");
-                    continue;
-                }
-
-                // 설명 파싱
-                if (line.startsWith("핵심 내용:") || line.startsWith("상세 설명:")) {
-                    isExplanation = true;
-                    explanation.append(line).append("\n");
-                } else if (isExplanation) {
-                    explanation.append(line).append("\n");
-                }
+            // 주의사항 제거 (주의사항: 또는 Note: 로 시작하는 부분 제거)
+            int cautionIndex = response.indexOf("\n주의사항:");
+            if (cautionIndex == -1) {
+                cautionIndex = response.indexOf("\nNote:");
+            }
+            if (cautionIndex != -1) {
+                response = response.substring(0, cautionIndex);
+            }
+            
+            // JSON 시작과 끝 위치 찾기
+            int startIndex = response.indexOf("{");
+            int endIndex = response.lastIndexOf("}") + 1;
+            
+            if (startIndex == -1 || endIndex == 0) {
+                log.error("[Gemini] JSON 형식이 아닙니다.");
+                return null;
             }
 
-            // 필수 필드 검증
-            if (title == null || title.isEmpty()) {
-                log.error("[Gemini] 제목이 누락되었습니다.");
-                title = "제목 없음";
-            }
-            if (summary == null || summary.isEmpty()) {
-                log.error("[Gemini] 요약이 누락되었습니다.");
-                summary = "요약 없음";
-            }
-            if (explanation.length() == 0) {
-                log.warn("[Gemini] 설명이 누락되었습니다.");
-                explanation.append("설명 없음");
-            }
-            if (jsonBuilder.length() == 0) {
-                log.warn("[Gemini] 용어 설명이 누락되었습니다.");
-                jsonBuilder.append("[]");
+            String jsonStr = response.substring(startIndex, endIndex);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(jsonStr);
+
+            String summary = root.path("summary").asText();
+            String explanation = root.path("explanation").asText();
+            String terms = root.path("terms").toString();
+
+            // 필드 검증
+            if (isInvalidField(summary) || isInvalidField(explanation) || terms.equals("[]")) {
+                log.warn("[Gemini] 유효하지 않은 필드 발견 - 요약: {}, 설명: {}, 용어: {}", 
+                    summary, explanation, terms);
+                return null;
             }
 
-            log.info("[Gemini] 파싱 완료 - 제목: {}, 요약 길이: {}, 설명 길이: {}, JSON 길이: {}", 
-                title, summary.length(), explanation.length(), jsonBuilder.length());
+            log.info("[Gemini] 파싱 완료 - 요약 길이: {}, 설명 길이: {}, JSON 길이: {}", 
+                summary.length(), explanation.length(), terms.length());
 
-            return new ArticleAnalysis(
-                title,
-                summary,
-                explanation.toString().trim(),
-                jsonBuilder.toString().trim()
-            );
+            return new ArticleAnalysis(summary, explanation, terms);
         } catch (Exception e) {
             log.error("[Gemini] 응답 파싱 실패: {}", e.getMessage(), e);
             return null;
         }
     }
 
-    private String callGemini(String prompt) {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            String requestBody = String.format("""
-                {
-                    "contents": [{
-                        "parts": [{
-                            "text": "%s"
-                        }]
-                    }]
-                }""", prompt.replace("\"", "\\\""));
-
-            String fullUrl = API_URL + "?key=" + apiKey;
-            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
-            
-            log.info("[Gemini] API 요청: \n{}", prompt);
-            ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
-            log.info("[Gemini] API 응답 상태: {}", response.getStatusCode());
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.getBody());
-            String responseText = root.path("candidates").get(0)
-                    .path("content").path("parts").get(0)
-                    .path("text").asText();
-            
-            log.info("[Gemini] API 응답 내용: \n{}", responseText);
-            return responseText;
-        } catch (Exception e) {
-            log.error("[Gemini] API 호출 실패: {}", e.getMessage(), e);
-            return null;
-        }
+    private boolean isInvalidField(String field) {
+        if (field == null || field.isEmpty()) return true;
+        field = field.trim();
+        return field.equals("처리 중...") ||
+               field.equals("기사 처리에 실패했습니다.") ||
+               field.equals("설명없음") ||
+               field.equals("요약없음") ||
+               field.equals("[]");
     }
 
     public String generateQuiz(String content, String userType, int quizNumber) {
@@ -240,8 +170,51 @@ public class GeminiClient {
             4) [보기4]
             정답: [정답]
             해설: [실질적인 절약과 재테크 팁이 담긴 해설]
+            
+            주의사항:
+            1. 반드시 위 형식을 지켜서 응답해주세요.
+            2. 마크다운 문법(**, ##, ``` 등)을 사용하지 마세요.
             """, content);
 
         return callGemini(prompt);
+    }
+
+    private String callGemini(String prompt) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            String requestBody = String.format("""
+                {
+                    "contents": [{
+                        "parts": [{
+                            "text": "%s"
+                        }]
+                    }]
+                }""", prompt.replace("\"", "\\\""));
+
+            String fullUrl = API_URL + "?key=" + apiKey;
+            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+            
+            log.info("[Gemini] API 요청: \n{}", prompt);
+            ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
+            log.info("[Gemini] API 응답 상태: {}", response.getStatusCode());
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            String responseText = root.path("candidates").get(0)
+                    .path("content").path("parts").get(0)
+                    .path("text").asText();
+            
+            // 마크다운 포맷 제거
+            responseText = responseText.replaceAll("```json\\s*", "").replaceAll("```\\s*$", "").trim();
+            
+            log.info("[Gemini] API 응답 내용: \n{}", responseText);
+            return responseText;
+        } catch (Exception e) {
+            log.error("[Gemini] API 호출 실패: {}", e.getMessage(), e);
+            return null;
+        }
     }
 }

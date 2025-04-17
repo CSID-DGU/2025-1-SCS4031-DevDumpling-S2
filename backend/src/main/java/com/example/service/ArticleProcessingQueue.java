@@ -84,6 +84,8 @@ public class ArticleProcessingQueue {
                         isInvalidField(analysis.getTermExplanationsJson())) {
                         log.warn("[큐] 일부 필드가 유효하지 않음 - 설명: {}, 요약: {}, 용어: {}", 
                             analysis.getExplanation(), analysis.getSummary(), analysis.getTermExplanationsJson());
+                        article.setStatus(Article.ProcessingStatus.PENDING);
+                        articleRepository.save(article);
                         throw new IllegalStateException("API 응답의 일부 필드가 유효하지 않습니다.");
                     }
                     
