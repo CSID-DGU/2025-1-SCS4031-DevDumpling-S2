@@ -62,6 +62,10 @@ gemini:
   api:
     key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
 
+fss:
+  api:
+    key: a20ba820e53668dd39b7f7f91bf451aa
+
 ---
 # AWS 환경 설정
 spring:
