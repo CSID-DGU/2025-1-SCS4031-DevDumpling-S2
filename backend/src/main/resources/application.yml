@@ -62,7 +62,10 @@ gemini:
   api:
     key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
 
-<<<<<<< Updated upstream
+fss:
+  api:
+    key: a20ba820e53668dd39b7f7f91bf451aa
+
 ---
 # AWS 환경 설정
 spring:
@@ -74,12 +77,3 @@ spring:
 
 kakao:
   redirect-uri: http://52.78.59.11:8080/api/auth/kakao/callback 
-=======
-fss:
-  api:
-    key: a20ba820e53668dd39b7f7f91bf451aa
-
-server:
-  port: 8080
-  address: 0.0.0.0 
->>>>>>> Stashed changes
