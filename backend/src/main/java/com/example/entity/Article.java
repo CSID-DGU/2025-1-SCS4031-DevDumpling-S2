@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Article")
+@Table(name = "article")
 public class Article {
 
     @Id
@@ -31,15 +31,15 @@ public class Article {
     @Column(nullable = false)
     private LocalDateTime publishDate;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     @NotNull(message = "요약은 필수입니다.")
     private String summary = "처리 중...";
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     @NotNull(message = "설명은 필수입니다.")
     private String explanation = "처리 중...";
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     private String termExplanations; // JSON 형태로 저장: [{"term": "용어", "explanation": "설명"}, ...]
 
     @Enumerated(EnumType.STRING)
