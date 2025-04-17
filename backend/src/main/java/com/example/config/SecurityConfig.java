@@ -25,7 +25,8 @@ public class SecurityConfig {
                     "/actuator/health",    // 헬스 체크
                     "/api/users/*/dummy-data",  // 더미 데이터 생성
                     "/rss/**",
-                    "/api/quizzes/**"
+                    "/api/quizzes/**",
+                    "/api/fss/**"
                 ).permitAll()
                 // 보호된 API - 인증 필요
                 .requestMatchers("/api/users/**").authenticated()
