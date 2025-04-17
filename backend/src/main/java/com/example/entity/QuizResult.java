@@ -3,30 +3,39 @@ package com.example.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "QuizResult")
-@Data
+@Table(name = "quiz_result")
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long resultID;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "quizID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String selectedAnswer;
 
+    @Column(nullable = false)
     private Boolean isCorrect;
 
-    private LocalDateTime submittedAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
