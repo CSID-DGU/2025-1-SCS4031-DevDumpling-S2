@@ -136,18 +136,18 @@ export default function MyPageScreen() {
                                 className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3"
                                 onPress={() => navigation.navigate('Scraps')}
                             >
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">스크랩·</Text>
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">찜 목록</Text>
-                                <Text className="text-2xl font-semibold text-Fineed-green">보러 가기 {'>'}</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">스크랩·</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">찜 목록</Text>
+                                <Text className="text-2xl font-bold text-Fineed-green">보러 가기 {'>'}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 className="flex-1 bg-white rounded-3xl shadow-sm p-8"
                                 onPress={() => navigation.navigate('MyPosts')}
                             >
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">내가 작성한</Text>
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">글·댓글</Text>
-                                <Text className="text-2xl font-semibold text-Fineed-green">보러 가기 {'>'}</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">내가 작성한</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">글·댓글</Text>
+                                <Text className="text-2xl font-bold text-Fineed-green">보러 가기 {'>'}</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -156,8 +156,8 @@ export default function MyPageScreen() {
                                 className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3"
                                 onPress={() => navigation.navigate('Badges')}
                             >
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">획득한 뱃지</Text>
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">확인하기 {'>'}</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">획득한 뱃지</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">확인하기 {'>'}</Text>
                                 <Text className="text-sm text-gray-500 mt-2">총 5개</Text>
                             </TouchableOpacity>
 
@@ -165,8 +165,8 @@ export default function MyPageScreen() {
                                 className="flex-1 bg-white rounded-3xl shadow-sm p-8"
                                 onPress={() => navigation.navigate('QuizHistory')}
                             >
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">퀴즈 기록</Text>
-                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">보러 가기 {'>'}</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">퀴즈 기록</Text>
+                                <Text className="text-2xl font-bold mb-0.5 text-Fineed-green">보러 가기 {'>'}</Text>
                                 <Text className="text-sm text-gray-500 mt-2">브론즈 티어 · 9회 완료</Text>
                             </TouchableOpacity>
                         </View>
