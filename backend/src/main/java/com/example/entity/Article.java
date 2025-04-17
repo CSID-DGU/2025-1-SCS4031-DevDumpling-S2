@@ -33,10 +33,12 @@ public class Article {
 
     @Column(columnDefinition = "text", nullable = false)
     @NotNull(message = "요약은 필수입니다.")
+    @Builder.Default
     private String summary = "처리 중...";
 
     @Column(columnDefinition = "text", nullable = false)
     @NotNull(message = "설명은 필수입니다.")
+    @Builder.Default
     private String explanation = "처리 중...";
 
     @Column(columnDefinition = "text", nullable = false)

@@ -40,19 +40,45 @@ public class RssArticleService {
         try {
             // 모든 정보를 한 번에 생성
             GeminiClient.ArticleAnalysis analysis = geminiClient.analyzeArticle(article.getContent());
-            
-            article.setTitle(analysis.getTitle());
+            if (analysis == null) {
+                log.warn("[기사 서비스] Gemini 분석 결과가 null입니다: {}", article.getTitle());
+                article.setStatus(Article.ProcessingStatus.PENDING);
+                article.setSummary("처리 중...");
+                article.setExplanation("처리 중...");
+                articleRepository.save(article);
+                return;
+            }
+
+            // 분석 결과 저장
             article.setSummary(analysis.getSummary());
             article.setExplanation(analysis.getExplanation());
             article.setTermExplanations(analysis.getTermExplanationsJson());
-            
+            article.setStatus(Article.ProcessingStatus.COMPLETED);
             articleRepository.save(article);
+            log.info("[기사 서비스] 기사 분석 완료 - 제목: {}", article.getTitle());
+
+            // 퀴즈 생성 (30초 대기 후 진행)
+            Thread.sleep(30000);
+            log.info("[기사 서비스] 퀴즈 생성 시작 - 제목: {}", article.getTitle());
+            quizService.generateQuizzesForArticle(article);
+            log.info("[기사 서비스] 퀴즈 생성 완료 - 제목: {}", article.getTitle());
+
         } catch (Exception e) {
-            log.error("기사 처리 중 오류 발생: {}", e.getMessage(), e);
-            article.setSummary("요약 생성 실패");
-            article.setExplanation("설명 생성 실패");
+            log.error("[기사 서비스] 기사 처리 중 오류 발생: {}", e.getMessage(), e);
+            article.setStatus(Article.ProcessingStatus.FAILED);
+            article.setSummary("기사 처리에 실패했습니다.");
+            article.setExplanation("기사 처리에 실패했습니다.");
             articleRepository.save(article);
         }
+    }
+
+    private boolean isInvalidField(String field) {
+        return field == null || 
+               field.isEmpty() || 
+               field.equals("처리 중...") || 
+               field.equals("기사 처리에 실패했습니다.") ||
+               field.equals("설명없음") ||
+               field.equals("요약없음");
     }
 
     public String fetchContentFromUrl(String url) {
