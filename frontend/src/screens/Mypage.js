@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Header from '../components/layout/Header';
 
 export default function MyPageScreen() {
     const navigation = useNavigation();
@@ -47,72 +48,131 @@ export default function MyPageScreen() {
     }
 
     return (
-        <SafeAreaView className="flex-1 bg-Fineed-background">
-            <View className="px-5 py-8">
-                <Text className="text-3xl font-bold text-Fineed-green mb-8">마이페이지</Text>
-
-                {userData ? (
-                    <View className="bg-white rounded-xl p-6 shadow-sm">
-                        <View className="flex-row items-center mb-6">
-                            {userData.profileImage ? (
+        <>
+            <Header />
+            <SafeAreaView className="flex-1 bg-Fineed-background">
+                <ScrollView className="flex-1">
+                    {/* 프로필 섹션 */}
+                    <View className="px-5 pt-3 pb-5">
+                        <View className="flex-row items-center space-x-3">
+                            <View className="w-[35%] flex items-center justify-center">
                                 <Image
-                                    source={{ uri: userData.profileImage }}
-                                    className="w-20 h-20 rounded-full mr-4"
+                                    source={{ uri: userData?.profileImage }}
+                                    className="w-[86px] h-[86px] rounded-full bg-gray-200"
                                 />
-                            ) : (
-                                <View className="w-20 h-20 rounded-full bg-gray-200 mr-4 items-center justify-center">
-                                    <Text className="text-2xl text-gray-400">프로필</Text>
+                            </View>
+                            <View className="w-[65%] bg-white py-4 px-5 rounded-3xl shadow-sm">
+                                <Text className="text-center text-base font-bold mb-1 text-Fineed-green">
+                                    {userData ? `${userData.nickname}님,` : '닉네임 정보 없음'}
+                                </Text>
+                                <Text className="text-center text-base font-bold mb-2 text-Fineed-green">
+                                    반가워요!
+                                </Text>
+                                <View className="flex-row items-center justify-center mb-2">
+                                    <Image
+                                        source={require('../../assets/images/badge.png')}
+                                        className="w-[22px] h-[22px] mr-1"
+                                        resizeMode="contain"
+                                    />
+                                    <Text className="font-bold mr-1">LV.2</Text>
+                                    <Text className="mx-1 text-gray-400">|</Text>
+                                    <Text className="text-xs text-gray-500">
+                                        챌린지 달성 12회
+                                    </Text>
                                 </View>
-                            )}
-
-                            <View>
-                                <Text className="text-xl font-bold">{userData.nickname || '닉네임 정보 없음'}</Text>
-                                <Text className="text-gray-500">{userData.email || '이메일 정보 없음'}</Text>
+                                <View className="h-1 bg-gray-200 rounded-full overflow-hidden mb-1">
+                                    <View className="h-full bg-Fineed-green w-[60%]" />
+                                </View>
+                                <View className="flex-row justify-between px-1">
+                                    <Text className="text-xs text-gray-500">LV.2</Text>
+                                    <Text className="text-xs text-gray-500">LV.3</Text>
+                                </View>
                             </View>
                         </View>
+                    </View>
 
-                        <View className="border-t border-gray-200 pt-4">
+                    {/* 챌린지 섹션 */}
+                    <View className="px-5 mb-4">
+                        <TouchableOpacity
+                            className="flex-row items-center mb-3"
+                            onPress={() => navigation.navigate('Challenges')}
+                        >
+                            <Text className="text-2xl font-bold text-Fineed-green">참여중인 챌린지</Text>
+                            <Text className="text-2xl font-bold text-Fineed-green ml-1">{'>'}</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3"
+                            onPress={() => navigation.navigate('ChallengeDetail')}
+                        >
+                            <View className="flex-row p-5">
+                                <View className="w-[36%] flex items-center justify-center pr-3">
+                                    <Image
+                                        source={require('../../assets/images/piggy-bank.png')}
+                                        className="w-24 h-24"
+                                        resizeMode="contain"
+                                    />
+                                </View>
+                                <View className="h-24 w-px bg-gray-200 mr-3" />
+                                <View className="w-[64%] flex justify-center  pl-1">
+                                    <Text className="text-center text-2xl font-bold mb-1 text-Fineed-green">도전!</Text>
+                                    <Text className="text-center text-2xl font-bold text-Fineed-green">일주일 저축 챌린지</Text>
+                                </View>
+                            </View>
+                            <View className="flex-row justify-center mt-3 mb-3">
+                                <View className="h-2 w-2 rounded-full bg-Fineed-green mx-1" />
+                                <View className="h-2 w-2 rounded-full bg-gray-300 mx-1" />
+                                <View className="h-2 w-2 rounded-full bg-gray-300 mx-1" />
+                                <View className="h-2 w-2 rounded-full bg-gray-300 mx-1" />
+                                <View className="h-2 w-2 rounded-full bg-gray-300 mx-1" />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* 메뉴 버튼 */}
+                    <View className="px-4 mb-8">
+                        <View className="flex-row mb-4">
                             <TouchableOpacity
-                                className="py-3"
-                                onPress={() => console.log('계정 설정')}
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3"
+                                onPress={() => navigation.navigate('Scraps')}
                             >
-                                <Text className="text-base">계정 설정</Text>
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">스크랩·</Text>
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">찜 목록</Text>
+                                <Text className="text-2xl font-semibold text-Fineed-green">보러 가기 {'>'}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                className="py-3"
-                                onPress={() => console.log('알림 설정')}
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8"
+                                onPress={() => navigation.navigate('MyPosts')}
                             >
-                                <Text className="text-base">알림 설정</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                className="py-3"
-                                onPress={() => console.log('문의하기')}
-                            >
-                                <Text className="text-base">문의하기</Text>
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">내가 작성한</Text>
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">글·댓글</Text>
+                                <Text className="text-2xl font-semibold text-Fineed-green">보러 가기 {'>'}</Text>
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity
-                            className="mt-6 bg-Fineed-green py-3 rounded-full items-center"
-                            onPress={handleLogout}
-                        >
-                            <Text className="text-white font-bold">로그아웃</Text>
-                        </TouchableOpacity>
+                        <View className="flex-row">
+                            <TouchableOpacity
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3"
+                                onPress={() => navigation.navigate('Badges')}
+                            >
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">획득한 뱃지</Text>
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">확인하기 {'>'}</Text>
+                                <Text className="text-sm text-gray-500 mt-2">총 5개</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8"
+                                onPress={() => navigation.navigate('QuizHistory')}
+                            >
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">퀴즈 기록</Text>
+                                <Text className="text-2xl font-semibold mb-1 text-Fineed-green">보러 가기 {'>'}</Text>
+                                <Text className="text-sm text-gray-500 mt-2">브론즈 티어 · 9회 완료</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                ) : (
-                    <View className="items-center justify-center py-10">
-                        <Text className="text-lg text-gray-500">로그인이 필요합니다</Text>
-                        <TouchableOpacity
-                            className="mt-4 bg-Fineed-green py-3 px-6 rounded-full"
-                            onPress={() => navigation.navigate('Login')}
-                        >
-                            <Text className="text-white font-bold">로그인하기</Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
-            </View>
-        </SafeAreaView>
+                </ScrollView>
+            </SafeAreaView>
+        </>
     );
 }

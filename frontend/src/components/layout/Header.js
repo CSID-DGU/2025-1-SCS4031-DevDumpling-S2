@@ -88,14 +88,7 @@ const Header = () => {
             {isLoggedIn ? (
                 // 로그인된 경우 사용자 이름과 로그아웃 버튼 표시
                 <View className="flex-row items-center">
-                    {userName ? (
-                        <Text
-                            style={{ fontFamily: 'Pretendard-Regular' }}
-                            className="text-[14px] leading-[22px] text-black mr-3"
-                        >
-                            {userName}님
-                        </Text>
-                    ) : null}
+
 
                     <TouchableOpacity onPress={() => navigation.navigate('Mypage')}>
                         <Text
@@ -106,14 +99,7 @@ const Header = () => {
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={handleLogout}>
-                        <Text
-                            style={{ fontFamily: 'Pretendard-Regular' }}
-                            className="text-[14px] leading-[22px] text-black"
-                        >
-                            로그아웃
-                        </Text>
-                    </TouchableOpacity>
+
                 </View>
             ) : (
                 // 로그인되지 않은 경우 로그인 버튼 표시
