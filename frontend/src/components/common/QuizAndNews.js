@@ -1,8 +1,51 @@
-import { View, Text, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Image, useWindowDimensions, Linking } from 'react-native';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+
+const API_BASE_URL = 'http://52.78.59.11:8080';
 
 export default function QuizAndNews() {
     const { width } = useWindowDimensions();
     const cardWidth = (width - 40) / 2 - 8;
+    const [article, setArticle] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchTodayArticle();
+    }, []);
+
+    const fetchTodayArticle = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`${API_BASE_URL}/rss/list`);
+            const articles = response.data;
+
+            if (articles && articles.length > 0) {
+                const latestArticle = articles
+                    .filter(article => article.status === 'COMPLETED')
+                    .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))[0];
+
+                setArticle(latestArticle);
+            }
+        } catch (error) {
+            console.error('기사를 불러오는데 실패했습니다:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const formatTodayDate = () => {
+        const today = new Date();
+        return format(today, 'MM월 dd일 오늘의 기사', { locale: ko });
+    };
+
+    const openArticleUrl = (url) => {
+        if (url) {
+            Linking.openURL(url).catch((err) => console.error('링크를 열 수 없습니다:', err));
+        }
+    };
 
     return (
         <View className="flex-row justify-between mt-3">
@@ -30,19 +73,36 @@ export default function QuizAndNews() {
                     style={{ height: cardWidth * 1.15 }}
                     className="bg-white rounded-[20px] shadow-md p-5"
                 >
-                    <View className="mb-2">
-                        <Text className="text-[10px] text-[#6D6D6D]">적금 · 케이뱅크</Text>
-                    </View>
-                    <Text className="text-[20px] font-bold text-black ">궁금한 적금</Text>
-                    <Text className="text-[10px] text-[#6D6D6D] mt-2">최고 연 7.20% 기본 연 1.20%</Text>
+                    {loading ? (
+                        <Text className="text-[12px] text-[#6D6D6D] text-center">로딩 중...</Text>
+                    ) : article ? (
+                        <>
+                            <View className="mb-2">
+                                <Text className="text-[10px] text-[#6D6D6D]">
+                                    {formatTodayDate()}
+                                </Text>
+                            </View>
+                            <TouchableOpacity onPress={() => openArticleUrl(article.sourceUrl)}>
+                                <Text className="text-[16px] font-bold text-black" numberOfLines={3}>
+                                    {article.title}
+                                </Text>
+                            </TouchableOpacity>
+                            <Text className="text-[10px] text-[#6D6D6D] mt-2" numberOfLines={2}>
+                                {article.summary}
+                            </Text>
 
-                    <Text className="text-[10px] text-[#6D6D6D] text-center mt-10">
-                        로그인하면 맞춤 추천 금융 상품을 받아볼 수 있어요!
-                    </Text>
-
-                    <View className="flex-row justify-center mt-4">
-                        <Text className="text-[12px] text-[#6D6D6D]">금융 기사 더 보러 가기 {'>'}</Text>
-                    </View>
+                            <TouchableOpacity
+                                onPress={() => openArticleUrl(article.sourceUrl)}
+                                className="flex-row justify-center mt-4"
+                            >
+                                <Text className="text-[12px] text-Fineed-green">금융 기사 더 보러 가기 {'>'}</Text>
+                            </TouchableOpacity>
+                        </>
+                    ) : (
+                        <Text className="text-[10px] text-[#6D6D6D] text-center mt-10">
+                            오늘의 추천 기사를 불러올 수 없습니다.
+                        </Text>
+                    )}
                 </View>
             </View>
         </View>

@@ -175,10 +175,10 @@ export default function MypageScreen() {
                     {/* 로그아웃 버튼 */}
                     <View className="px-5 mb-10 mt-6">
                         <TouchableOpacity
-                            className="bg-red-500 rounded-3xl shadow-md p-5 items-center"
+                            className="bg-white rounded-3xl shadow-md p-5 items-center"
                             onPress={handleLogout}
                         >
-                            <Text className="text-2xl font-bold text-white">로그아웃</Text>
+                            <Text className="text-2xl font-bold text-Fineed-green">로그아웃</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
