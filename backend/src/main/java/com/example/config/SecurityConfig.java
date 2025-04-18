@@ -14,11 +14,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()  // React Native 앱이므로 CSRF 보호 불필요
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests()
-                // 공개 API - 인증 불필요
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/",
                     "/api/auth/**",        // 카카오 로그인 등 인증 관련
@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/card/**").authenticated()
                 .requestMatchers("/api/investment/**").authenticated()
                 // 나머지 요청은 인증 필요
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+            );
         
         return http.build();
     }

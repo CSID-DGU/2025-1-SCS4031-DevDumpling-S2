@@ -6,6 +6,7 @@ import com.example.entity.User;
 import com.example.service.QuizResultService;
 import com.example.service.QuizService;
 import com.example.service.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,22 +26,25 @@ public class QuizResultController {
     private final QuizService quizService;
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<QuizResult> submitQuizAnswer(
-            @RequestBody Map<String, String> request,
+    @Data
+    public static class QuizAnswerRequest {
+        private String selectedAnswer;
+    }
+
+    @PostMapping("/{quizId}/submit")
+    public ResponseEntity<?> submitQuizAnswer(
+            @PathVariable Long quizId,
+            @RequestBody QuizAnswerRequest request,
             Authentication authentication) {
         try {
-            Long quizId = Long.parseLong(request.get("quizId"));
-            String selectedAnswer = request.get("selectedAnswer");
-            
-            User user = userService.getUserByEmail(authentication.getName());
+            User user = userService.findByKakaoId(authentication.getName());
             Quiz quiz = quizService.findById(quizId);
             
             if (quiz == null) {
                 return ResponseEntity.notFound().build();
             }
             
-            QuizResult result = quizResultService.saveQuizResult(user, quiz, selectedAnswer);
+            QuizResult result = quizResultService.saveQuizResult(user, quiz, request.getSelectedAnswer());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("[퀴즈 결과] 제출 중 오류 발생: {}", e.getMessage());
@@ -51,7 +55,7 @@ public class QuizResultController {
     @GetMapping("/results")
     public ResponseEntity<List<QuizResult>> getMyQuizResults(Authentication authentication) {
         try {
-            User user = userService.getUserByEmail(authentication.getName());
+            User user = userService.findByKakaoId(authentication.getName());
             List<QuizResult> results = quizResultService.getUserQuizResults(user);
             return ResponseEntity.ok(results);
         } catch (Exception e) {
@@ -63,7 +67,7 @@ public class QuizResultController {
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getMyQuizStats(Authentication authentication) {
         try {
-            User user = userService.getUserByEmail(authentication.getName());
+            User user = userService.findByKakaoId(authentication.getName());
             
             long totalAnswers = quizResultService.getUserTotalAnswerCount(user);
             long correctAnswers = quizResultService.getUserCorrectAnswerCount(user);
