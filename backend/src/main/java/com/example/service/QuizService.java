@@ -152,4 +152,9 @@ public class QuizService {
         List<Quiz> quizzes = quizRepository.findByArticleIdAndUserType(articleId, userType);
         return quizzes.isEmpty() ? null : quizzes.get(0);  // 가장 최근 퀴즈(ID가 가장 큰 것) 반환
     }
+
+    public Quiz findById(Long id) {
+        return quizRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + id));
+    }
 }
