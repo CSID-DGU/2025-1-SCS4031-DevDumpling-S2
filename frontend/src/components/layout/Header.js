@@ -13,15 +13,12 @@ const Header = () => {
         try {
             const userToken = await AsyncStorage.getItem('userToken');
             const userData = await AsyncStorage.getItem('userData');
-
-            if (userToken) {
+            console.log('userToken:', userToken);
+            console.log('userData:', userData);
+            if (userToken && userData) {
                 setIsLoggedIn(true);
-
-                // 사용자 이름 설정 (있는 경우)
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    setUserName(user.nickname || '');
-                }
+                const user = JSON.parse(userData);
+                setUserName(user.nickname || '');
             } else {
                 setIsLoggedIn(false);
                 setUserName('');
@@ -32,37 +29,7 @@ const Header = () => {
         }
     };
 
-    // 로그아웃 함수
-    const handleLogout = async () => {
-        try {
-            Alert.alert(
-                '로그아웃',
-                '정말 로그아웃 하시겠습니까?',
-                [
-                    {
-                        text: '취소',
-                        style: 'cancel'
-                    },
-                    {
-                        text: '로그아웃',
-                        onPress: async () => {
-                            // AsyncStorage에서 토큰과 사용자 정보 삭제
-                            await AsyncStorage.removeItem('userToken');
-                            await AsyncStorage.removeItem('userData');
-                            setIsLoggedIn(false);
-                            setUserName('');
 
-                            // 선택적: 로그아웃 성공 메시지 표시
-                            Alert.alert('로그아웃 되었습니다.');
-                        }
-                    }
-                ]
-            );
-        } catch (error) {
-            console.error('로그아웃 오류:', error);
-            Alert.alert('로그아웃 중 오류가 발생했습니다.');
-        }
-    };
 
     // 화면이 포커스될 때마다 로그인 상태 확인
     useFocusEffect(
@@ -86,7 +53,6 @@ const Header = () => {
             </Text>
 
             {isLoggedIn ? (
-                // 로그인된 경우 사용자 이름과 로그아웃 버튼 표시
                 <View className="flex-row items-center">
 
 

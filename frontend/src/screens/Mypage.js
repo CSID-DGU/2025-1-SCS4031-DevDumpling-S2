@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/layout/Header';
 
-export default function MyPageScreen() {
+export default function MypageScreen() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -28,14 +28,14 @@ export default function MyPageScreen() {
 
     const handleLogout = async () => {
         try {
-            await AsyncStorage.removeItem('userToken');
             await AsyncStorage.removeItem('userData');
+            setUserData(null);
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }],
             });
         } catch (error) {
-            console.error('로그아웃 실패:', error);
+            console.error('로그아웃 중 오류 발생:', error);
         }
     };
 
@@ -170,6 +170,16 @@ export default function MyPageScreen() {
                                 <Text className="text-sm text-gray-500 mt-2">브론즈 티어 · 9회 완료</Text>
                             </TouchableOpacity>
                         </View>
+                    </View>
+
+                    {/* 로그아웃 버튼 */}
+                    <View className="px-5 mb-10 mt-6">
+                        <TouchableOpacity
+                            className="bg-red-500 rounded-3xl shadow-md p-5 items-center"
+                            onPress={handleLogout}
+                        >
+                            <Text className="text-2xl font-bold text-white">로그아웃</Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </SafeAreaView>
