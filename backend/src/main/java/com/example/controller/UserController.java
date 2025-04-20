@@ -2,16 +2,19 @@ package com.example.controller;
 
 import com.example.dummy.entity.*;
 import com.example.dummy.repository.*;
+import com.example.entity.User;
 import com.example.service.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -22,6 +25,35 @@ public class UserController {
     private final CardTransactionRepository cardTransactionRepository;
     private final InvestmentRecordRepository investmentRecordRepository;
     private final InvestmentTransactionRepository investmentTransactionRepository;
+
+    @GetMapping("/mydata-consent")
+    public ResponseEntity<?> checkMyDataConsent(Authentication authentication) {
+        try {
+            boolean hasConsent = userService.checkMyDataConsent(authentication.getName());
+            return ResponseEntity.ok(Map.of("hasConsent", hasConsent));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/mydata-consent")
+    public ResponseEntity<?> updateMyDataConsent(
+            Authentication authentication,
+            @RequestBody MyDataConsentRequest request) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            user.setMyDataConsent(request.isConsent());
+            userService.save(user);
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @Data
+    public static class MyDataConsentRequest {
+        private boolean consent;
+    }
 
     @GetMapping("/{userId}/dummy-data")
     public ResponseEntity<?> checkDummyData(@PathVariable Long userId) {

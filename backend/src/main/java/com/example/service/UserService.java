@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User createUser(String kakaoId, String nickname, String profileImage) {
+    public User createUser(String kakaoId, String nickname, String profileImage, boolean myDataConsent) {
         // 이미 존재하는 사용자인지 확인
         if (userRepository.existsByKakaoId(kakaoId)) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
@@ -57,6 +57,7 @@ public class UserService implements UserDetailsService {
                 .kakaoId(kakaoId)
                 .nickname(nickname)
                 .profileImage(profileImage)
+                .myDataConsent(myDataConsent)
                 .userType(User.UserType.A)
                 .build();
         user = userRepository.save(user);
@@ -76,5 +77,10 @@ public class UserService implements UserDetailsService {
         
         // 투자 더미 데이터 생성
         investmentDummyDataService.generateDummyData(userId);
+    }
+
+    public boolean checkMyDataConsent(String kakaoId) {
+        User user = findByKakaoId(kakaoId);
+        return user.isMyDataConsent();
     }
 } 

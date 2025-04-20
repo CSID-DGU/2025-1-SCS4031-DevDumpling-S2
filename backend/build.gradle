@@ -48,6 +48,13 @@ dependencies {
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// AWS S3
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.261'
+
+	// MockMultipartFile을 위한 의존성
+	testImplementation 'org.springframework:spring-test'
+	implementation 'org.springframework:spring-web'
 }
 
 tasks.named('test') {

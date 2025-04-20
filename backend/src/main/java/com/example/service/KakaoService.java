@@ -92,7 +92,7 @@ public class KakaoService {
         // 이미 존재하는 사용자인지 확인
         if (!userRepository.existsByKakaoId(kakaoId)) {
             log.info("새로운 사용자 생성");
-            return userService.createUser(kakaoId, nickname, profileImage);
+            return userService.createUser(kakaoId, nickname, profileImage, false);
         }
 
         log.info("기존 사용자 정보 업데이트");

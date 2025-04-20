@@ -76,3 +76,8 @@ spring:
 
 kakao:
   redirect-uri: http://52.78.59.11:8080/api/auth/kakao/callback 
+
+aws:
+  region: ap-northeast-2
+  s3:
+    bucket-name: myapp-logos
