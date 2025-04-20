@@ -67,14 +67,14 @@ export default function FreeBoardWriteScreen({ navigation }) {
                             onPress={() => navigation.goBack()}
                             className="flex-1 bg-[#D9D9D9] py-3 rounded-xl items-center"
                         >
-                            <Text className="text-black text-sm font-medium">취소소</Text>
+                            <Text className="text-black text-sm font-medium">취소</Text>
                         </TouchableOpacity>
                         {/* 등록 버튼 */}
                         <TouchableOpacity
                             onPress={handleSubmit}
                             className="flex-1 bg-[#014029] py-3 rounded-xl items-center"
                         >
-                            <Text className="text-white text-sm font-medium">등록록</Text>
+                            <Text className="text-white text-sm font-medium">등록</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

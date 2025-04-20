@@ -1,7 +1,7 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, Touchable } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
-import Icon from 'react-native-vector-icons/Ionicons';
-
+import BoardHeader from '../../components/common/BoardHeader';
+import BoardPostItem from '../../components/common/BoardPostItem';
 
 export default function FreeBoardScreen({ navigation }) {
     const posts = [
@@ -41,6 +41,7 @@ export default function FreeBoardScreen({ navigation }) {
             author: "알락꼬리꼬마도요",
         },
     ];
+
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
 
@@ -48,32 +49,12 @@ export default function FreeBoardScreen({ navigation }) {
         <>
             <Header />
             <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
-
-                {/* 카테고리 탭 */}
-                <View
-                    className="flex-row items-center justify-between bg-[#014029] rounded-2xl mb-4"
-                    style={{
-                        paddingVertical: 12,
-                        marginHorizontal: horizontalPadding,
-                    }}>
-                    {/* 뒤로 가기 버튼 */}
-                    <TouchableOpacity onPress={() => navigation.goBack()} className="ml-4">
-                        <Icon name="arrow-back-outline" size={24} color="#EFEFEF" />
-                    </TouchableOpacity>
-                    {/* 중앙 타이틀 */}
-                    <Text className="text-white text-sm font-semibold">자유게시판</Text>
-                    {/* 오른쪽 아이콘들 */}
-                    <View className="flex-row mr-4">
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('CommunitySearch')}
-                            style={{ marginRight: 15 }}>
-                            <Icon name="search-outline" size={22} color="#EFEFEF" />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate('FreeBoardWrite')}>
-                            <Icon name="create-outline" size={22} color="#EFEFEF" />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <BoardHeader
+                    navigation={navigation}
+                    title="자유게시판"
+                    onSearchPress={() => navigation.navigate('CommunitySearch')}
+                    onWritePress={() => navigation.navigate('FreeBoardWrite')}
+                />
 
                 {/* 게시글 리스트 */}
                 <ScrollView
@@ -85,24 +66,12 @@ export default function FreeBoardScreen({ navigation }) {
                     }}>
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
                         {posts.map((post, index) => (
-                            <View key={index}>
-                                <TouchableOpacity className="px-4 py-4">
-                                    <Text
-                                        className="font-semibold text-black text-sm"
-                                        numberOfLines={1}
-                                    > {post.title} </Text>
-                                    <Text
-                                        className="text-xs text-xs text-gray-600 mt-1"
-                                        numberOfLines={2}
-                                    > {post.content} </Text>
-                                    <Text className="text-[10px] text-gray-400 mt-1"> {post.author} </Text>
-                                </TouchableOpacity>
-
-                                {/* 항목 사이에만 구분선 */}
-                                {index < posts.length - 1 && (
-                                    <View className="border-t border-gray-200 mx-4" />
-                                )}
-                            </View>
+                            <BoardPostItem
+                                key={index}
+                                post={post}
+                                isLastItem={index === posts.length - 1}
+                                onPress={() => {/* TODO: 게시글 상세 페이지로 이동 */}}
+                            />
                         ))}
                     </View>
                 </ScrollView>
