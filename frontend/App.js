@@ -13,6 +13,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoadingProvider } from './src/contexts/LoadingContext';
 import Loading from './src/components/common/Loading';
+import NewsList from './src/screens/NewsList';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -43,9 +45,9 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-          name="CommunitySearch"
-          component={CommunitySearch}
-          options={{ headerShown: false }}
+            name="CommunitySearch"
+            component={CommunitySearch}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Login"
@@ -58,13 +60,18 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-          name="FreeBoardWrite"
-          component={FreeBoardWrite}
-          options={{ headerShown: false }}
+            name="FreeBoardWrite"
+            component={FreeBoardWrite}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Mypage"
             component={Mypage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="NewsList"
+            component={NewsList}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

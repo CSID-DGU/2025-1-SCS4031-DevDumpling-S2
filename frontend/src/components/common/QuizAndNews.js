@@ -4,6 +4,7 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useLoading } from '../../hooks/useLoading';
+import { useNavigation } from '@react-navigation/native';
 
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
@@ -14,6 +15,7 @@ export default function QuizAndNews() {
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const { showLoading, hideLoading } = useLoading();
+    const navigation = useNavigation();
 
     useEffect(() => {
         fetchTodayArticle();
@@ -103,7 +105,7 @@ export default function QuizAndNews() {
                             </Text>
 
                             <TouchableOpacity
-                                onPress={() => openArticleUrl(article.sourceUrl)}
+                                onPress={() => navigation.navigate('NewsList')}
                                 className="flex-row justify-center mt-4"
                             >
                                 <Text className="text-[12px] text-Fineed-green">금융 기사 더 보러 가기 {'>'}</Text>
