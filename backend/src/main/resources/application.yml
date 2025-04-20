@@ -16,6 +16,17 @@ spring:
         jdbc.batch_size: 10
         default_batch_fetch_size: 10
 
+# AWS S3 설정
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: myapp-logos
+    credentials:
+      access-key: ${AWS_ACCESS_KEY:default_access_key}
+      secret-key: ${AWS_SECRET_KEY:default_secret_key}
+
 # 서버 설정
 server:
   port: 8080
@@ -76,8 +87,3 @@ spring:
 
 kakao:
   redirect-uri: http://52.78.59.11:8080/api/auth/kakao/callback 
-
-aws:
-  region: ap-northeast-2
-  s3:
-    bucket-name: myapp-logos
