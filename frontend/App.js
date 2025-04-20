@@ -9,6 +9,8 @@ import "./global.css";
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { LoadingProvider } from './src/contexts/LoadingContext';
+import Loading from './src/components/common/Loading';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,36 +26,38 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <StatusBar style="light" />
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Community"
-          component={CommunityHome}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="FreeBoard"
-          component={FreeBoard}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Mypage"
-          component={Mypage}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-
-    </NavigationContainer>
+    <LoadingProvider>
+      <NavigationContainer>
+        <StatusBar style="light" />
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Community"
+            component={CommunityHome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="FreeBoard"
+            component={FreeBoard}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Mypage"
+            component={Mypage}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+        <Loading visible />
+      </NavigationContainer>
+    </LoadingProvider>
   );
 }

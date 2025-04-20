@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { useLoading } from '../../hooks/useLoading';
+
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
@@ -11,6 +13,7 @@ export default function QuizAndNews() {
     const cardWidth = (width - 40) / 2 - 8;
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { showLoading, hideLoading } = useLoading();
 
     useEffect(() => {
         fetchTodayArticle();
@@ -41,11 +44,19 @@ export default function QuizAndNews() {
         return format(today, 'MM월 dd일 오늘의 기사', { locale: ko });
     };
 
-    const openArticleUrl = (url) => {
+    const openArticleUrl = async (url) => {
         if (url) {
-            Linking.openURL(url).catch((err) => console.error('링크를 열 수 없습니다:', err));
+            showLoading();
+            try {
+                await Linking.openURL(url);
+            } catch (err) {
+                console.error('링크를 열 수 없습니다:', err);
+            } finally {
+                hideLoading();
+            }
         }
     };
+
 
     return (
         <View className="flex-row justify-between mt-3">
