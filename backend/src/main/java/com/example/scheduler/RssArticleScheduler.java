@@ -49,8 +49,9 @@ public class RssArticleScheduler {
         return contains;
     }
 
-    //@Scheduled(cron = "0 0 9 * * ?", zone = "Asia/Seoul")
-    @Scheduled(cron = "0 50 1 * * ?", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 9 * * ?", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 14 18 * * ?", zone = "Asia/Seoul")
+    //@Scheduled(cron = "0 */5 * * * ?", zone = "Asia/Seoul")
     public void fetchRssArticlesDaily() {
         try {
             int totalSaved = 0;

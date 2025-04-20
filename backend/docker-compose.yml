@@ -59,6 +59,9 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       JAVA_OPTS: -Xmx300m -Xms300m
+      TZ: Asia/Seoul
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - app-network
     deploy:
