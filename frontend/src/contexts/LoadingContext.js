@@ -1,4 +1,3 @@
-// src/contexts/LoadingContext.js
 import React, { createContext, useState, useContext } from 'react';
 
 const LoadingContext = createContext();
@@ -13,4 +12,5 @@ export const LoadingProvider = ({ children }) => {
     );
 };
 
+// Context를 사용하기 위한 기본 훅
 export const useLoadingContext = () => useContext(LoadingContext);

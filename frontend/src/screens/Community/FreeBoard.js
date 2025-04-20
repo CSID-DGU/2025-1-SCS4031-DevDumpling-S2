@@ -54,16 +54,16 @@ export default function FreeBoardScreen({ navigation }) {
                     className="flex-row items-center justify-between bg-[#014029] rounded-2xl mb-4"
                     style={{
                         paddingVertical: 12,
-                        paddingHorizontal: horizontalPadding,
+                        marginHorizontal: horizontalPadding,
                     }}>
                     {/* 뒤로 가기 버튼 */}
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => navigation.goBack()} className="ml-4">
                         <Icon name="arrow-back-outline" size={24} color="#EFEFEF" />
                     </TouchableOpacity>
                     {/* 중앙 타이틀 */}
                     <Text className="text-white text-sm font-semibold">자유게시판</Text>
                     {/* 오른쪽 아이콘들 */}
-                    <View className="flex-row space-x-4">
+                    <View className="flex-row mr-4">
                         <TouchableOpacity
                             onPress={() => navigation.navigate('CommunitySearch')}
                             style={{ marginRight: 15 }}>
@@ -86,24 +86,24 @@ export default function FreeBoardScreen({ navigation }) {
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
                         {posts.map((post, index) => (
                             <View key={index}>
-                                <TouchableOpacity className="px-4 py-4">                                
-                                <Text
-                                    className="font-semibold text-black text-sm"
-                                    numberOfLines={1}
-                                > {post.title} </Text>
-                                <Text
-                                    className="text-xs text-xs text-gray-600 mt-1"
-                                    numberOfLines={2}
-                                > {post.content} </Text>
-                                <Text className="text-[10px] text-gray-400 mt-1"> {post.author} </Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity className="px-4 py-4">
+                                    <Text
+                                        className="font-semibold text-black text-sm"
+                                        numberOfLines={1}
+                                    > {post.title} </Text>
+                                    <Text
+                                        className="text-xs text-xs text-gray-600 mt-1"
+                                        numberOfLines={2}
+                                    > {post.content} </Text>
+                                    <Text className="text-[10px] text-gray-400 mt-1"> {post.author} </Text>
+                                </TouchableOpacity>
 
-                            {/* 항목 사이에만 구분선 */}
-                            {index < posts.length - 1 && (
-                                <View className="border-t border-gray-200 mx-4" />
-                            )}
-                        </View>
-                    ))}
+                                {/* 항목 사이에만 구분선 */}
+                                {index < posts.length - 1 && (
+                                    <View className="border-t border-gray-200 mx-4" />
+                                )}
+                            </View>
+                        ))}
                     </View>
                 </ScrollView>
 
