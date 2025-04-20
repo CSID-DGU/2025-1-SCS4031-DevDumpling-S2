@@ -1,5 +1,6 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, Touchable } from 'react-native';
 import Header from '../../components/layout/Header';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 export default function FreeBoardScreen({ navigation }) {
@@ -49,9 +50,28 @@ export default function FreeBoardScreen({ navigation }) {
             <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
 
                 {/* 카테고리 탭 */}
-                <View className="flex-row justify-center mb-4">
-                    <View className="bg-[#014029] px-4 py-2 rounded-full w-full max-w-[200px] self-center">
-                        <Text className="text-white text-center text-sm font-semibold">자유게시판</Text>
+                <View
+                    className="flex-row items-center justify-between bg-[#014029] rounded-2xl mb-4"
+                    style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: horizontalPadding,
+                    }}>
+                    {/* 뒤로 가기 버튼 */}
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name="arrow-back-outline" size={24} color="#EFEFEF" />
+                    </TouchableOpacity>
+                    {/* 중앙 타이틀 */}
+                    <Text className="text-white text-sm font-semibold">자유게시판</Text>
+                    {/* 오른쪽 아이콘들 */}
+                    <View className="flex-row space-x-4">
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('CommunitySearch')}
+                            style={{ marginRight: 15 }}>
+                            <Icon name="search-outline" size={22} color="#EFEFEF" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('FreeBoardWrite')}>
+                            <Icon name="create-outline" size={22} color="#EFEFEF" />
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -79,7 +99,7 @@ export default function FreeBoardScreen({ navigation }) {
                             </TouchableOpacity>
 
                             {/* 항목 사이에만 구분선 */}
-                            {index < posts.lentgh - 1 && (
+                            {index < posts.length - 1 && (
                                 <View className="border-t border-gray-200 mx-4" />
                             )}
                         </View>

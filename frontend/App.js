@@ -3,6 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './src/screens/Home/HomeScreen';
 import CommunityHome from './src/screens/Community/CommunityHome';
 import FreeBoard from './src/screens/Community/FreeBoard';
+import CommunitySearch from './src/screens/Community/CommunitySearch';
+import FreeBoardWrite from './src/screens/Community/FreeBoardWrite';
 import Login from './src/screens/Login';
 import Mypage from './src/screens/Mypage';
 import "./global.css";
@@ -41,6 +43,11 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+          name="CommunitySearch"
+          component={CommunitySearch}
+          options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="Login"
             component={Login}
             options={{ headerShown: false }}
@@ -49,6 +56,11 @@ export default function App() {
             name="FreeBoard"
             component={FreeBoard}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+          name="FreeBoardWrite"
+          component={FreeBoardWrite}
+          options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Mypage"
