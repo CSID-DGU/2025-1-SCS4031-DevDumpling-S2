@@ -37,7 +37,7 @@ public class CardDummyDataService {
         String cardType = DummyDataGenerator.randomChoice(DummyDataGenerator.CARD_TYPES);
         LocalDateTime issueDate = LocalDateTime.now().minusMonths(random.nextInt(12));
 
-        return CardSpent.builder()
+        CardSpent cardSpent = CardSpent.builder()
                 .userId(userId)
                 .cardId(cardId)
                 .cardName(DummyDataGenerator.randomChoice(DummyDataGenerator.CARD_COMPANIES) + " " + cardType)
@@ -51,6 +51,8 @@ public class CardDummyDataService {
                 .recentStore(DummyDataGenerator.randomChoice(DummyDataGenerator.MERCHANT_NAMES))
                 .createdAt(LocalDateTime.now())
                 .build();
+
+        return cardSpentRepository.save(cardSpent);
     }
 
     @Transactional
