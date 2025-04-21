@@ -24,8 +24,22 @@ public class BankDummyDataService {
     public void generateDummyData(Long userId) {
         // 은행 계좌 생성
         BankBalance bankBalance = createBankBalance(userId);
-        bankBalanceRepository.save(bankBalance);
+        generateBankTransactions(userId, bankBalance.getAccountNumber());
+    }
 
+    @Transactional
+    public BankBalance createBankBalance(Long userId) {
+        BankBalance balance = new BankBalance();
+        balance.setUserId(userId);
+        balance.setBankName(DummyDataGenerator.randomChoice(DummyDataGenerator.BANK_NAMES));
+        balance.setAccountNumber(DummyDataGenerator.generateAccountNumber());
+        balance.setAccountType(DummyDataGenerator.randomChoice(DummyDataGenerator.ACCOUNT_TYPES));
+        balance.setBalance(1000000L + random.nextInt(9000000)); // 100만원 ~ 1000만원
+        return bankBalanceRepository.save(balance);
+    }
+
+    @Transactional
+    public void generateBankTransactions(Long userId, String accountNumber) {
         // 최근 3개월간의 거래 내역 생성
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusMonths(3);
@@ -34,21 +48,11 @@ public class BankDummyDataService {
         for (int i = 0; i < 90; i++) {
             BankTransaction transaction = createTransaction(
                 userId,
-                bankBalance.getAccountNumber(),
+                accountNumber,
                 DummyDataGenerator.getRandomDate(startDate, endDate)
             );
             bankTransactionRepository.save(transaction);
         }
-    }
-
-    private BankBalance createBankBalance(Long userId) {
-        BankBalance balance = new BankBalance();
-        balance.setUserId(userId);
-        balance.setBankName(DummyDataGenerator.randomChoice(DummyDataGenerator.BANK_NAMES));
-        balance.setAccountNumber(DummyDataGenerator.generateAccountNumber());
-        balance.setAccountType(DummyDataGenerator.randomChoice(DummyDataGenerator.ACCOUNT_TYPES));
-        balance.setBalance(1000000L + random.nextInt(9000000)); // 100만원 ~ 1000만원
-        return balance;
     }
 
     private BankTransaction createTransaction(Long userId, String accountNumber, LocalDateTime transactionDate) {

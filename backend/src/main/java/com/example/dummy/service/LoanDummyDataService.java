@@ -1,0 +1,134 @@
+package com.example.dummy.service;
+
+import com.example.dummy.entity.LoanAccount;
+import com.example.dummy.entity.LoanTransaction;
+import com.example.dummy.repository.LoanAccountRepository;
+import com.example.dummy.repository.LoanTransactionRepository;
+import com.example.dummy.util.DummyDataGenerator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
+
+@Service
+@RequiredArgsConstructor
+public class LoanDummyDataService {
+    private final LoanAccountRepository loanAccountRepository;
+    private final LoanTransactionRepository loanTransactionRepository;
+    private final Random random = new Random();
+
+    @Transactional
+    public void generateDummyData(Long userId) {
+        // 대출 계좌 1~2개 생성
+        int loanCount = 1 + random.nextInt(2);
+        for (int i = 0; i < loanCount; i++) {
+            boolean isShortTerm = random.nextBoolean(); // 랜덤하게 단기/장기 결정
+            LoanAccount loanAccount = createLoanAccount(userId, isShortTerm);
+            generateLoanTransactions(userId, loanAccount.getLoanId(), isShortTerm);
+            updateLoanStatus(loanAccount);
+        }
+    }
+
+    @Transactional
+    public LoanAccount createLoanAccount(Long userId, boolean isShortTerm) {
+        LoanAccount loanAccount = createLoanAccountEntity(userId, isShortTerm);
+        return loanAccountRepository.save(loanAccount);
+    }
+
+    @Transactional
+    public void generateLoanTransactions(Long userId, String loanId, boolean isShortTerm) {
+        // 최근 3개월 거래 내역 생성
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusMonths(3);
+
+        // 단기/장기 여부에 따라 상환 주기 설정
+        int repaymentCycle = isShortTerm ? 1 : 3; // 단기는 월납, 장기는 3개월납
+
+        while (startDate.isBefore(endDate)) {
+            LoanTransaction transaction = createLoanTransaction(
+                userId,
+                loanId,
+                startDate,
+                isShortTerm
+            );
+            loanTransactionRepository.save(transaction);
+            startDate = startDate.plusMonths(repaymentCycle);
+        }
+    }
+
+    private LoanAccount createLoanAccountEntity(Long userId, boolean isShortTerm) {
+        String loanId = DummyDataGenerator.generateLoanNumber();
+        LocalDateTime contractDate = LocalDateTime.now().minusMonths(random.nextInt(12));
+        
+        // 단기/장기 여부에 따라 만기일 설정
+        LocalDateTime maturityDate;
+        if (isShortTerm) {
+            maturityDate = contractDate.plusMonths(random.nextInt(12) + 1); // 1~12개월
+        } else {
+            maturityDate = contractDate.plusMonths(random.nextInt(120) + 12); // 12~132개월
+        }
+
+        return LoanAccount.builder()
+                .userId(userId)
+                .loanId(loanId)
+                .loanType(DummyDataGenerator.randomChoice(LoanAccount.LoanType.values()))
+                .institutionName(DummyDataGenerator.randomChoice(DummyDataGenerator.BANK_NAMES))
+                .productName(DummyDataGenerator.randomChoice(DummyDataGenerator.LOAN_PRODUCTS))
+                .contractDate(contractDate.toLocalDate())
+                .maturityDate(maturityDate.toLocalDate())
+                .principalAmount(10000000L + random.nextInt(90000000)) // 1000만원 ~ 1억원
+                .remainingPrincipal(10000000L + random.nextInt(90000000))
+                .interestRate(3.0 + random.nextDouble() * 7.0) // 3% ~ 10%
+                .repaymentType(DummyDataGenerator.randomChoice(LoanAccount.RepaymentType.values()))
+                .monthlyDueDay(15 + random.nextInt(15)) // 15일 ~ 30일
+                .nextInterestDue(LocalDate.now().plusDays(15 + random.nextInt(15)))
+                .isShortTerm(isShortTerm)
+                .isLongTerm(!isShortTerm)
+                .isOverdue(random.nextDouble() < 0.1) // 10% 확률로 연체
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    private LoanTransaction createLoanTransaction(Long userId, String loanId, LocalDateTime transactionDate, boolean isShortTerm) {
+        LoanTransaction.TransactionType transactionType = DummyDataGenerator.randomChoice(LoanTransaction.TransactionType.values());
+        long amount = 100000L + random.nextInt(900000); // 10만원 ~ 100만원
+        long principalPaid = transactionType == LoanTransaction.TransactionType.PRINCIPAL_REPAYMENT ? amount : 0L;
+        long interestPaid = transactionType == LoanTransaction.TransactionType.INTEREST_PAYMENT ? amount : 0L;
+        double interestRate = 3.0 + random.nextDouble() * 7.0; // 3% ~ 10%
+
+        return LoanTransaction.builder()
+                .userId(userId)
+                .loanId(loanId)
+                .transactionDate(transactionDate.toLocalDate())
+                .transactionType(transactionType)
+                .amount(amount)
+                .principalPaid(principalPaid)
+                .interestPaid(interestPaid)
+                .interestRate(interestRate)
+                .isAutoPayment(random.nextBoolean())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    @Transactional
+    public void updateLoanStatus(LoanAccount loanAccount) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusMonths(3);
+
+        // 최근 3개월간의 거래 내역을 기반으로 대출 상태 업데이트
+        List<LoanTransaction> recentTransactions = loanTransactionRepository.findByLoanIdAndTransactionDateBetween(
+            loanAccount.getLoanId(), startDate.toLocalDate(), endDate.toLocalDate());
+
+        // 연체 여부 확인 (최근 3개월간 상환이 없으면 연체로 간주)
+        boolean hasRecentPayment = recentTransactions.stream()
+            .anyMatch(tx -> tx.getTransactionType() == LoanTransaction.TransactionType.PRINCIPAL_REPAYMENT ||
+                          tx.getTransactionType() == LoanTransaction.TransactionType.INTEREST_PAYMENT);
+
+        loanAccount.setIsOverdue(!hasRecentPayment);
+        loanAccountRepository.save(loanAccount);
+    }
+} 

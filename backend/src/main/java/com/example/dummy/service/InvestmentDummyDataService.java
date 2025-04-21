@@ -26,28 +26,13 @@ public class InvestmentDummyDataService {
         int accountCount = 1 + random.nextInt(2);
         for (int i = 0; i < accountCount; i++) {
             InvestmentRecord record = createInvestmentRecord(userId);
-            investmentRecordRepository.save(record);
-
-            // 최근 3개월 거래 내역 생성
-            LocalDateTime endDate = LocalDateTime.now();
-            LocalDateTime startDate = endDate.minusMonths(3);
-
-            // 월별 평균 20건의 거래 생성
-            for (int j = 0; j < 60; j++) {
-                InvestmentTransaction transaction = createInvestmentTransaction(
-                    userId,
-                    record.getAccountNumber(),
-                    DummyDataGenerator.getRandomDate(startDate, endDate)
-                );
-                investmentTransactionRepository.save(transaction);
-            }
-
-            // 투자 계좌 잔액 업데이트
-            updateInvestmentBalance(record, startDate, endDate);
+            generateInvestmentTransactions(userId, record.getAccountNumber());
+            updateInvestmentBalance(record);
         }
     }
 
-    private InvestmentRecord createInvestmentRecord(Long userId) {
+    @Transactional
+    public InvestmentRecord createInvestmentRecord(Long userId) {
         String accountNumber = DummyDataGenerator.generateAccountNumber();
         String investmentType = DummyDataGenerator.randomChoice(DummyDataGenerator.INVESTMENT_TYPES);
         LocalDateTime openDate = LocalDateTime.now().minusMonths(random.nextInt(12));
@@ -64,6 +49,23 @@ public class InvestmentDummyDataService {
                 .recentStock(DummyDataGenerator.randomChoice(DummyDataGenerator.STOCK_NAMES))
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    @Transactional
+    public void generateInvestmentTransactions(Long userId, String accountNumber) {
+        // 최근 3개월 거래 내역 생성
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusMonths(3);
+
+        // 월별 평균 20건의 거래 생성
+        for (int j = 0; j < 60; j++) {
+            InvestmentTransaction transaction = createInvestmentTransaction(
+                userId,
+                accountNumber,
+                DummyDataGenerator.getRandomDate(startDate, endDate)
+            );
+            investmentTransactionRepository.save(transaction);
+        }
     }
 
     private InvestmentTransaction createInvestmentTransaction(Long userId, String accountNumber, LocalDateTime transactionDate) {
@@ -86,7 +88,11 @@ public class InvestmentDummyDataService {
                 .build();
     }
 
-    private void updateInvestmentBalance(InvestmentRecord record, LocalDateTime startDate, LocalDateTime endDate) {
+    @Transactional
+    public void updateInvestmentBalance(InvestmentRecord record) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusMonths(3);
+
         long totalAmount = investmentTransactionRepository.findByAccountNumberAndTransactionDateBetween(
                 record.getAccountNumber(), startDate.toLocalDate(), endDate.toLocalDate())
             .stream()
