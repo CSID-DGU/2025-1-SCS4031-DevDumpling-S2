@@ -2,9 +2,13 @@ import { Text, View, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './src/screens/Home/HomeScreen';
 import CommunityHome from './src/screens/Community/CommunityHome';
+import HotBoard from './src/screens/Community/HotBoard';
+import InvestBoard from './src/screens/Community/InvestBoard';
+import ChallengeBoard from './src/screens/Community/ChallengeBoard';
+import QuizBoard from './src/screens/Community/QuizBoard';
 import FreeBoard from './src/screens/Community/FreeBoard';
 import CommunitySearch from './src/screens/Community/CommunitySearch';
-import FreeBoardWrite from './src/screens/Community/FreeBoardWrite';
+import CommunityWrite from './src/screens/Community/CommunityWrite';
 import Login from './src/screens/Login';
 import Mypage from './src/screens/Mypage';
 import "./global.css";
@@ -55,13 +59,33 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="HotBoard"
+            component={HotBoard}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="InvestBoard"
+            component={InvestBoard}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ChallengeBoard"
+            component={ChallengeBoard}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="QuizBoard"
+            component={QuizBoard}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="FreeBoard"
             component={FreeBoard}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="FreeBoardWrite"
-            component={FreeBoardWrite}
+            name="CommunityWrite"
+            component={CommunityWrite}
             options={{ headerShown: false }}
           />
           <Stack.Screen

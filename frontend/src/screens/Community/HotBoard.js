@@ -3,7 +3,7 @@ import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
 
-export default function FreeBoardScreen({ navigation }) {
+export default function HotBoardScreen({ navigation }) {
     const posts = [
         {
             title: "아무도 안 물어봤지만 내 최애 재테크 방법",
@@ -51,7 +51,7 @@ export default function FreeBoardScreen({ navigation }) {
             <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
                 <BoardHeader
                     navigation={navigation}
-                    title="자유게시판"
+                    title="HOT게시판"
                     onSearchPress={() => navigation.navigate('CommunitySearch')}
                     onWritePress={() => navigation.navigate('CommunityWrite')}
                 />
