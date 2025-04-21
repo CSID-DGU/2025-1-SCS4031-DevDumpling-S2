@@ -26,28 +26,13 @@ public class CardDummyDataService {
         int cardCount = 2 + random.nextInt(2);
         for (int i = 0; i < cardCount; i++) {
             CardSpent cardSpent = createCardSpent(userId);
-            cardSpentRepository.save(cardSpent);
-
-            // 최근 3개월 거래 내역 생성
-            LocalDateTime endDate = LocalDateTime.now();
-            LocalDateTime startDate = endDate.minusMonths(3);
-
-            // 월별 평균 30건의 거래 생성
-            for (int j = 0; j < 90; j++) {
-                CardTransaction transaction = createCardTransaction(
-                    userId,
-                    cardSpent.getCardId(),
-                    DummyDataGenerator.getRandomDate(startDate, endDate)
-                );
-                cardTransactionRepository.save(transaction);
-            }
-
-            // 카드별 월별 청구금액 업데이트
-            updateMonthlyBillAmount(cardSpent, startDate, endDate);
+            generateCardTransactions(userId, cardSpent.getCardId());
+            updateMonthlyBillAmount(cardSpent);
         }
     }
 
-    private CardSpent createCardSpent(Long userId) {
+    @Transactional
+    public CardSpent createCardSpent(Long userId) {
         String cardId = DummyDataGenerator.generateCardNumber();
         String cardType = DummyDataGenerator.randomChoice(DummyDataGenerator.CARD_TYPES);
         LocalDateTime issueDate = LocalDateTime.now().minusMonths(random.nextInt(12));
@@ -68,6 +53,23 @@ public class CardDummyDataService {
                 .build();
     }
 
+    @Transactional
+    public void generateCardTransactions(Long userId, String cardId) {
+        // 최근 3개월 거래 내역 생성
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusMonths(3);
+
+        // 월별 평균 30건의 거래 생성
+        for (int j = 0; j < 90; j++) {
+            CardTransaction transaction = createCardTransaction(
+                userId,
+                cardId,
+                DummyDataGenerator.getRandomDate(startDate, endDate)
+            );
+            cardTransactionRepository.save(transaction);
+        }
+    }
+
     private CardTransaction createCardTransaction(Long userId, String cardId, LocalDateTime transactionDate) {
         String category = DummyDataGenerator.randomChoice(DummyDataGenerator.CATEGORIES);
         String storeName = DummyDataGenerator.randomChoice(DummyDataGenerator.MERCHANT_NAMES);
@@ -84,8 +86,12 @@ public class CardDummyDataService {
                 .build();
     }
 
-    private void updateMonthlyBillAmount(CardSpent cardSpent, LocalDateTime startDate, LocalDateTime endDate) {
+    @Transactional
+    public void updateMonthlyBillAmount(CardSpent cardSpent) {
         String currentMonth = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM"));
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusMonths(3);
+
         long monthlyAmount = cardTransactionRepository.findByCardIdAndTransactionDateBetween(
                 cardSpent.getCardId(), startDate.toLocalDate(), endDate.toLocalDate())
             .stream()
