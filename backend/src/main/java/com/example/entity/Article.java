@@ -44,6 +44,9 @@ public class Article {
     @Column(columnDefinition = "text", nullable = false)
     private String termExplanations; // JSON 형태로 저장: [{"term": "용어", "explanation": "설명"}, ...]
 
+    @Column(name = "newspaper_name")
+    private String newspaperName;
+
     @Enumerated(EnumType.STRING)
     private ProcessingStatus status;
 
