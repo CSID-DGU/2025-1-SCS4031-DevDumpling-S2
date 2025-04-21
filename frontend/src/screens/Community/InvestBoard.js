@@ -29,7 +29,7 @@ export default function InvestBoardScreen({ navigation }) {
                     navigation={navigation}
                     title="투자게시판"
                     onSearchPress={() => navigation.navigate('CommunitySearch')}
-                    onWritePress={() => navigation.navigate('InvestBoardWrite')}
+                    onWritePress={() => navigation.navigate('CommunityWrite')}
                 />
 
                 <ScrollView

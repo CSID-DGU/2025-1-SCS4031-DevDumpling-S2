@@ -3,17 +3,17 @@ import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
 
-export default function ChallengeBoardScreen({ navigation }) {
+export default function QuizBoardScreen({ navigation }) {
     const posts = [
         {
-            title: "매일 1만원 저축 챌린지",
-            content: "매일 1만원씩 저축하는 챌린지에 참여하세요!",
-            author: "저축마스터",
+            title: "오늘 퀴즈",
+            content: "재밌당",
+            author: "퀴즈마스터",
         },
         {
-            title: "한 달 동안 카드값 30% 줄이기",
-            content: "카드값을 줄이는 방법을 공유하고 함께 실천해봐요!",
-            author: "절약전문가",
+            title: "퀴즈 한 달 기록 달성",
+            content: "꾸준히 한 게 보이니까 뿌듯허네",
+            author: "퀴즈조아",
         },
         // ... 추가 게시글들
     ];
@@ -27,7 +27,7 @@ export default function ChallengeBoardScreen({ navigation }) {
             <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
                 <BoardHeader
                     navigation={navigation}
-                    title="챌린지게시판"
+                    title="퀴즈게시판"
                     onSearchPress={() => navigation.navigate('CommunitySearch')}
                     onWritePress={() => navigation.navigate('CommunityWrite')}
                 />
