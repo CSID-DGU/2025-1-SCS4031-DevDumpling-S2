@@ -37,7 +37,7 @@ public class InvestmentDummyDataService {
         String investmentType = DummyDataGenerator.randomChoice(DummyDataGenerator.INVESTMENT_TYPES);
         LocalDateTime openDate = LocalDateTime.now().minusMonths(random.nextInt(12));
 
-        return InvestmentRecord.builder()
+        InvestmentRecord record = InvestmentRecord.builder()
                 .userId(userId)
                 .accountNumber(accountNumber)
                 .accountName(DummyDataGenerator.randomChoice(DummyDataGenerator.BANK_NAMES) + " " + investmentType)
@@ -49,6 +49,8 @@ public class InvestmentDummyDataService {
                 .recentStock(DummyDataGenerator.randomChoice(DummyDataGenerator.STOCK_NAMES))
                 .createdAt(LocalDateTime.now())
                 .build();
+
+        return investmentRecordRepository.save(record);
     }
 
     @Transactional

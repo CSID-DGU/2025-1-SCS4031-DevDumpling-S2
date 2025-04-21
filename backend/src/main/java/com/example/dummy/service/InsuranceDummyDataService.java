@@ -35,7 +35,22 @@ public class InsuranceDummyDataService {
 
     @Transactional
     public InsuranceAccount createInsuranceAccount(Long userId) {
-        InsuranceAccount insuranceAccount = createInsuranceAccountEntity(userId);
+        String insuranceId = DummyDataGenerator.generateInsuranceNumber();
+        LocalDateTime contractDate = LocalDateTime.now().minusMonths(random.nextInt(12));
+        LocalDateTime maturityDate = contractDate.plusYears(5 + random.nextInt(15)); // 5년 ~ 20년
+
+        InsuranceAccount insuranceAccount = InsuranceAccount.builder()
+                .userId(userId)
+                .insuranceId(insuranceId)
+                .productName(DummyDataGenerator.randomChoice(DummyDataGenerator.INSURANCE_PRODUCTS))
+                .insuranceType(DummyDataGenerator.randomChoice(InsuranceAccount.InsuranceType.values()))
+                .contractStatus(DummyDataGenerator.randomChoice(InsuranceAccount.ContractStatus.values()))
+                .contractDate(contractDate.toLocalDate())
+                .maturityDate(maturityDate.toLocalDate())
+                .insuredAmount(10000000L + random.nextInt(90000000)) // 1000만원 ~ 1억원
+                .createdAt(LocalDateTime.now())
+                .build();
+
         return insuranceAccountRepository.save(insuranceAccount);
     }
 
@@ -54,24 +69,6 @@ public class InsuranceDummyDataService {
             );
             insuranceTransactionRepository.save(transaction);
         }
-    }
-
-    private InsuranceAccount createInsuranceAccountEntity(Long userId) {
-        String insuranceId = DummyDataGenerator.generateInsuranceNumber();
-        LocalDateTime contractDate = LocalDateTime.now().minusMonths(random.nextInt(12));
-        LocalDateTime maturityDate = contractDate.plusYears(5 + random.nextInt(15)); // 5년 ~ 20년
-
-        return InsuranceAccount.builder()
-                .userId(userId)
-                .insuranceId(insuranceId)
-                .productName(DummyDataGenerator.randomChoice(DummyDataGenerator.INSURANCE_PRODUCTS))
-                .insuranceType(DummyDataGenerator.randomChoice(InsuranceAccount.InsuranceType.values()))
-                .contractStatus(DummyDataGenerator.randomChoice(InsuranceAccount.ContractStatus.values()))
-                .contractDate(contractDate.toLocalDate())
-                .maturityDate(maturityDate.toLocalDate())
-                .insuredAmount(10000000L + random.nextInt(90000000)) // 1000만원 ~ 1억원
-                .createdAt(LocalDateTime.now())
-                .build();
     }
 
     private InsuranceTransaction createInsuranceTransaction(Long userId, String insuranceId, LocalDateTime transactionDate) {

@@ -3,6 +3,8 @@ package com.example.service;
 import com.example.dummy.service.BankDummyDataService;
 import com.example.dummy.service.CardDummyDataService;
 import com.example.dummy.service.InvestmentDummyDataService;
+import com.example.dummy.service.InsuranceDummyDataService;
+import com.example.dummy.service.LoanDummyDataService;
 import com.example.entity.User;
 import com.example.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,9 @@ public class UserService implements UserDetailsService {
     private final BankDummyDataService bankDummyDataService;
     private final CardDummyDataService cardDummyDataService;
     private final InvestmentDummyDataService investmentDummyDataService;
+    private final InsuranceDummyDataService insuranceDummyDataService;
+    private final LoanDummyDataService loanDummyDataService;
+    private final Random random = new Random();
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -68,15 +74,38 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    private void generateDummyData(Long userId) {
-        // 은행 더미 데이터 생성
-        bankDummyDataService.generateDummyData(userId);
-        
-        // 카드 더미 데이터 생성
-        cardDummyDataService.generateDummyData(userId);
-        
-        // 투자 더미 데이터 생성
-        investmentDummyDataService.generateDummyData(userId);
+    @Transactional
+    public void generateDummyData(Long userId) {
+        // 은행 계좌 1~3개 생성
+        int bankCount = 1 + random.nextInt(3);
+        for (int i = 0; i < bankCount; i++) {
+            bankDummyDataService.createBankBalance(userId);
+        }
+
+        // 카드 2~3개 생성
+        int cardCount = 2 + random.nextInt(2);
+        for (int i = 0; i < cardCount; i++) {
+            cardDummyDataService.createCardSpent(userId);
+        }
+
+        // 투자 계좌 1~2개 생성
+        int investmentCount = 1 + random.nextInt(2);
+        for (int i = 0; i < investmentCount; i++) {
+            investmentDummyDataService.createInvestmentRecord(userId);
+        }
+
+        // 보험 계좌 1~3개 생성
+        int insuranceCount = 1 + random.nextInt(3);
+        for (int i = 0; i < insuranceCount; i++) {
+            insuranceDummyDataService.createInsuranceAccount(userId);
+        }
+
+        // 대출 계좌 1~2개 생성
+        int loanCount = 1 + random.nextInt(2);
+        for (int i = 0; i < loanCount; i++) {
+            boolean isShortTerm = random.nextBoolean();
+            loanDummyDataService.createLoanAccount(userId, isShortTerm);
+        }
     }
 
     public boolean checkMyDataConsent(String kakaoId) {
