@@ -106,6 +106,7 @@ public class RssArticleScheduler {
                                         .explanation("처리 중...")
                                         .summary("처리 중...")
                                         .termExplanations("[]")
+                                        .newspaperName(parseNewspaperName(link))
                                         .build();
 
                                 if (!rssArticleService.existsByTitle(article.getTitle())) {
@@ -241,5 +242,18 @@ public class RssArticleScheduler {
                 .replaceAll("\\s+", " ")
                 .replaceAll("^\\s+|\\s+$", "")
                 .trim();
+    }
+
+    private String parseNewspaperName(String url) {
+        if (url.contains("etnews.com")) {
+            return "전자신문";
+        } else if (url.contains("hani.co.kr")) {
+            return "한겨레";
+        } else if (url.contains("hankyung.com")) {
+            return "한국경제";
+        } else if (url.contains("mk.co.kr")) {
+            return "매일경제";
+        }
+        return "기타";
     }
 }
