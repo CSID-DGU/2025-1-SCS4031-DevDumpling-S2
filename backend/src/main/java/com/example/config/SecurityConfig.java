@@ -6,10 +6,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.example.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -19,23 +25,14 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/",
-                    "/api/auth/**",        // 카카오 로그인 등 인증 관련
-                    "/actuator/health",    // 헬스 체크
-                    "/api/users/*/dummy-data",  // 더미 데이터 생성
-                    "/rss/**",
-                    "/api/quizzes/**",
-                    "/api/fss/**"
-                ).permitAll()
-                // 보호된 API - 인증 필요
-                .requestMatchers("/api/users/**").authenticated()
-                .requestMatchers("/api/bank/**").authenticated()
-                .requestMatchers("/api/card/**").authenticated()
-                .requestMatchers("/api/investment/**").authenticated()
-                // 나머지 요청은 인증 필요
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/dummy/**").permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                //.requestMatchers("/api/dummy/**").authenticated()
                 .anyRequest().authenticated()
-            );
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }
