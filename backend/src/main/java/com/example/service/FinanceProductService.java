@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Random;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class FinanceProductService {
     private final FinanceProductRepository productRepository;
     private final FinanceProductOptionRepository optionRepository;
     private final FinanceCompanyRepository companyRepository;
+    private final Random random = new Random();
 
     @Transactional
     public void syncAllCompanies(String topFinGrpNo) {
@@ -320,5 +324,37 @@ public class FinanceProductService {
             pageNo++;
         }
         log.info("적금상품 전체 동기화 완료");
+    }
+
+    //더미데이터 생성용 메서드 추가
+
+    @Transactional(readOnly = true)
+    public String getRandomBankName() {
+        List<FinanceCompany> companies = companyRepository.findAll();
+        if (companies.isEmpty()) {
+            log.warn("은행 정보가 없습니다. FSS API에서 동기화가 필요합니다.");
+            return "기본은행";
+        }
+        return companies.get(random.nextInt(companies.size())).getKorCoNm();
+    }
+
+    @Transactional(readOnly = true)
+    public String getRandomDepositProductName() {
+        List<FinanceProduct> products = productRepository.findByProductType("DEPOSIT");
+        if (products.isEmpty()) {
+            log.warn("예금 상품 정보가 없습니다. FSS API에서 동기화가 필요합니다.");
+            return "기본예금";
+        }
+        return products.get(random.nextInt(products.size())).getFinPrdtNm();
+    }
+
+    @Transactional(readOnly = true)
+    public String getRandomSavingProductName() {
+        List<FinanceProduct> products = productRepository.findByProductType("SAVING");
+        if (products.isEmpty()) {
+            log.warn("적금 상품 정보가 없습니다. FSS API에서 동기화가 필요합니다.");
+            return "기본적금";
+        }
+        return products.get(random.nextInt(products.size())).getFinPrdtNm();
     }
 } 

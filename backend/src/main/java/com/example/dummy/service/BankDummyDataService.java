@@ -5,6 +5,7 @@ import com.example.dummy.entity.BankTransaction;
 import com.example.dummy.repository.BankBalanceRepository;
 import com.example.dummy.repository.BankTransactionRepository;
 import com.example.dummy.util.DummyDataGenerator;
+import com.example.service.FinanceProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class BankDummyDataService {
 
     private final BankBalanceRepository bankBalanceRepository;
     private final BankTransactionRepository bankTransactionRepository;
+    private final FinanceProductService financeProductService;
     private final Random random = new Random();
 
     @Transactional
@@ -29,11 +31,15 @@ public class BankDummyDataService {
 
     @Transactional
     public BankBalance createBankBalance(Long userId) {
+        // FSS API에서 가져온 은행 정보를 사용하여 계좌 생성
+        String bankName = financeProductService.getRandomBankName();
+        String productName = financeProductService.getRandomDepositProductName();
+        
         BankBalance balance = new BankBalance();
         balance.setUserId(userId);
-        balance.setBankName(DummyDataGenerator.randomChoice(DummyDataGenerator.BANK_NAMES));
+        balance.setBankName(bankName);
         balance.setAccountNumber(DummyDataGenerator.generateAccountNumber());
-        balance.setAccountType(DummyDataGenerator.randomChoice(DummyDataGenerator.ACCOUNT_TYPES));
+        balance.setAccountType(productName);
         balance.setBalance(1000000L + random.nextInt(9000000)); // 100만원 ~ 1000만원
         return bankBalanceRepository.save(balance);
     }

@@ -1,12 +1,12 @@
 package com.example.service;
 
+import com.example.entity.User;
+import com.example.repository.UserRepository;
 import com.example.dummy.service.BankDummyDataService;
 import com.example.dummy.service.CardDummyDataService;
 import com.example.dummy.service.InvestmentDummyDataService;
 import com.example.dummy.service.InsuranceDummyDataService;
 import com.example.dummy.service.LoanDummyDataService;
-import com.example.entity.User;
-import com.example.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +28,7 @@ public class UserService implements UserDetailsService {
     private final InvestmentDummyDataService investmentDummyDataService;
     private final InsuranceDummyDataService insuranceDummyDataService;
     private final LoanDummyDataService loanDummyDataService;
+    private final FinanceProductService financeProductService;
     private final Random random = new Random();
 
     @Override
@@ -68,10 +69,21 @@ public class UserService implements UserDetailsService {
                 .build();
         user = userRepository.save(user);
 
+        // FSS API에서 은행 정보 동기화
+        syncFinanceData();
+
         // 더미 데이터 생성
         generateDummyData(user.getId());
 
         return user;
+    }
+
+    @Transactional
+    public void syncFinanceData() {
+        // 은행 정보 동기화
+        financeProductService.syncAllCompanies("020000");
+        financeProductService.syncAllDepositProducts("020000");
+        financeProductService.syncAllSavingProducts("020000");
     }
 
     @Transactional
