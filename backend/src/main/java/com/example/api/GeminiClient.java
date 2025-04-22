@@ -202,7 +202,7 @@ public class GeminiClient {
             String fullUrl = API_URL + "?key=" + apiKey;
             HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
             
-            log.info("[Gemini] API 요청: \n{}", prompt);
+            log.info("[Gemini] API 요청 시작");
             ResponseEntity<String> response = restTemplate.postForEntity(fullUrl, request, String.class);
             log.info("[Gemini] API 응답 상태: {}", response.getStatusCode());
 
@@ -215,7 +215,7 @@ public class GeminiClient {
             // 마크다운 포맷 제거
             responseText = responseText.replaceAll("```json\\s*", "").replaceAll("```\\s*$", "").trim();
             
-            log.info("[Gemini] API 응답 내용: \n{}", responseText);
+            log.info("[Gemini] API 응답 수신 완료 - 길이: {}", responseText.length());
             return responseText;
         } catch (Exception e) {
             log.error("[Gemini] API 호출 실패: {}", e.getMessage(), e);

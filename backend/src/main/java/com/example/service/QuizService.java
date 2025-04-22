@@ -32,6 +32,15 @@ public class QuizService {
         try {
             log.info("[퀴즈 서비스] 퀴즈 생성 시작 - 기사 ID: {}, 제목: {}", article.getId(), article.getTitle());
             
+            // Gemini 호출 (모든 사용자 타입의 퀴즈를 한 번에 생성)
+            String response = geminiClient.generateQuiz(article.getContent(), "ALL", 4);
+            
+            if (response == null) {
+                log.error("[퀴즈 서비스] Gemini 응답이 null입니다 - 기사 ID: {}", article.getId());
+                return;
+            }
+            log.info("[퀴즈 서비스] Gemini 응답 수신 - 기사 ID: {}, 응답 길이: {}", article.getId(), response.length());
+
             // 각 사용자 타입별로 퀴즈 생성
             for (UserType userType : UserType.values()) {
                 log.info("[퀴즈 서비스] {} 타입 퀴즈 생성 시작", userType);
@@ -42,35 +51,31 @@ public class QuizService {
                     continue;
                 }
 
-                // Gemini 호출 시 사용자 타입을 전달
-                log.info("[퀴즈 서비스] Gemini API 호출 - 기사 ID: {}, userType: {}", article.getId(), userType);
-                String response = geminiClient.generateQuiz(article.getContent(), userType.name(), 4);
-                
-                if (response == null) {
-                    log.error("[퀴즈 서비스] Gemini 응답이 null입니다 - 기사 ID: {}, userType: {}", article.getId(), userType);
+                // 해당 사용자 타입의 퀴즈 섹션 추출
+                String typeSection = extractTypeSection(response, userType);
+                if (typeSection == null) {
+                    log.error("[퀴즈 서비스] {} 타입의 퀴즈 섹션을 찾을 수 없습니다 - 기사 ID: {}", userType, article.getId());
                     continue;
                 }
-                log.info("[퀴즈 서비스] Gemini 응답 수신 - 기사 ID: {}, userType: {}, 응답 길이: {}", 
-                    article.getId(), userType, response.length());
 
                 // 문제 추출
                 String question = "";
-                int questionStart = response.indexOf("문제:");
-                int questionEnd = response.indexOf("보기:");
+                int questionStart = typeSection.indexOf("문제:");
+                int questionEnd = typeSection.indexOf("보기:");
                 if (questionStart != -1) {
-                    question = response.substring(questionStart + 3, 
-                                              questionEnd != -1 ? questionEnd : response.indexOf("정답:")).trim();
+                    question = typeSection.substring(questionStart + 3, 
+                                              questionEnd != -1 ? questionEnd : typeSection.indexOf("정답:")).trim();
                     log.info("[퀴즈 서비스] 문제 추출 완료 - 기사 ID: {}, userType: {}, 문제 길이: {}", 
                         article.getId(), userType, question.length());
                 }
 
                 // 보기 추출 (4지선다)
-                Map<String, String> optionsMap = new LinkedHashMap<>(); // 순서 보장을 위해 LinkedHashMap 사용
-                if (response.contains("1)")) {
-                    int optionsStart = response.indexOf("1)");
-                    int optionsEnd = response.indexOf("정답:");
+                Map<String, String> optionsMap = new LinkedHashMap<>();
+                if (typeSection.contains("1)")) {
+                    int optionsStart = typeSection.indexOf("1)");
+                    int optionsEnd = typeSection.indexOf("정답:");
                     if (optionsStart != -1 && optionsEnd != -1) {
-                        String optionsText = response.substring(optionsStart, optionsEnd).trim();
+                        String optionsText = typeSection.substring(optionsStart, optionsEnd).trim();
                         String[] options = optionsText.split("\\n");
                         for (int j = 0; j < options.length; j++) {
                             String option = options[j].substring(options[j].indexOf(")") + 1).trim();
@@ -83,10 +88,10 @@ public class QuizService {
 
                 // 정답 추출 (보기 내용 그대로)
                 String answer = "";
-                int answerStart = response.indexOf("정답:");
-                int answerEnd = response.indexOf("해설:");
+                int answerStart = typeSection.indexOf("정답:");
+                int answerEnd = typeSection.indexOf("해설:");
                 if (answerStart != -1 && answerEnd != -1) {
-                    String answerText = response.substring(answerStart + 3, answerEnd).trim();
+                    String answerText = typeSection.substring(answerStart + 3, answerEnd).trim();
                     
                     // 정답 번호 추출
                     int answerNumber = -1;
@@ -104,15 +109,15 @@ public class QuizService {
                     } else {
                         log.error("[퀴즈 서비스] 정답 번호가 올바르지 않아 퀴즈 생성을 건너뜁니다 - 기사 ID: {}, userType: {}, 원본 정답: {}", 
                             article.getId(), userType, answerText);
-                        continue; // 정답 번호가 올바르지 않으면 해당 퀴즈 건너뛰기
+                        continue;
                     }
                 }
 
                 // 해설 추출
                 String explanation = "";
-                int explanationStart = response.indexOf("해설:");
+                int explanationStart = typeSection.indexOf("해설:");
                 if (explanationStart != -1) {
-                    explanation = response.substring(explanationStart + 3).trim();
+                    explanation = typeSection.substring(explanationStart + 3).trim();
                     log.info("[퀴즈 서비스] 해설 추출 완료 - 기사 ID: {}, userType: {}, 해설 길이: {}", 
                         article.getId(), userType, explanation.length());
                 }
@@ -136,6 +141,27 @@ public class QuizService {
             log.error("[퀴즈 서비스] 퀴즈 생성 중 오류 발생 - 기사 ID: {}, 제목: {}, 오류: {}", 
                 article.getId(), article.getTitle(), e.getMessage(), e);
         }
+    }
+
+    private String extractTypeSection(String response, UserType userType) {
+        String typeMarker = "[" + userType + " 유형]";
+        log.info("[퀴즈 서비스] {} 타입 섹션 검색 시작 - 마커: {}", userType, typeMarker);
+        
+        int startIndex = response.indexOf(typeMarker);
+        if (startIndex == -1) {
+            log.error("[퀴즈 서비스] {} 타입 섹션을 찾을 수 없습니다", userType);
+            return null;
+        }
+        
+        startIndex += typeMarker.length();
+        int endIndex = response.indexOf("[", startIndex);
+        if (endIndex == -1) {
+            endIndex = response.length();
+        }
+        
+        String section = response.substring(startIndex, endIndex).trim();
+        log.info("[퀴즈 서비스] {} 타입 섹션 추출 완료 - 길이: {}", userType, section.length());
+        return section;
     }
 
     private boolean isInvalidField(String field) {
