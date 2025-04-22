@@ -39,18 +39,13 @@ public class QuizResultService {
     }
 
     private boolean checkAnswer(Quiz quiz, String selectedAnswer) {
-        if (quiz.getQuizType().equals("OX")) {
-            return quiz.getAnswer().equalsIgnoreCase(selectedAnswer);
-        } else {
-            // 4지선다 문제의 경우
-            try {
-                int selected = Integer.parseInt(selectedAnswer);
-                int correct = Integer.parseInt(quiz.getAnswer());
-                return selected == correct;
-            } catch (NumberFormatException e) {
-                log.error("[퀴즈 결과] 정답 비교 중 오류 발생: {}", e.getMessage());
-                return false;
-            }
+        try {
+            int selected = Integer.parseInt(selectedAnswer);
+            int correct = Integer.parseInt(quiz.getAnswer());
+            return selected == correct;
+        } catch (NumberFormatException e) {
+            log.error("[퀴즈 결과] 정답 비교 중 오류 발생: {}", e.getMessage());
+            return false;
         }
     }
 
