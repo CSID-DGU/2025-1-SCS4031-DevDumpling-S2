@@ -6,7 +6,6 @@ import { ko } from 'date-fns/locale';
 import { useLoading } from '../../hooks/useLoading';
 import { useNavigation } from '@react-navigation/native';
 
-
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
 export default function QuizAndNews() {
@@ -59,6 +58,10 @@ export default function QuizAndNews() {
         }
     };
 
+    // 퀴즈 화면으로 이동하는 함수
+    const navigateToQuiz = () => {
+        navigation.navigate('Quiz');
+    };
 
     return (
         <View className="flex-row justify-between mt-3">
@@ -68,6 +71,7 @@ export default function QuizAndNews() {
                 <TouchableOpacity
                     style={{ height: cardWidth * 1.15 }}
                     className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
+                    onPress={navigateToQuiz}
                 >
                     <Image
                         source={require('../../../assets/images/test.png')}
