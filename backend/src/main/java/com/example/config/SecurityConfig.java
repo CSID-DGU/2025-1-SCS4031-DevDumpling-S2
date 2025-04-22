@@ -9,6 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.example.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +36,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/boards/*/update/*").authenticated()
                 .requestMatchers("/api/boards/*/delete/*").authenticated()
                 .requestMatchers("/api/boards/**").permitAll()
+                .requestMatchers("/rss/**").permitAll()  // RSS 관련 엔드포인트
+                .requestMatchers("/api/quizzes/**").permitAll()  // 퀴즈 조회 관련 엔드포인트
+                .requestMatchers(HttpMethod.GET, "/api/quiz-results/**").permitAll()  // 퀴즈 결과 조회
+                .requestMatchers(HttpMethod.POST, "/api/quiz-results/**").authenticated()  // 퀴즈 결과 제출은 인증 필요
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
