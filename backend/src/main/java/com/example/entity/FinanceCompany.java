@@ -30,4 +30,7 @@ public class FinanceCompany {
 
     @Column(name = "cal_tel")
     private String calTel;
+
+    @Column(name = "bank_image")
+    private String bankImage;
 } 

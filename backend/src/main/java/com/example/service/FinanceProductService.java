@@ -357,4 +357,11 @@ public class FinanceProductService {
         }
         return products.get(random.nextInt(products.size())).getFinPrdtNm();
     }
+
+    @Transactional(readOnly = true)
+    public String getBankImage(String bankName) {
+        FinanceCompany company = companyRepository.findByKorCoNm(bankName)
+                .orElseThrow(() -> new RuntimeException("은행을 찾을 수 없습니다: " + bankName));
+        return company.getBankImage();
+    }
 } 
