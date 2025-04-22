@@ -1,12 +1,12 @@
 package com.example.service;
 
-import com.example.entity.User;
-import com.example.repository.UserRepository;
 import com.example.dummy.service.BankDummyDataService;
 import com.example.dummy.service.CardDummyDataService;
 import com.example.dummy.service.InvestmentDummyDataService;
 import com.example.dummy.service.InsuranceDummyDataService;
 import com.example.dummy.service.LoanDummyDataService;
+import com.example.entity.User;
+import com.example.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -27,14 +27,11 @@ public class Quiz {
 
     @Column(columnDefinition = "TEXT")
     private String question; // 퀴즈 질문
-    
-    @Column(length = 20)
-    private String quizType; // "OX" 또는 "MULTIPLE_CHOICE"
 
     @Column(columnDefinition = "TEXT")
-    private String options; // 4지선다의 경우 JSON 형태로 저장
+    private String options; // JSON 형태로 저장 {"option1": "내용1", "option2": "내용2", "option3": "내용3", "option4": "내용4"}
 
-    private String answer; // 정답
+    private String answer; // 정답 (1, 2, 3, 4 중 하나)
 
     @Column(columnDefinition = "TEXT")
     private String explanation; // 해설
