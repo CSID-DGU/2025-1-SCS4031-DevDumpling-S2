@@ -29,7 +29,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/dummy/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                //.requestMatchers("/api/dummy/**").authenticated()
+                // 게시판 API 권한 설정
+                .requestMatchers("/api/boards/*/create").authenticated()
+                .requestMatchers("/api/boards/*/update/*").authenticated()
+                .requestMatchers("/api/boards/*/delete/*").authenticated()
+                .requestMatchers("/api/boards/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

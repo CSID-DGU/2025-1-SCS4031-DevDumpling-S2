@@ -3,6 +3,7 @@ package com.example.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,6 +30,7 @@ public class User {
     private String profileImage;
 
     @Column(name = "mydata_consent")
+    @ColumnDefault("false")
     private boolean myDataConsent;
 
     @Enumerated(EnumType.STRING)
@@ -50,6 +52,14 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public boolean isMyDataConsent() {
+        return myDataConsent;
+    }
+
+    public void setMyDataConsent(boolean myDataConsent) {
+        this.myDataConsent = myDataConsent;
     }
 
     public enum UserType {
