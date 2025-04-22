@@ -18,6 +18,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoadingProvider } from './src/contexts/LoadingContext';
 import Loading from './src/components/common/Loading';
 import NewsList from './src/screens/NewsList';
+import Quiz from './src/screens/Quiz';
 
 
 const Stack = createNativeStackNavigator();
@@ -96,6 +97,11 @@ export default function App() {
           <Stack.Screen
             name="NewsList"
             component={NewsList}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Quiz"
+            component={Quiz}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
