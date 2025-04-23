@@ -4,6 +4,8 @@ import com.example.api.FssApiClient;
 import com.example.dto.fss.CompanyResponse;
 import com.example.dto.fss.DepositProductResponse;
 import com.example.dto.fss.SavingProductResponse;
+import com.example.dto.fss.RentHouseLoanResponse;
+import com.example.dto.fss.CreditLoanResponse;
 import com.example.service.FinanceProductService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -48,20 +50,18 @@ public class FssApiController {
         return ResponseEntity.ok(fssApiClient.getSavingProducts(topFinGrpNo, pageNo));
     }
 
-    @PostMapping("/sync/deposit")
-    public ResponseEntity<String> syncDepositProducts(
+    @GetMapping("/creditloan")
+    public ResponseEntity<CreditLoanResponse> getCreditLoanProducts(
         @RequestParam(defaultValue = "020000") String topFinGrpNo,
         @RequestParam(defaultValue = "1") int pageNo) {
-        financeProductService.syncDepositProducts(topFinGrpNo, pageNo);
-        return ResponseEntity.ok("예금상품 동기화가 완료되었습니다.");
+        return ResponseEntity.ok(fssApiClient.getCreditLoanProducts(topFinGrpNo, pageNo));
     }
 
-    @PostMapping("/sync/saving")
-    public ResponseEntity<String> syncSavingProducts(
+    @GetMapping("/rentloan")
+    public ResponseEntity<RentHouseLoanResponse> getRentLoanProducts(
         @RequestParam(defaultValue = "020000") String topFinGrpNo,
         @RequestParam(defaultValue = "1") int pageNo) {
-        financeProductService.syncSavingProducts(topFinGrpNo, pageNo);
-        return ResponseEntity.ok("적금상품 동기화가 완료되었습니다.");
+        return ResponseEntity.ok(fssApiClient.getRentLoanProducts(topFinGrpNo, pageNo));
     }
 
     @PostMapping("/sync/all/deposit")
@@ -78,13 +78,20 @@ public class FssApiController {
         return ResponseEntity.ok("적금상품 전체 동기화가 완료되었습니다.");
     }
 
-    @PostMapping("/sync/company")
-    public ResponseEntity<String> syncCompanies(
-        @RequestParam(defaultValue = "020000") String topFinGrpNo,
-        @RequestParam(defaultValue = "1") int pageNo) {
-        financeProductService.syncCompanies(topFinGrpNo, pageNo);
-        return ResponseEntity.ok("금융회사 동기화가 완료되었습니다.");
+    @PostMapping("/sync/all/creditloan")
+    public ResponseEntity<String> syncAllCreditLoanProducts(
+        @RequestParam(defaultValue = "020000") String topFinGrpNo) {
+        financeProductService.syncAllCreditLoanProducts(topFinGrpNo);
+        return ResponseEntity.ok("신용대출상품 전체 동기화가 완료되었습니다.");
     }
+
+    @PostMapping("/sync/all/rentloan")
+    public ResponseEntity<String> syncAllRentLoanProducts(
+        @RequestParam(defaultValue = "020000") String topFinGrpNo) {
+        financeProductService.syncAllRentLoanProducts(topFinGrpNo);
+        return ResponseEntity.ok("전세대출상품 전체 동기화가 완료되었습니다.");
+    }
+    
 
     @PostMapping("/sync/all/company")
     public ResponseEntity<String> syncAllCompanies(
