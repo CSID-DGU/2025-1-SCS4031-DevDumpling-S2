@@ -3,6 +3,8 @@ package com.example.api;
 import com.example.dto.fss.CompanyResponse;
 import com.example.dto.fss.DepositProductResponse;
 import com.example.dto.fss.SavingProductResponse;
+import com.example.dto.fss.RentHouseLoanResponse;
+import com.example.dto.fss.CreditLoanResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.springframework.beans.factory.annotation.Value;
@@ -167,5 +169,31 @@ public class FssApiClient {
                 .toUriString();
 
         return parseResponse(callApi(url), SavingProductResponse.class);
+    }
+
+    public CreditLoanResponse getCreditLoanProducts(String topFinGrpNo, int pageNo) {
+        System.out.println("\n=== FSS API 호출 정보 (신용대출 상품) ===");
+        System.out.println("🔑 Current API Key: " + apiKey);
+
+        String url = UriComponentsBuilder.fromHttpUrl("https://finlife.fss.or.kr/finlifeapi/creditLoanProductsSearch.json")
+                .queryParam("auth", apiKey)
+                .queryParam("topFinGrpNo", topFinGrpNo)
+                .queryParam("pageNo", pageNo)
+                .toUriString();
+
+        return parseResponse(callApi(url), CreditLoanResponse.class);
+    }
+
+    public RentHouseLoanResponse getRentLoanProducts(String topFinGrpNo, int pageNo) {
+        System.out.println("\n=== FSS API 호출 정보 (전세대출 상품) ===");
+        System.out.println("🔑 Current API Key: " + apiKey);
+
+        String url = UriComponentsBuilder.fromHttpUrl("https://finlife.fss.or.kr/finlifeapi/rentHouseLoanProductsSearch.json")
+                .queryParam("auth", apiKey)
+                .queryParam("topFinGrpNo", topFinGrpNo)
+                .queryParam("pageNo", pageNo)
+                .toUriString();
+
+        return parseResponse(callApi(url), RentHouseLoanResponse.class);
     }
 }
