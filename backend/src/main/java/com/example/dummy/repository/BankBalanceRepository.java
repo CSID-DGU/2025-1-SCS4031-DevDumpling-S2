@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface BankBalanceRepository extends JpaRepository<BankBalance, Long> {
     List<BankBalance> findByUserId(Long userId);
     Optional<BankBalance> findByAccountNumber(String accountNumber);
+    Optional<BankBalance> findByUserIdAndAccountNumber(Long userId, String accountNumber);
 } 
