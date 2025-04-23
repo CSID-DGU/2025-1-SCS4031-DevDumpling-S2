@@ -42,8 +42,17 @@ public class UserController {
             @RequestBody MyDataConsentRequest request) {
         try {
             User user = userService.findByKakaoId(authentication.getName());
-            user.setMyDataConsent(request.isConsent());
-            userService.save(user);
+            
+            // 마이데이터 동의가 false에서 true로 변경되는 경우에만 더미 데이터 생성
+            if (!user.isMyDataConsent() && request.isConsent()) {
+                user.setMyDataConsent(true);
+                userService.save(user);
+                userService.generateDummyDataForConsentedUser(user.getId());
+            } else {
+                user.setMyDataConsent(request.isConsent());
+                userService.save(user);
+            }
+            
             return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
