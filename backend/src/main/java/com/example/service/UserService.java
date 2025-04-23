@@ -72,8 +72,10 @@ public class UserService implements UserDetailsService {
         // FSS API에서 은행 정보 동기화
         syncFinanceData();
 
-        // 더미 데이터 생성
-        generateDummyData(user.getId());
+        // 마이데이터 동의가 true인 경우에만 더미 데이터 생성
+        if (myDataConsent) {
+            generateDummyData(user.getId());
+        }
 
         return user;
     }
@@ -117,6 +119,18 @@ public class UserService implements UserDetailsService {
         for (int i = 0; i < loanCount; i++) {
             boolean isShortTerm = random.nextBoolean();
             loanDummyDataService.createLoanAccount(userId, isShortTerm);
+        }
+    }
+
+    @Transactional
+    public void generateDummyDataForConsentedUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.isMyDataConsent()) {
+            generateDummyData(userId);
+        } else {
+            throw new RuntimeException("마이데이터 동의가 필요합니다.");
         }
     }
 
