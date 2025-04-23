@@ -1,37 +1,58 @@
-import { View, ScrollView, Text, TextInput, useWindowDimensions, TouchableOpacity, Touchable } from 'react-native';
+import { View, ScrollView, Text, TextInput, useWindowDimensions, TouchableOpacity, Touchable, FlatList } from 'react-native';
 import Header from '../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useState } from 'react';
 
 
 export default function CommunitySearchScreen({ navigation }) {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
-    const recentKeywords = ["연금", "보험 증명서", "퇴직연금"];
+    const [searchText, setSearchText] = useState('');
+    const [searchHistory, setSearchHistory] = useState(['연금', '보험 증명서', '퇴직연금']);
+    
+    const handleDeleteItem = (item) => {
+        setSearchHistory(searchHistory.filter(i => i !== item));
+    }
 
     return (
         <>
             <Header />
             <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
 
-                {/* 카테고리 탭 */}
+                {/* 검색 바 */}
                 <View
-                    className="flex-row items-center bg-[#014029] rounded-2xl mb-4"
+                    className="flex-row items-center bg-white rounded-full px-3 py-2 shadow-md mb-4"
                     style={{
                         paddingVertical: 12,
                         paddingHorizontal: horizontalPadding,
                     }}>
-                    {/* 중앙 타이틀 */}
-                    <Text className="text-white text-sm font-semibold">커뮤니티 글 검색</Text>
+                    <TouchableOpacity onPress={() => navigation.goBack()} className="mr-2">
+                        <Icon name="arrow-back" size={22} color="#014029" />
+                    </TouchableOpacity>
+                    <TextInput
+                        className="flex-1 text-sm text-black"
+                        placeholder="검색할 내용을 입력하세요"
+                        value={searchText}
+                        onChangeText={setSearchText}
+                    />
+                    <Icon name="search" size={20} color="#014029" />
                 </View>
 
-                {/* 게시글 작성 */}
-                <View
-                    className="flex-1 bg-[#F9F9F9] rounded-2xl shadow-md"
-                    style={{
-                        paddingHorizontal: horizontalPadding,
-                    }}>
-                    <View className="border-t border-gray-200 mx-4" />
-                </View>
+                {/* 검색 기록 */}
+                <Text className="text-gray-700 text-base font-semibold mb-2">검색 기록</Text>
+                <FlatList
+                    data={searchHistory}
+                    keyExtractor={(item) => item}
+                    renderItem={({ item }) => (
+                        <View className="flex-row justify-between items-center py-2 border-b border-gray-200">
+                            <Text className="text-base text-black">{item}</Text>
+                            <TouchableOpacity onPress={() => handleDeleteItem(item)}>
+                                <Icon name="close" size={18} color="gray" />
+                            </TouchableOpacity>
+                        </View>
+                    )}>
+
+                </FlatList>
                 
             </View>
         </>
