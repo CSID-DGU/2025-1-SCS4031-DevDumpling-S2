@@ -47,6 +47,14 @@ public class BankDummyDataService {
 
     @Transactional
     public void generateBankTransactions(Long userId, String accountNumber) {
+        // 해당 계좌의 기존 거래내역 확인
+        List<BankTransaction> existingTransactions = bankTransactionRepository.findByAccountNumber(accountNumber);
+        
+        // 이미 거래내역이 존재하는 경우 추가 생성하지 않음
+        if (!existingTransactions.isEmpty()) {
+            return;
+        }
+
         // 최근 3개월간의 거래 내역 생성
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusMonths(3);
