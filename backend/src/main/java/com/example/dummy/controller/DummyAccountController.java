@@ -117,7 +117,7 @@ public class DummyAccountController {
         }
     }
 
-    @PostMapping("/bank-accounts/consent")
+    @PostMapping("/bank-accounts/consent/add")
     public ResponseEntity<?> handleSelectedBankAccounts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody SelectedBankAccountsRequest request
@@ -140,5 +140,37 @@ public class DummyAccountController {
     @Data
     public static class SelectedBankAccountsRequest {
         private List<String> selectedAccountNumbers;
+    }
+
+    @PostMapping("/bank-accounts/consent/revoke")
+    public ResponseEntity<?> revokeBankAccountConsent(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedBankAccountsRequest request
+    ) {
+        log.info("[더미계좌] 은행 계좌 동의 철회 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 계좌 수: {}", user.getId(), request.getSelectedAccountNumbers().size());
+            
+            // 선택된 각 계좌에 대해 동의 철회 처리
+            for (String accountNumber : request.getSelectedAccountNumbers()) {
+                dummyAccountService.revokeAccountConsent(user.getId(), accountNumber);
+            }
+            
+            log.info("[더미계좌] 은행 계좌 동의 철회 완료");
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "계좌 동의가 철회되었습니다."
+            ));
+        } catch (IllegalArgumentException e) {
+            log.error("[더미계좌] 은행 계좌 동의 철회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            log.error("[더미계좌] 은행 계좌 동의 철회 중 오류 발생", e);
+            throw e;
+        }
     }
 } 

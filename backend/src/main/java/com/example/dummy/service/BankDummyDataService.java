@@ -97,4 +97,18 @@ public class BankDummyDataService {
     public List<BankBalance> getBankAccounts(Long userId) {
         return bankBalanceRepository.findByUserId(userId);
     }
+
+    @Transactional
+    public void revokeAccountConsent(Long userId, String accountNumber) {
+        // 계좌 존재 여부 확인
+        BankBalance bankBalance = bankBalanceRepository.findByUserIdAndAccountNumber(userId, accountNumber)
+            .orElseThrow(() -> new IllegalArgumentException("해당 계좌를 찾을 수 없습니다."));
+
+        // 계좌 비활성화
+        bankBalance.setIsActive(false);
+        bankBalanceRepository.save(bankBalance);
+
+        // 해당 계좌의 거래내역 삭제
+        bankTransactionRepository.deleteByAccountNumber(accountNumber);
+    }
 } 
