@@ -80,7 +80,7 @@ export default function NewsListScreen({ navigation }) {
                                 onPress={() => openArticleUrl(article.sourceUrl)}
                                 className="bg-white rounded-3xl p-4 mb-4 shadow-sm"
                             >
-                                <Text className="text-xs text-gray-500 mb-1">{article.source}</Text>
+                                <Text className="text-xs text-gray-500 mb-1">{article.newspaperName || '미정의 언론사'}</Text>
                                 <Text className="text-base font-bold mb-2" numberOfLines={2}>
                                     {article.title}
                                 </Text>
