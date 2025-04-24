@@ -103,4 +103,23 @@ public class DummyAccountService {
             bankDummyDataService.generateBankTransactions(userId, accountNumber);
         }
     }
+
+    @Transactional
+    public void revokeAccountConsent(Long userId, String accountNumber) {
+        // 계좌 존재 여부 확인
+        BankBalance bankBalance = bankBalanceRepository.findByUserIdAndAccountNumber(userId, accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("해당 계좌를 찾을 수 없습니다."));
+
+        // 이미 동의하지 않은 계좌인 경우
+        if (!bankBalance.getIsActive()) {
+            throw new IllegalArgumentException("이미 동의가 철회된 계좌입니다.");
+        }
+
+        // 계좌 비활성화
+        bankBalance.setIsActive(false);
+        bankBalanceRepository.save(bankBalance);
+
+        // 해당 계좌의 거래내역 삭제
+        bankTransactionRepository.deleteByAccountNumber(accountNumber);
+    }
 } 
