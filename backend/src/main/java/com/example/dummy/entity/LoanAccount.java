@@ -67,6 +67,10 @@ public class LoanAccount {
     @Column(name = "is_overdue") // 연체 여부
     private Boolean isOverdue;
 
+    @Column(name = "is_active", nullable = false) // 활성화 여부
+    @Builder.Default
+    private Boolean isActive = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -76,9 +80,8 @@ public class LoanAccount {
     }
 
     public enum RepaymentType {
-        EQUAL_PRINCIPAL,          // 원금균등상환
-        EQUAL_INSTALLMENT,        // 원리금균등상환
-        BULLET,                   // 만기일시상환
-        INTEREST_ONLY            // 이자만 납부
+        PRINCIPAL_INTEREST,          // 원금+이자 상환
+        PRINCIPAL,                   // 원금만 상환
+        INTEREST                     // 이자만 상환
     }
 } 
