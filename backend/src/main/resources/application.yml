@@ -15,6 +15,13 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc.batch_size: 10
         default_batch_fetch_size: 10
+        query:
+          in_clause_parameter_padding: true
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+  transaction:
+    default-timeout: 30s
 
 # AWS S3 설정
 cloud:
@@ -76,6 +83,11 @@ gemini:
 fss:
   api:
     key: a20ba820e53668dd39b7f7f91bf451aa
+
+# KRX API 설정
+krx:
+  api:
+    key: 90D107060B904DB9AA0A0F8E03F594A97136BFB9
 
 ---
 # AWS 환경 설정
