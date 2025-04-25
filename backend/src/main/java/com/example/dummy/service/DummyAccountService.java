@@ -4,6 +4,7 @@ import com.example.dummy.dto.AccountSummaryResponse.*;
 import com.example.dummy.repository.*;
 import com.example.dummy.entity.BankTransaction;
 import com.example.dummy.entity.BankBalance;
+import com.example.dummy.entity.LoanAccount;
 import com.example.dummy.util.DummyDataGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class DummyAccountService {
     private final InsuranceAccountRepository insuranceAccountRepository;
     private final LoanAccountRepository loanAccountRepository;
     private final BankDummyDataService bankDummyDataService;
+    private final LoanDummyDataService loanDummyDataService;
     private final Random random = new Random();
 
     @Transactional(readOnly = true)
@@ -121,5 +123,27 @@ public class DummyAccountService {
 
         // 해당 계좌의 거래내역 삭제
         bankTransactionRepository.deleteByAccountNumber(accountNumber);
+    }
+
+    @Transactional
+    public void processSelectedLoans(Long userId, List<String> selectedLoanIds) {
+        // 선택된 각 대출 계좌에 대해 isActive 상태 업데이트 및 거래내역 생성
+        for (String loanId : selectedLoanIds) {
+            // 대출 계좌 존재 여부 확인
+            LoanAccount loanAccount = loanAccountRepository.findByUserIdAndLoanId(userId, loanId)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 대출 계좌입니다: " + loanId));
+
+            // 대출 계좌 활성화
+            loanAccount.setIsActive(true);
+            loanAccountRepository.save(loanAccount);
+
+            // 활성화된 대출 계좌에 대해 거래내역 생성
+            loanDummyDataService.generateLoanTransactions(userId, loanId);
+        }
+    }
+
+    @Transactional
+    public void revokeLoanConsent(Long userId, String loanId) {
+        loanDummyDataService.revokeLoanConsent(userId, loanId);
     }
 } 

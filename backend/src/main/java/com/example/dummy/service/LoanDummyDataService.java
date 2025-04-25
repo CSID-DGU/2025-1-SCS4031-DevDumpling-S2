@@ -30,7 +30,7 @@ public class LoanDummyDataService {
         for (int i = 0; i < loanCount; i++) {
             boolean isShortTerm = random.nextBoolean(); // 랜덤하게 단기/장기 결정
             LoanAccount loanAccount = createLoanAccount(userId, isShortTerm);
-            generateLoanTransactions(userId, loanAccount.getLoanId(), isShortTerm);
+            generateLoanTransactions(userId, loanAccount.getLoanId());
             updateLoanStatus(loanAccount);
         }
     }
@@ -42,24 +42,51 @@ public class LoanDummyDataService {
     }
 
     @Transactional
-    public void generateLoanTransactions(Long userId, String loanId, boolean isShortTerm) {
+    public void generateLoanTransactions(Long userId, String loanId) {
+        // 대출 계좌 존재 여부 확인
+        LoanAccount loanAccount = loanAccountRepository.findByUserIdAndLoanId(userId, loanId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 대출 계좌를 찾을 수 없습니다."));
+
+        // 이미 거래내역이 존재하는 경우 추가 생성하지 않음
+        List<LoanTransaction> existingTransactions = loanTransactionRepository.findByLoanId(loanId);
+        if (!existingTransactions.isEmpty()) {
+            return;
+        }
+
         // 최근 3개월 거래 내역 생성
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusMonths(3);
 
         // 단기/장기 여부에 따라 상환 주기 설정
-        int repaymentCycle = isShortTerm ? 1 : 3; // 단기는 월납, 장기는 3개월납
+        int repaymentCycle = Boolean.TRUE.equals(loanAccount.getIsShortTerm()) ? 1 : 3; // 단기는 월납, 장기는 3개월납
 
         while (startDate.isBefore(endDate)) {
             LoanTransaction transaction = createLoanTransaction(
                 userId,
                 loanId,
                 startDate,
-                isShortTerm
+                Boolean.TRUE.equals(loanAccount.getIsShortTerm())
             );
             loanTransactionRepository.save(transaction);
             startDate = startDate.plusMonths(repaymentCycle);
         }
+
+        // 대출 상태 업데이트
+        updateLoanStatus(loanAccount);
+    }
+
+    @Transactional
+    public void revokeLoanConsent(Long userId, String loanId) {
+        // 대출 계좌 존재 여부 확인
+        LoanAccount loanAccount = loanAccountRepository.findByUserIdAndLoanId(userId, loanId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 대출 계좌를 찾을 수 없습니다."));
+
+        // 대출 계좌 비활성화
+        loanAccount.setIsActive(false);
+        loanAccountRepository.save(loanAccount);
+
+        // 해당 대출의 거래내역 삭제
+        loanTransactionRepository.deleteByLoanId(loanId);
     }
 
     private LoanAccount createLoanAccountEntity(Long userId, boolean isShortTerm) {

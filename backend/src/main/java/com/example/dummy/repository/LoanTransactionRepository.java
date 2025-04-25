@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface LoanTransactionRepository extends JpaRepository<LoanTransaction, Long> {
     List<LoanTransaction> findByLoanIdAndTransactionDateBetween(String loanId, LocalDate startDate, LocalDate endDate);
+    List<LoanTransaction> findByLoanId(String loanId);
+    void deleteByLoanId(String loanId);
 } 

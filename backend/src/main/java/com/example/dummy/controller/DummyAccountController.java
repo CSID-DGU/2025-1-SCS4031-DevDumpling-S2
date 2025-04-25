@@ -32,7 +32,7 @@ public class DummyAccountController {
     private final InvestmentRecordRepository investmentRecordRepository;
     private final InvestmentTransactionRepository investmentTransactionRepository;
 
-    @GetMapping("/bank-accounts")
+    @GetMapping("/bank")
     public ResponseEntity<List<BankAccountDto>> getBankAccounts(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -104,20 +104,20 @@ public class DummyAccountController {
     public ResponseEntity<List<LoanAccountDto>> getLoanAccounts(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        log.info("[더미계좌] 대출 조회 요청");
+        log.info("[더미계좌] 대출 계좌 조회 요청");
         try {
             User user = userService.findByKakaoId(userDetails.getUsername());
             log.info("[더미계좌] 사용자 ID: {}", user.getId());
             List<LoanAccountDto> loans = dummyAccountService.getLoanAccounts(user.getId());
-            log.info("[더미계좌] 대출 조회 완료. 대출 수: {}", loans.size());
+            log.info("[더미계좌] 대출 계좌 조회 완료. 대출 수: {}", loans.size());
             return ResponseEntity.ok(loans);
         } catch (Exception e) {
-            log.error("[더미계좌] 대출 조회 중 오류 발생", e);
+            log.error("[더미계좌] 대출 계좌 조회 중 오류 발생", e);
             throw e;
         }
     }
 
-    @PostMapping("/bank-accounts/consent/add")
+    @PostMapping("/bank/consent/add")
     public ResponseEntity<?> handleSelectedBankAccounts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody SelectedBankAccountsRequest request
@@ -142,7 +142,7 @@ public class DummyAccountController {
         private List<String> selectedAccountNumbers;
     }
 
-    @PostMapping("/bank-accounts/consent/revoke")
+    @PostMapping("/bank/consent/revoke")
     public ResponseEntity<?> revokeBankAccountConsent(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody SelectedBankAccountsRequest request
@@ -172,5 +172,60 @@ public class DummyAccountController {
             log.error("[더미계좌] 은행 계좌 동의 철회 중 오류 발생", e);
             throw e;
         }
+    }
+
+    @PostMapping("/loans/consent/add")
+    public ResponseEntity<?> handleSelectedLoans(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedLoansRequest request
+    ) {
+        log.info("[더미계좌] 선택된 대출 계좌 처리 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 대출 수: {}", user.getId(), request.getSelectedLoanIds().size());
+            
+            dummyAccountService.processSelectedLoans(user.getId(), request.getSelectedLoanIds());
+            
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            log.error("[더미계좌] 선택된 대출 계좌 처리 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @PostMapping("/loans/consent/revoke")
+    public ResponseEntity<?> revokeLoanConsent(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedLoansRequest request
+    ) {
+        log.info("[더미계좌] 대출 계좌 동의 철회 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 대출 수: {}", user.getId(), request.getSelectedLoanIds().size());
+            
+            for (String loanId : request.getSelectedLoanIds()) {
+                dummyAccountService.revokeLoanConsent(user.getId(), loanId);
+            }
+            
+            log.info("[더미계좌] 대출 계좌 동의 철회 완료");
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "대출 계좌 동의가 철회되었습니다."
+            ));
+        } catch (IllegalArgumentException e) {
+            log.error("[더미계좌] 대출 계좌 동의 철회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            log.error("[더미계좌] 대출 계좌 동의 철회 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @Data
+    public static class SelectedLoansRequest {
+        private List<String> selectedLoanIds;
     }
 } 
