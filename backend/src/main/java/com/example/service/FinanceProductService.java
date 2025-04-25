@@ -571,4 +571,20 @@ public class FinanceProductService {
                 .orElseThrow(() -> new RuntimeException("은행을 찾을 수 없습니다: " + bankName));
         return company.getBankImage();
     }
+
+    public String getRandomCreditLoanProductName() {
+        List<CreditLoan> products = creditLoanRepository.findAll();
+        if (products.isEmpty()) {
+            return "기본신용대출";
+        }
+        return products.get(random.nextInt(products.size())).getFinPrdtNm();
+    }
+
+    public String getRandomRentLoanProductName() {
+        List<RentHouseLoan> products = rentHouseLoanRepository.findAll();
+        if (products.isEmpty()) {
+            return "기본전세대출";
+        }
+        return products.get(random.nextInt(products.size())).getFinPrdtNm();
+    }
 } 

@@ -71,9 +71,8 @@ public class LoanAccount {
     private LocalDateTime createdAt;
 
     public enum LoanType {
-        BANK,       // 은행
-        CARD,       // 카드
-        INSURANCE   // 보험
+        CREDIT,     // 신용대출
+        RENT        // 전세대출
     }
 
     public enum RepaymentType {

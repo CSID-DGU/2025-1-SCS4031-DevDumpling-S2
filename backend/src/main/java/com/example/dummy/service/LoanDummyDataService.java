@@ -5,6 +5,7 @@ import com.example.dummy.entity.LoanTransaction;
 import com.example.dummy.repository.LoanAccountRepository;
 import com.example.dummy.repository.LoanTransactionRepository;
 import com.example.dummy.util.DummyDataGenerator;
+import com.example.service.FinanceProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.util.Random;
 public class LoanDummyDataService {
     private final LoanAccountRepository loanAccountRepository;
     private final LoanTransactionRepository loanTransactionRepository;
+    private final FinanceProductService financeProductService;
     private final Random random = new Random();
 
     @Transactional
@@ -72,12 +74,19 @@ public class LoanDummyDataService {
             maturityDate = contractDate.plusMonths(random.nextInt(120) + 12); // 12~132개월
         }
 
+        // FSS API에서 가져온 대출 상품 정보를 사용
+        String loanType = random.nextBoolean() ? "CREDIT" : "RENT";
+        String institutionName = financeProductService.getRandomBankName();
+        String productName = loanType.equals("CREDIT") ? 
+            financeProductService.getRandomCreditLoanProductName() : 
+            financeProductService.getRandomRentLoanProductName();
+
         return LoanAccount.builder()
                 .userId(userId)
                 .loanId(loanId)
-                .loanType(DummyDataGenerator.randomChoice(LoanAccount.LoanType.values()))
-                .institutionName(DummyDataGenerator.randomChoice(DummyDataGenerator.BANK_NAMES))
-                .productName(DummyDataGenerator.randomChoice(DummyDataGenerator.LOAN_PRODUCTS))
+                .loanType(LoanAccount.LoanType.valueOf(loanType))
+                .institutionName(institutionName)
+                .productName(productName)
                 .contractDate(contractDate.toLocalDate())
                 .maturityDate(maturityDate.toLocalDate())
                 .principalAmount(10000000L + random.nextInt(90000000)) // 1000만원 ~ 1억원
