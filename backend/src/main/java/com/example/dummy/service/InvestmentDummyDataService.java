@@ -49,7 +49,7 @@ public class InvestmentDummyDataService {
     @Transactional
     public InvestmentRecord createInvestmentRecord(Long userId) {
         String accountNumber = DummyDataGenerator.generateAccountNumber();
-        boolean isEtf = random.nextBoolean(); // ETF 여부 랜덤 결정
+        boolean isEtf = random.nextBoolean();
         String today = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
         
         String productName;
@@ -81,6 +81,7 @@ public class InvestmentDummyDataService {
                 .recentTransactionDate(LocalDateTime.now().minusDays(random.nextInt(30)).toLocalDate())
                 .recentAmount(100000L + random.nextInt(900000))
                 .recentStock(productName)
+                .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -89,6 +90,14 @@ public class InvestmentDummyDataService {
 
     @Transactional
     public void generateInvestmentTransactions(Long userId, String accountNumber) {
+        // 해당 계좌의 기존 거래내역 확인
+        List<InvestmentTransaction> existingTransactions = investmentTransactionRepository.findByAccountNumber(accountNumber);
+        
+        // 이미 거래내역이 존재하는 경우 추가 생성하지 않음
+        if (!existingTransactions.isEmpty()) {
+            return;
+        }
+
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusMonths(3);
         String today = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
@@ -104,8 +113,27 @@ public class InvestmentDummyDataService {
         }
     }
 
+    @Transactional
+    public void revokeInvestmentConsent(Long userId, String accountNumber) {
+        // 계좌 존재 여부 확인
+        InvestmentRecord record = investmentRecordRepository.findByUserIdAndAccountNumber(userId, accountNumber)
+            .orElseThrow(() -> new IllegalArgumentException("해당 계좌를 찾을 수 없습니다."));
+
+        // 계좌 비활성화
+        record.setIsActive(false);
+        investmentRecordRepository.save(record);
+
+        // 해당 계좌의 거래내역 삭제
+        investmentTransactionRepository.deleteByAccountNumber(accountNumber);
+    }
+
+    @Transactional(readOnly = true)
+    public List<InvestmentRecord> getInvestmentAccounts(Long userId) {
+        return investmentRecordRepository.findByUserId(userId);
+    }
+
     private InvestmentTransaction createInvestmentTransaction(Long userId, String accountNumber, LocalDateTime transactionDate, String today) {
-        InvestmentRecord record = investmentRecordRepository.findByAccountNumber(accountNumber)
+        InvestmentRecord record = investmentRecordRepository.findByUserIdAndAccountNumber(userId, accountNumber)
             .orElseThrow(() -> new RuntimeException("계좌를 찾을 수 없습니다."));
         
         boolean isEtf = "ETF".equals(record.getInvestmentType());

@@ -27,6 +27,7 @@ public class DummyAccountService {
     private final LoanAccountRepository loanAccountRepository;
     private final BankDummyDataService bankDummyDataService;
     private final LoanDummyDataService loanDummyDataService;
+    private final InvestmentDummyDataService investmentDummyDataService;
     private final Random random = new Random();
 
     @Transactional(readOnly = true)
@@ -127,19 +128,21 @@ public class DummyAccountService {
 
     @Transactional
     public void processSelectedLoans(Long userId, List<String> selectedLoanIds) {
-        // 선택된 각 대출 계좌에 대해 isActive 상태 업데이트 및 거래내역 생성
         for (String loanId : selectedLoanIds) {
-            // 대출 계좌 존재 여부 확인
-            LoanAccount loanAccount = loanAccountRepository.findByUserIdAndLoanId(userId, loanId)
-                    .orElseThrow(() -> new RuntimeException("존재하지 않는 대출 계좌입니다: " + loanId));
-
-            // 대출 계좌 활성화
-            loanAccount.setIsActive(true);
-            loanAccountRepository.save(loanAccount);
-
-            // 활성화된 대출 계좌에 대해 거래내역 생성
             loanDummyDataService.generateLoanTransactions(userId, loanId);
         }
+    }
+
+    @Transactional
+    public void processSelectedInvestments(Long userId, List<String> selectedAccountNumbers) {
+        for (String accountNumber : selectedAccountNumbers) {
+            investmentDummyDataService.generateInvestmentTransactions(userId, accountNumber);
+        }
+    }
+
+    @Transactional
+    public void revokeInvestmentConsent(Long userId, String accountNumber) {
+        investmentDummyDataService.revokeInvestmentConsent(userId, accountNumber);
     }
 
     @Transactional
