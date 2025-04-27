@@ -3,8 +3,10 @@ package com.example.service;
 import com.example.api.GeminiClient;
 import com.example.entity.Article;
 import com.example.entity.Quiz;
+import com.example.entity.User;
 import com.example.entity.UserType;
 import com.example.repository.QuizRepository;
+import com.example.repository.QuizResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,6 +27,7 @@ import java.util.LinkedHashMap;
 public class QuizService {
 
     private final QuizRepository quizRepository;
+    private final QuizResultRepository quizResultRepository;
     private final GeminiClient geminiClient;
     private final ObjectMapper objectMapper;
 
@@ -177,6 +181,20 @@ public class QuizService {
 
     public List<Quiz> findByUserType(UserType userType) {
         return quizRepository.findByUserType(userType);
+    }
+
+    public List<Quiz> findUnansweredQuizzesByUserType(UserType userType, User user) {
+        // 해당 유형의 모든 퀴즈
+        List<Quiz> allQuizzes = quizRepository.findByUserType(userType);
+        // 사용자가 이미 푼 퀴즈 ID 목록
+        List<Long> answeredQuizIds = quizResultRepository.findByUser(user).stream()
+                .map(quizResult -> quizResult.getQuiz().getId())
+                .collect(Collectors.toList());
+        
+        // 아직 풀지 않은 퀴즈만 필터링
+        return allQuizzes.stream()
+                .filter(quiz -> !answeredQuizIds.contains(quiz.getId()))
+                .collect(Collectors.toList());
     }
 
     public Quiz findByArticleIdAndUserType(Long articleId, UserType userType) {

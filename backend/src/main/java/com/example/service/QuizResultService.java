@@ -41,9 +41,11 @@ public class QuizResultService {
     private boolean checkAnswer(Quiz quiz, String selectedAnswer) {
         try {
             int selected = Integer.parseInt(selectedAnswer);
-            int correct = Integer.parseInt(quiz.getAnswer());
+            // 정답에서 첫 번쨰 문자(번호)만 추출
+            String correctAnswer = quiz.getAnswer();
+            int correct = Integer.parseInt(correctAnswer.substring(0, 1));
             return selected == correct;
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             log.error("[퀴즈 결과] 정답 비교 중 오류 발생: {}", e.getMessage());
             return false;
         }
