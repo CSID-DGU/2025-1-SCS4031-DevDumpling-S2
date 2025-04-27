@@ -228,4 +228,59 @@ public class DummyAccountController {
     public static class SelectedLoansRequest {
         private List<String> selectedLoanIds;
     }
+
+    @PostMapping("/investments/consent/add")
+    public ResponseEntity<?> handleSelectedInvestments(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedInvestmentsRequest request
+    ) {
+        log.info("[더미계좌] 선택된 투자 계좌 처리 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 계좌 수: {}", user.getId(), request.getSelectedAccountNumbers().size());
+            
+            dummyAccountService.processSelectedInvestments(user.getId(), request.getSelectedAccountNumbers());
+            
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            log.error("[더미계좌] 선택된 투자 계좌 처리 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @PostMapping("/investments/consent/revoke")
+    public ResponseEntity<?> revokeInvestmentConsent(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedInvestmentsRequest request
+    ) {
+        log.info("[더미계좌] 투자 계좌 동의 철회 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 계좌 수: {}", user.getId(), request.getSelectedAccountNumbers().size());
+            
+            for (String accountNumber : request.getSelectedAccountNumbers()) {
+                dummyAccountService.revokeInvestmentConsent(user.getId(), accountNumber);
+            }
+            
+            log.info("[더미계좌] 투자 계좌 동의 철회 완료");
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "투자 계좌 동의가 철회되었습니다."
+            ));
+        } catch (IllegalArgumentException e) {
+            log.error("[더미계좌] 투자 계좌 동의 철회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            log.error("[더미계좌] 투자 계좌 동의 철회 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @Data
+    public static class SelectedInvestmentsRequest {
+        private List<String> selectedAccountNumbers;
+    }
 } 

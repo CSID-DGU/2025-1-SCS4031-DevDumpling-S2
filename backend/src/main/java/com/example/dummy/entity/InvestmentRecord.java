@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "investment_records")
@@ -42,9 +43,21 @@ public class InvestmentRecord {
     @Column(nullable = false)
     private Long recentAmount;
 
-    @Column(nullable = false)
+    @Column(name = "recent_stock")
     private String recentStock;
 
-    @Column(nullable = false)
+    @Column(name = "is_active")
+    @ColumnDefault("false")
+    private boolean isActive;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
 } 

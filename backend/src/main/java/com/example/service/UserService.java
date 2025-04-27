@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.Random;
@@ -30,6 +32,9 @@ public class UserService implements UserDetailsService {
     private final LoanDummyDataService loanDummyDataService;
     private final FinanceProductService financeProductService;
     private final Random random = new Random();
+    private final EtfService etfService;
+    private final StockService stockService;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -82,10 +87,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void syncFinanceData() {
-        // 은행 정보 동기화
-        financeProductService.syncAllCompanies("020000");
-        financeProductService.syncAllDepositProducts("020000");
-        financeProductService.syncAllSavingProducts("020000");
+        // 은행/예금/적금/대출/주식/ETF 상품 동기화는 빌드(서버 시작) 시에만 수행
+        // 회원가입 시에는 별도 동기화 없이 DB 싱크만 맞춤 (필요시 DB에 상품 없을 때만 예외 처리)
     }
 
     @Transactional
