@@ -23,6 +23,13 @@ public class LoanDummyDataService {
     private final FinanceProductService financeProductService;
     private final Random random = new Random();
 
+    private static final String[] DUMMY_CREDIT_LOAN_NAMES = {
+        "신한 마이카대출", "국민 신용대출", "카카오뱅크 비상금대출"
+    };
+    private static final String[] DUMMY_RENT_LOAN_NAMES = {
+        "우리 전세자금대출", "농협 전월세보증금대출", "하나 전세론"
+    };
+
     @Transactional
     public void generateDummyData(Long userId) {
         // 대출 계좌 1~2개 생성
