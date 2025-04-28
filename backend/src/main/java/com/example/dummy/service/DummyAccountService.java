@@ -5,7 +5,9 @@ import com.example.dummy.repository.*;
 import com.example.dummy.entity.BankTransaction;
 import com.example.dummy.entity.BankBalance;
 import com.example.dummy.entity.LoanAccount;
+import com.example.dummy.entity.InvestmentRecord;
 import com.example.dummy.util.DummyDataGenerator;
+import com.example.service.FinanceProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +30,18 @@ public class DummyAccountService {
     private final BankDummyDataService bankDummyDataService;
     private final LoanDummyDataService loanDummyDataService;
     private final InvestmentDummyDataService investmentDummyDataService;
+    private final FinanceProductService financeProductService;
     private final Random random = new Random();
 
     @Transactional(readOnly = true)
     public List<BankAccountDto> getBankAccounts(Long userId) {
         return bankBalanceRepository.findByUserId(userId).stream()
-                .map(bank -> BankAccountDto.builder()
-                        .accountNumber(bank.getAccountNumber())
-                        .bankName(bank.getBankName())
-                        .accountName(bank.getBankName())
-                        .balance(bank.getBalance())
+                .map(balance -> BankAccountDto.builder()
+                        .accountNumber(balance.getAccountNumber())
+                        .bankName(balance.getBankName())
+                        .accountName(balance.getAccountType())
+                        .balance(balance.getBalance())
+                        .bankImage(financeProductService.getBankImage(balance.getBankName()))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -56,12 +60,15 @@ public class DummyAccountService {
 
     @Transactional(readOnly = true)
     public List<InvestmentAccountDto> getInvestmentAccounts(Long userId) {
-        return investmentRecordRepository.findByUserId(userId).stream()
-                .map(investment -> InvestmentAccountDto.builder()
-                        .accountNumber(investment.getAccountNumber())
-                        .accountName(investment.getAccountName())
-                        .investmentType(investment.getInvestmentType())
-                        .balance(investment.getBalance())
+        List<InvestmentRecord> records = investmentRecordRepository.findByUserId(userId);
+        return records.stream()
+                .map(record -> InvestmentAccountDto.builder()
+                        .accountNumber(record.getAccountNumber())
+                        .accountName(record.getAccountName())
+                        .investmentType(record.getInvestmentType())
+                        .balance(record.getBalance())
+                        .bankImage(financeProductService.getBankImage(record.getInvestmentType().equals("ETF") ? 
+                                "ETF" : "주식"))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -86,6 +93,8 @@ public class DummyAccountService {
                         .productName(loan.getProductName())
                         .loanType(loan.getLoanType().name())
                         .loanAmount(loan.getPrincipalAmount())
+                        .bankName(loan.getKorCoNm())
+                        .bankImage(financeProductService.getBankImage(loan.getKorCoNm()))
                         .build())
                 .collect(Collectors.toList());
     }

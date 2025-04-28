@@ -27,8 +27,8 @@ public class LoanAccount {
     @Enumerated(EnumType.STRING)
     private LoanType loanType;
 
-    @Column(name = "institution_name", nullable = false) // 기관 이름
-    private String institutionName;
+    @Column(name = "kor_co_nm", nullable = false) // FSS API의 금융회사명
+    private String korCoNm;
 
     @Column(name = "product_name", nullable = false) // 상품 이름
     private String productName;

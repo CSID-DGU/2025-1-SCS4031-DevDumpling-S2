@@ -21,6 +21,7 @@ public class AccountSummaryResponse {
         private String bankName;
         private String accountName;
         private Long balance;
+        private String bankImage;
     }
 
     @Getter
@@ -39,6 +40,7 @@ public class AccountSummaryResponse {
         private String accountName;
         private String investmentType;
         private Long balance;
+        private String bankImage;
     }
 
     @Getter
@@ -57,5 +59,7 @@ public class AccountSummaryResponse {
         private String productName;
         private String loanType;
         private Long loanAmount;
+        private String bankName;
+        private String bankImage;
     }
 } 
