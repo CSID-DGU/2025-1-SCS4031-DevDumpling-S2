@@ -2,15 +2,14 @@ package com.example.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "Challenge")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
+@Builder
 public class Challenge {
 
     @Id
@@ -31,4 +30,23 @@ public class Challenge {
 
     private Boolean isOpen;
     private Integer maxParticipants;
+    
+    @Enumerated(EnumType.STRING)
+    private ChallengeType type;
+    
+    @Enumerated(EnumType.STRING)
+    private ChallengeCategory category;
+    
+    private String inviteCode;
+
+    public enum ChallengeType {
+        PUBLIC, PRIVATE
+    }
+
+    public enum ChallengeCategory {
+        NEW_DISCOUNT, FOOD, CAFE_SNACK, SAVINGS, 
+        ALCOHOL_ENTERTAINMENT, SHOPPING, BEAUTY,
+        TRAVEL, PET, MART_CONVENIENCE, GAME_OTT,
+        HOUSING_COMMUNICATION, TRANSPORTATION, HEALTH_EXERCISE
+    }
 }
