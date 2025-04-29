@@ -110,7 +110,7 @@ public class LoanDummyDataService {
 
         // FSS API에서 가져온 대출 상품 정보를 사용
         String loanType = random.nextBoolean() ? "CREDIT" : "RENT";
-        String institutionName = financeProductService.getRandomBankName();
+        String korCoNm = financeProductService.getRandomBankName();
         String productName = loanType.equals("CREDIT") ? 
             financeProductService.getRandomCreditLoanProductName() : 
             financeProductService.getRandomRentLoanProductName();
@@ -119,19 +119,20 @@ public class LoanDummyDataService {
                 .userId(userId)
                 .loanId(loanId)
                 .loanType(LoanAccount.LoanType.valueOf(loanType))
-                .institutionName(institutionName)
+                .korCoNm(korCoNm)
                 .productName(productName)
                 .contractDate(contractDate.toLocalDate())
                 .maturityDate(maturityDate.toLocalDate())
                 .principalAmount(10000000L + random.nextInt(90000000)) // 1000만원 ~ 1억원
-                .remainingPrincipal(10000000L + random.nextInt(90000000))
-                .interestRate(3.0 + random.nextDouble() * 7.0) // 3% ~ 10%
-                .repaymentType(DummyDataGenerator.randomChoice(LoanAccount.RepaymentType.values()))
+                .remainingPrincipal(10000000L + random.nextInt(90000000)) // 1000만원 ~ 1억원
+                .interestRate(3.0 + random.nextDouble() * 5.0) // 3.0% ~ 8.0%
+                .repaymentType(LoanAccount.RepaymentType.PRINCIPAL_INTEREST)
                 .monthlyDueDay(15 + random.nextInt(15)) // 15일 ~ 30일
-                .nextInterestDue(LocalDate.now().plusDays(15 + random.nextInt(15)))
+                .nextInterestDue(LocalDate.now().plusMonths(1))
                 .isShortTerm(isShortTerm)
                 .isLongTerm(!isShortTerm)
-                .isOverdue(random.nextDouble() < 0.1) // 10% 확률로 연체
+                .isOverdue(false)
+                .isActive(false)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

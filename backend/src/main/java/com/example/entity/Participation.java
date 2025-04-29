@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Participation {
 
     @Id
@@ -29,4 +30,6 @@ public class Participation {
     
     @Column(name = "user_rank")
     private Integer rank;
+
+    private Double totalScore;  // 종합 점수 (0~100)
 }
