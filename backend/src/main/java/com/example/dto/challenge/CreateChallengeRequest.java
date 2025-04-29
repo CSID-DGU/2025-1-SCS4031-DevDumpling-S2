@@ -11,7 +11,6 @@ public class CreateChallengeRequest {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Boolean isOpen;
     private Integer maxParticipants;
     private ChallengeType type;
     private ChallengeCategory category;

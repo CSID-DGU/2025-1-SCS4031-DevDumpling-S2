@@ -13,7 +13,6 @@ public class ChallengeResponse {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Boolean isOpen;
     private Integer maxParticipants;
     private ChallengeType type;
     private ChallengeCategory category;
@@ -26,7 +25,6 @@ public class ChallengeResponse {
         response.setDescription(challenge.getDescription());
         response.setStartDate(challenge.getStartDate());
         response.setEndDate(challenge.getEndDate());
-        response.setIsOpen(challenge.getIsOpen());
         response.setMaxParticipants(challenge.getMaxParticipants());
         response.setType(challenge.getType());
         response.setCategory(challenge.getCategory());
