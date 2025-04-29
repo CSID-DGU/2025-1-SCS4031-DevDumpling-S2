@@ -153,7 +153,6 @@ export default function Quiz() {
                 </Text>
             </View>
 
-            {/* 선택지 부분 - 별도 컨테이너로 분리 */}
             <View className="space-y-3 mx-6">
                 {options.map((option, index) => (
                     <TouchableOpacity
