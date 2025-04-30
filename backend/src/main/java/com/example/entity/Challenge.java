@@ -42,6 +42,12 @@ public class Challenge {
     @Column(nullable = false)
     private boolean isDeleted = false;
 
+    @Column(nullable = false)
+    private boolean isCompleted = false;
+
+    @Column
+    private LocalDate completionDate;
+
     public enum ChallengeType {
         PUBLIC, PRIVATE
     }

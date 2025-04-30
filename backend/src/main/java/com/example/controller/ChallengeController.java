@@ -7,6 +7,7 @@ import com.example.dto.challenge.ParticipationResponse;
 import com.example.dto.challenge.ChallengeSummaryResponse;
 import com.example.dto.challenge.ChallengeDetailResponse;
 import com.example.dto.challenge.UpdateChallengeRequest;
+import com.example.dto.challenge.CompleteChallengeRequest;
 import com.example.entity.User;
 import com.example.service.ChallengeService;
 import com.example.service.UserService;
@@ -130,6 +131,47 @@ public class ChallengeController {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("[챌린지 삭제] 오류 발생: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/{challengeId}/complete")
+    public ResponseEntity<Void> completeChallenge(
+            @PathVariable Long challengeId,
+            @RequestBody CompleteChallengeRequest request,
+            Authentication authentication) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            challengeService.completeChallenge(challengeId, request, user);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            log.error("[챌린지 완료] 유효성 오류: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (IllegalStateException e) {
+            log.error("[챌린지 완료] 상태 오류: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("[챌린지 완료] 오류 발생: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/{challengeId}/abandon")
+    public ResponseEntity<Void> abandonChallenge(
+            @PathVariable Long challengeId,
+            Authentication authentication) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            challengeService.abandonChallenge(challengeId, user);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            log.error("[챌린지 포기] 유효성 오류: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (IllegalStateException e) {
+            log.error("[챌린지 포기] 상태 오류: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("[챌린지 포기] 오류 발생: {}", e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
