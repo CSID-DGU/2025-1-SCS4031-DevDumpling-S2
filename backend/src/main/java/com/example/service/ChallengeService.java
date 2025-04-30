@@ -7,6 +7,7 @@ import com.example.dto.challenge.ParticipationResponse;
 import com.example.dto.challenge.ChallengeSummaryResponse;
 import com.example.dto.challenge.ChallengeDetailResponse;
 import com.example.dto.challenge.UpdateChallengeRequest;
+import com.example.dto.challenge.CompleteChallengeRequest;
 import com.example.entity.Challenge;
 import com.example.entity.Participation;
 import com.example.entity.User;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -235,5 +237,67 @@ public class ChallengeService {
         // 소프트 삭제
         challenge.setDeleted(true);
         challengeRepository.save(challenge);
+    }
+
+    @Transactional
+    public void completeChallenge(Long challengeId, CompleteChallengeRequest request, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        // 이미 완료된 챌린지인지 확인
+        if (challenge.isCompleted()) {
+            throw new IllegalStateException("이미 완료된 챌린지입니다.");
+        }
+
+        // 조기 완료인 경우 생성자/관리자 권한 확인
+        if (request.isEarlyCompletion()) {
+            if (!challenge.getUser().getId().equals(user.getId())) {
+                throw new IllegalStateException("챌린지 생성자만 조기 완료 처리할 수 있습니다.");
+            }
+        }
+
+        // 완료 처리
+        challenge.setCompleted(true);
+        challenge.setCompletionDate(LocalDate.now());
+        challengeRepository.save(challenge);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정에 실행
+    @Transactional
+    public void checkAndCompleteExpiredChallenges() {
+        LocalDate today = LocalDate.now();
+        List<Challenge> expiredChallenges = challengeRepository.findByEndDateBeforeAndIsCompletedFalse(today);
+
+        for (Challenge challenge : expiredChallenges) {
+            challenge.setCompleted(true);
+            challenge.setCompletionDate(today);
+            challengeRepository.save(challenge);
+            log.info("[챌린지 자동 완료] 챌린지 ID: {}", challenge.getChallengeID());
+        }
+    }
+
+    @Transactional
+    public void abandonChallenge(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        // 이미 완료된 챌린지인지 확인
+        if (challenge.isCompleted()) {
+            throw new IllegalStateException("이미 완료된 챌린지는 포기할 수 없습니다.");
+        }
+
+        // 참여 정보 찾기
+        Participation participation = participationRepository.findByUserAndChallenge(user, challenge)
+            .orElseThrow(() -> new IllegalStateException("참여 중인 챌린지가 아닙니다."));
+
+        // 이미 포기한 챌린지인지 확인
+        if (participation.isAbandoned()) {
+            throw new IllegalStateException("이미 포기한 챌린지입니다.");
+        }
+
+        // 포기 처리
+        participation.setAbandoned(true);
+        participation.setAbandonDate(LocalDate.now());
+        participationRepository.save(participation);
     }
 } 

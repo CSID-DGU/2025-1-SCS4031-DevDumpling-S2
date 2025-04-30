@@ -26,10 +26,17 @@ public class Participation {
     private Challenge challenge;
 
     private LocalDate joinDate;
-    private Float successRate;
+    @Column(nullable = false)
+    private float successRate;
     
-    @Column(name = "user_rank")
+    @Column(name = "user_rank", nullable = false)
     private Integer rank;
+
+    @Column(nullable = false)
+    private boolean isAbandoned = false;
+
+    @Column
+    private LocalDate abandonDate;
 
     private Double totalScore;  // 종합 점수 (0~100)
 }
