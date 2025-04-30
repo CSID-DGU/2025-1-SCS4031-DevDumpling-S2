@@ -34,10 +34,13 @@ public class Challenge {
     @Enumerated(EnumType.STRING)
     private ChallengeType type;
     
-    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ChallengeCategory category;
     
     private String inviteCode;
+
+    @Column(nullable = false)
+    private boolean isDeleted = false;
 
     public enum ChallengeType {
         PUBLIC, PRIVATE

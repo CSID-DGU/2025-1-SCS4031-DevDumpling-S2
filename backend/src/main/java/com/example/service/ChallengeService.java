@@ -6,6 +6,7 @@ import com.example.dto.challenge.JoinChallengeRequest;
 import com.example.dto.challenge.ParticipationResponse;
 import com.example.dto.challenge.ChallengeSummaryResponse;
 import com.example.dto.challenge.ChallengeDetailResponse;
+import com.example.dto.challenge.UpdateChallengeRequest;
 import com.example.entity.Challenge;
 import com.example.entity.Participation;
 import com.example.entity.User;
@@ -48,6 +49,18 @@ public class ChallengeService {
         }
 
         Challenge savedChallenge = challengeRepository.save(challenge);
+
+        // 생성자를 자동으로 참여자로 등록
+        Participation participation = Participation.builder()
+                .user(user)
+                .challenge(savedChallenge)
+                .joinDate(LocalDate.now())
+                .successRate(0.0f)
+                .rank(1)
+                .build();
+
+        participationRepository.save(participation);
+
         return ChallengeResponse.from(savedChallenge);
     }
 
@@ -159,5 +172,68 @@ public class ChallengeService {
             p.setRank(currentRank);
             previousSuccessRate = p.getSuccessRate();
         }
+    }
+
+    @Transactional
+    public ChallengeResponse updateChallenge(Long challengeId, UpdateChallengeRequest request, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        // 생성자 확인
+        if (!challenge.getUser().getId().equals(user.getId())) {
+            throw new IllegalStateException("챌린지 생성자만 수정할 수 있습니다.");
+        }
+
+        // 시작일 이전인지 확인
+        if (LocalDate.now().isAfter(challenge.getStartDate())) {
+            throw new IllegalStateException("이미 시작된 챌린지는 수정할 수 없습니다.");
+        }
+
+        // 수정 가능한 필드 업데이트
+        if (request.getTitle() != null) {
+            challenge.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            challenge.setDescription(request.getDescription());
+        }
+        if (request.getStartDate() != null) {
+            challenge.setStartDate(request.getStartDate());
+        }
+        if (request.getEndDate() != null) {
+            challenge.setEndDate(request.getEndDate());
+        }
+        if (request.getMaxParticipants() != null) {
+            challenge.setMaxParticipants(request.getMaxParticipants());
+        }
+        if (request.getType() != null) {
+            challenge.setType(request.getType());
+        }
+        if (request.getCategory() != null) {
+            challenge.setCategory(request.getCategory());
+        }
+
+        Challenge updatedChallenge = challengeRepository.save(challenge);
+        return ChallengeResponse.from(updatedChallenge);
+    }
+
+    @Transactional
+    public void deleteChallenge(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        // 생성자 확인
+        if (!challenge.getUser().getId().equals(user.getId())) {
+            throw new IllegalStateException("챌린지 생성자만 삭제할 수 있습니다.");
+        }
+
+        // 참여자 확인
+        long participantCount = participationRepository.countByChallenge(challenge);
+        if (participantCount > 0) {
+            throw new IllegalStateException("참여자가 있는 챌린지는 삭제할 수 없습니다.");
+        }
+
+        // 소프트 삭제
+        challenge.setDeleted(true);
+        challengeRepository.save(challenge);
     }
 } 
