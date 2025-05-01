@@ -53,9 +53,7 @@ export default function HomeScreen() {
       } catch (apiError) {
         console.error('마이데이터 API 호출 오류:', apiError);
 
-        // 개발 중에는 API 오류 시 항상 팝업 표시 (테스트용)
-        setShowMydataModal(true);
-        console.log('API 오류로 테스트용 팝업 표시');
+
       }
     } catch (error) {
       console.error('마이데이터 동의 확인 중 오류:', error);
@@ -111,7 +109,7 @@ export default function HomeScreen() {
 
       // 약관 동의 정보를 서버에 전송
       await axios.put(`${API_BASE_URL}/users/mydata-consent`, {
-        myDataConsent: true
+        consent: true
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });

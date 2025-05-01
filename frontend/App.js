@@ -20,6 +20,7 @@ import Loading from './src/components/common/Loading';
 import NewsList from './src/screens/NewsList';
 import Quiz from './src/screens/Quiz';
 import MyDataConsent from './src/screens/MyDataConsent';
+import NewsDetail from './src/screens/NewsDetail';
 
 
 const Stack = createNativeStackNavigator();
@@ -108,6 +109,11 @@ export default function App() {
           <Stack.Screen
             name="MyDataConsent"
             component={MyDataConsent}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="NewsDetail"
+            component={NewsDetail}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

@@ -77,7 +77,7 @@ export default function NewsListScreen({ navigation }) {
                         {articles.map((article, index) => (
                             <TouchableOpacity
                                 key={index}
-                                onPress={() => openArticleUrl(article.sourceUrl)}
+                                onPress={() => navigation.navigate('NewsDetail', { articleId: article.id })}
                                 className="bg-white rounded-3xl p-4 mb-4 shadow-sm"
                             >
                                 <Text className="text-xs text-gray-500 mb-1">{article.newspaperName || '오류'}</Text>
