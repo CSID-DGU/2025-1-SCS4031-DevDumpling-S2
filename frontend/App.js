@@ -9,6 +9,7 @@ import QuizBoard from './src/screens/Community/QuizBoard';
 import FreeBoard from './src/screens/Community/FreeBoard';
 import CommunitySearch from './src/screens/Community/CommunitySearch';
 import CommunityWrite from './src/screens/Community/CommunityWrite';
+import CommunityPosts from './src/screens/Community/CommunityPosts';
 import Login from './src/screens/Login';
 import Mypage from './src/screens/Mypage';
 import "./global.css";
@@ -89,6 +90,11 @@ export default function App() {
           <Stack.Screen
             name="CommunityWrite"
             component={CommunityWrite}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CommunityPosts"
+            component={CommunityPosts}
             options={{ headerShown: false }}
           />
           <Stack.Screen

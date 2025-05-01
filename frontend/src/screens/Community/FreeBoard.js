@@ -9,6 +9,7 @@ export default function FreeBoardScreen({ navigation }) {
             title: "아무도 안 물어봤지만 내 최애 재테크 방법",
             content: "난 솔직히 월세 받는 게 최고라고 생각함. 거기까지 가는 게 문제긴 한데...",
             author: "알락꼬리꼬마도요",
+            route: "CommunityPosts"
         },
         {
             title: "첫 월급으로 뭐 사야 현명한 소비일까?",
@@ -70,7 +71,7 @@ export default function FreeBoardScreen({ navigation }) {
                                 key={index}
                                 post={post}
                                 isLastItem={index === posts.length - 1}
-                                onPress={() => {/* TODO: 게시글 상세 페이지로 이동 */}}
+                                onPress={() => post.route && navigation.navigate(post.route)}
                             />
                         ))}
                     </View>
