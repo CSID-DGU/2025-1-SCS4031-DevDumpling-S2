@@ -28,8 +28,10 @@ export default function MypageScreen() {
 
     const handleLogout = async () => {
         try {
-            await AsyncStorage.removeItem('userData');
+            // 모든 사용자 관련 데이터 삭제
+            await AsyncStorage.multiRemove(['userData', 'userToken']);
             setUserData(null);
+            console.log('로그아웃 완료: 모든 사용자 데이터 삭제됨');
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }],
