@@ -123,7 +123,7 @@
 #### 2.2 본 프로젝트의 차별점
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/8563b1bd-dc16-4648-a0a8-0084cf2de549" alt="개발할만두_기존사례분석" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/6cf7b42f-5716-4420-a570-4048cb10e8bb" style="max-width: 100%; height: auto;">
 </div>
 
 ### 3. 주요 서비스 소개
