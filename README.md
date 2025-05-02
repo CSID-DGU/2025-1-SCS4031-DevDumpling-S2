@@ -136,8 +136,7 @@
 
 - 금융 기사 요약 및 금융 용어 설명
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/5da0fa9d-497a-4ad2-baf2-8ea4d20d9569
-" alt="AI 금융기사" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/5da0fa9d-497a-4ad2-baf2-8ea4d20d9569" alt="AI 금융기사" style="max-width: 100%; height: auto;">
 </div>
     
 - 금융 기사 기반 퀴즈
