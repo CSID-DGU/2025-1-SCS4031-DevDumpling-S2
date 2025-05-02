@@ -1,32 +1,18 @@
-<div align="center" style="background: linear-gradient(120deg, #ffffff 0%, #f8f9fa 100%); padding: 30px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); margin: 20px 0;">
-  <link href="https://webfontworld.github.io/bm/BMJua.css" rel="stylesheet">
-  <img src="https://capsule-render.vercel.app/api?type=transparent&height=150&text=FINEED&fontSize=120&fontColor=004225" />
-  <p style="margin-top: -35px; font-family: 'BM JUA', sans-serif; letter-spacing: 1px;">
-    <span style="color: #004225; font-size: 20px; text-shadow: 1px 1px 2px rgba(0, 66, 37, 0.1);">FIN</span><span style="color: #8B4513; font-size: 20px; text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.1);">ance</span>
-    <span style="color: #004225; font-size: 20px; text-shadow: 1px 1px 2px rgba(0, 66, 37, 0.1);">N</span><span style="color: #8B4513; font-size: 20px; text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.1);">eed</span>
-    <span style="color: #004225; font-size: 20px; text-shadow: 1px 1px 2px rgba(0, 66, 37, 0.1);">E</span><span style="color: #8B4513; font-size: 20px; text-shadow: 1px 1px 2px rgba(139, 69, 19, 0.1);">veryone</span>
-  </p>
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20Everyone&descSize=25&descAlignY=75&animation=fadeIn&descColor=8B4513" />
+  <p style="margin-top: -10px; color: #666666; font-size: 16px;"></p>
 </div>
 
-<div style="background: linear-gradient(120deg, #ffffff 0%, #f8f9fa 100%); padding: 25px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); margin: 20px 0;">
-  <h2 style="font-family: 'BM JUA', sans-serif; color: #004225; margin-bottom: 20px; text-align: center; text-shadow: 1px 1px 2px rgba(0, 66, 37, 0.1);">목차</h2>
-  <div style="font-family: 'BM JUA', sans-serif; line-height: 2; padding: 0 20px;">
-    <p><a href="#i-팀원-소개" style="color: #004225; text-decoration: none; transition: color 0.3s;">1. 팀원 소개</a></p>
-    <p><a href="#ii-프로젝트-수행-결과" style="color: #004225; text-decoration: none; transition: color 0.3s;">2. 프로젝트 소개개</a></p>
-    <p><a href="#iii-프로젝트-자료" style="color: #004225; text-decoration: none; transition: color 0.3s;">3. 주요 서비스 소개개</a></p>
-    <p><a href="#iv-개발-환경-및-기술-스택" style="color: #004225; text-decoration: none; transition: color 0.3s;">4. 개발 환경 및 기술 스택</a></p>
-    <p><a href="#v-프로젝트-구조" style="color: #004225; text-decoration: none; transition: color 0.3s;">5. 프로젝트 구조</a></p>
-    <p><a href="#vi-시작-가이드" style="color: #004225; text-decoration: none; transition: color 0.3s;">6. 시작 가이드</a></p>
-  </div>
-</div>
+## 목차
 
-## 2025-1 융합캡스톤디자인 S2 개발할만두
+1. [팀원 소개](#i-팀원-소개)<br>
+2. [프로젝트 소개](#ii-프로젝트-수행-결과)<br>
+3. [주요 서비스 소개](#iii-프로젝트-자료)<br>
+4. [개발 환경 및 기술 스택](#iv-개발-환경-및-기술-스택)<br>
+5. [프로젝트 구조](#v-프로젝트-구조)<br>
+6. [시작 가이드](#vi-시작-가이드)
 
-### 프로젝트명
-### 청년을 위한 금융 소셜 커뮤니티 앱 "FINEED"
-
-청년을 위한 금융 소셜 커뮤니티 앱
-
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0;">
 
 ## I. 팀원 소개
 
