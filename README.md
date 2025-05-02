@@ -3,6 +3,8 @@
   <p style="margin-top: -10px; color: #666666; font-size: 16px;"></p>
 </div>
 
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
+
 ## 목차
 
 1. [팀원 소개](#i-팀원-소개)  
@@ -13,6 +15,9 @@
    2-4. [개발 환경 및 기술 스택](#4-개발-환경-및-기술-스택)  
    2-5. [프로젝트 구조](#5-프로젝트-구조)  
 3. [시작 가이드](#6-시작-가이드)
+
+
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
 ## I. 팀원 소개
 
@@ -39,7 +44,7 @@
 |김희진<br>[@Kim-Hee-Jin](https://github.com/Kim-Hee-Jin) |신예성<br>[@shin-yeseong](https://github.com/shin-yeseong)|오연진<br>[@yonjinoh](https://github.com/yonjinoh)|현광수<br>[@ISEViper](https://github.com/ISEViper)|
 |프론트엔드 |프론트엔드 |백엔드, 배포 | 백엔드 |
 
-
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
 ## II. 프로젝트 소개
 
@@ -75,7 +80,7 @@
 
 본 프로젝트는 **금융 챌린지**, **금융 리뷰**, **금융 기사 요약 및 퀴즈**의 세 가지 주요 기능을 중심으로 설계되었으며, 이를 구현함에 있어 아래와 같은 기존 서비스 사례들을 기능별로 조사하고 분석하였음
 
-----
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
 #### 🔹 금융 챌린지 기능 관련
 
@@ -88,7 +93,7 @@
 기존 서비스는 포인트 중심의 단기 참여 유도에 그치는 경우가 많으며, **사용자 주도형 목표 설정 및 진행 관리 기능은 부족**.  
 본 프로젝트는 **사용자가 직접 금융 목표를 설정하고, 달성 과정을 관리하는 능동적 챌린지 시스템**을 지향.
 
----
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
 #### 🔹 금융 리뷰 기능 관련
 
@@ -101,7 +106,7 @@
 기존 플랫폼은 UI 중심의 상품 비교에 초점을 맞추고 있으며, **실사용자 리뷰 기반의 정보 제공 기능은 미흡**.  
 본 프로젝트는 **상품 실사용 경험을 바탕으로 한 리뷰 및 평점 제공 시스템**으로 **신뢰성 있는 상품 선택 환경**을 조성.
 
----
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
 #### 🔹 금융 기사 요약 및 퀴즈 기능 관련
 
@@ -130,8 +135,11 @@
     이미지 첨부 
 
 - 금융 기사 요약 및 금융 용어 설명
-    이미지 첨부 
-
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/5da0fa9d-497a-4ad2-baf2-8ea4d20d9569
+" alt="AI 금융기사" style="max-width: 100%; height: auto;">
+</div>
+    
 - 금융 기사 기반 퀴즈
     이미지 첨부
 
@@ -194,6 +202,7 @@
   <img src="https://github.com/user-attachments/assets/f351a249-77cb-4a8b-8506-ab7b74f503c6" alt="ERD" style="max-width: 100%; height: auto;">
 </div>
 
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
-
-## 6. 시작 가이드
+## III. 시작 가이드
+추후 작성성
