@@ -5,12 +5,14 @@
 
 ## 목차
 
-1. [팀원 소개](#i-팀원-소개)<br>
-2. [프로젝트 소개](#ii-프로젝트-수행-결과)<br>
-3. [주요 서비스 소개](#iii-프로젝트-자료)<br>
-4. [개발 환경 및 기술 스택](#iv-개발-환경-및-기술-스택)<br>
-5. [프로젝트 구조](#v-프로젝트-구조)<br>
-6. [시작 가이드](#vi-시작-가이드)
+1. [팀원 소개](#i-팀원-소개)
+2. [프로젝트 소개](#ii-프로젝트-소개)
+   2-1. [프로젝트 개요](#1-프로젝트-개요)
+   2-2. [선행 사례 및 관련 기술 분석](#2-선행-사례-및-관련-기술-분석)
+   2-3. [주요 서비스 소개](#3-주요-서비스-소개)
+   2-4. [개발 환경 및 기술 스택](#4-개발-환경-및-기술-스택)
+   2-5. [프로젝트 구조](#5-프로젝트-구조)
+3. [시작 가이드](#6-시작-가이드)
 
 <hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
@@ -42,7 +44,8 @@
 
 
 ## II. 프로젝트 소개
-### 1. 프로젝트 개요  
+
+### 1. 프로젝트 개요
 
 - 청년들의 재무 독립을 지원하는 금융 커뮤니티 플랫폼 개발
 
@@ -62,12 +65,13 @@
 
 #### 1.3 최종결과물  
 
-이미지 첨부
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/c3f4e384-6de5-4daa-81e5-01cf02ebdef7" alt="서비스소개" style="max-width: 100%; height: auto;">
+</div>
 
 ### 2. 선행 사례 및 관련 기술 분석
 
 #### 2.1 선행 사례 분석
-
 
 
 
@@ -142,14 +146,14 @@
 ### 5. 프로젝트 구조
 #### 5.1 시스템 구조
 <div align="center">
-  <img src="https://raw.githubusercontent.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/main/Docs/images/개발할만두_시스템구조도.png" alt="시스템 구조도" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/8563b1bd-dc16-4648-a0a8-0084cf2de549" alt="시스템구조도" style="max-width: 100%; height: auto;">
 </div>
 
 #### 5.2 ERD
 <div align="center">
-  <img src="https://raw.githubusercontent.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/main/Docs/images/개발할만두_논리적ERD.png" alt="개발할만두_논리적ERD" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/f351a249-77cb-4a8b-8506-ab7b74f503c6" alt="ERD" style="max-width: 100%; height: auto;">
 </div>
 
 
 
-### 6. 시작 가이드(사용 방법)
+## 6. 시작 가이드
