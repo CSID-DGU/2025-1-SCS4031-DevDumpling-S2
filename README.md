@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20Everyone&descSize=25&descAlignY=75&animation=twinkling&descColor=8B4513" />
+  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20for%20Everyone&descSize=25&descAlignY=75&animation=twinkling&descColor=8B4513" />
   <p style="margin-top: -10px; color: #666666; font-size: 16px;"></p>
 </div>
 
@@ -204,4 +204,4 @@
 
 
 ## III. 시작 가이드
-추후 작성성
+추후 작성
