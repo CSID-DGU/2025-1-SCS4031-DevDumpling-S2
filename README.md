@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20Everyone&descSize=25&descAlignY=75&animation=fadeIn&descColor=8B4513" />
+  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20Everyone&descSize=25&descAlignY=75&animation=twinkling&descColor=8B4513" />
   <p style="margin-top: -10px; color: #666666; font-size: 16px;"></p>
 </div>
 
@@ -12,7 +12,7 @@
 5. [프로젝트 구조](#v-프로젝트-구조)<br>
 6. [시작 가이드](#vi-시작-가이드)
 
-<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0;">
+<hr style="border: 0.1px solid #e0e0e0; margin: 5px 0; opacity: 0.3;">
 
 ## I. 팀원 소개
 
@@ -64,10 +64,18 @@
 
 이미지 첨부
 
-### 2. 선행 사례 및 관련 기술 분석석
+### 2. 선행 사례 및 관련 기술 분석
 
 #### 2.1 선행 사례 분석
+
+
+
+
 #### 2.2 본 프로젝트의 차별점
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/main/Docs/images/개발할만두_기존사례분석.png" alt="개발할만두_기존사례분석" style="max-width: 100%; height: auto;">
+</div>
 
 ### 3. 주요 서비스 소개
 
@@ -95,31 +103,41 @@
 
 ### 4. 개발 환경 및 기술 스택
 
-##### Language & Framework
-<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
-<img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
-<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white">
-<img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white">
+#### Language & Framework
+<div style="display: flex; gap: 5px; flex-wrap: wrap;">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+  <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
+  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white">
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white">
+</div>
 
-##### Database
-<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
+#### Database
+<div style="display: flex; gap: 5px; flex-wrap: wrap;">
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
+</div>
 
-##### DevOps
-<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white">
-<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-<img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+#### DevOps
+<div style="display: flex; gap: 5px; flex-wrap: wrap;">
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
+  <img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+</div>
 
-##### Development Tools
-<img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white">
-<img src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white">
-<img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white">
+#### Development Tools
+<div style="display: flex; gap: 5px; flex-wrap: wrap;">
+  <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white">
+  <img src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white">
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white">
+</div>
 
-##### Collaboration Tools
-<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
-<img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
-<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white">
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
-<img src="https://img.shields.io/badge/Canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white">
+#### Collaboration Tools
+<div style="display: flex; gap: 5px; flex-wrap: wrap;">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
+  <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
+  <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white">
+  <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
+  <img src="https://img.shields.io/badge/Canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white">
+</div>
 
 ### 5. 프로젝트 구조
 #### 5.1 시스템 구조
