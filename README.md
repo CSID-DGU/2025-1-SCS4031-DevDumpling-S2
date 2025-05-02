@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20Everyone&descSize=25&descAlignY=75&animation=twinkling&descColor=8B4513" />
+  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20for%20Everyone&descSize=25&descAlignY=75&animation=twinkling&descColor=8B4513" />
   <p style="margin-top: -10px; color: #666666; font-size: 16px;"></p>
 </div>
 
@@ -123,7 +123,7 @@
 #### 2.2 본 프로젝트의 차별점
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/main/Docs/images/개발할만두_기존사례분석.png" alt="개발할만두_기존사례분석" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/6cf7b42f-5716-4420-a570-4048cb10e8bb" style="max-width: 100%; height: auto;">
 </div>
 
 ### 3. 주요 서비스 소개
@@ -204,4 +204,4 @@
 
 
 ## III. 시작 가이드
-추후 작성성
+추후 작성
