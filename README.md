@@ -196,12 +196,6 @@
   <img src="https://github.com/user-attachments/assets/8563b1bd-dc16-4648-a0a8-0084cf2de549" alt="시스템구조도" style="max-width: 100%; height: auto;">
 </div>
 
-#### 5.2 ERD
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/f351a249-77cb-4a8b-8506-ab7b74f503c6" alt="ERD" style="max-width: 100%; height: auto;">
-</div>
-
-
 
 ## III. 시작 가이드
 추후 작성
