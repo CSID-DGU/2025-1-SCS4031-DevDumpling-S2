@@ -39,7 +39,7 @@
 
 
 ### Team
-|<img src="https://avatars.githubusercontent.com/u/143872214?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/144208568?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/144078388?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/144078389?v=4" width="150" height="150"/>|
+|<img src="https://github.com/Kim-Hee-Jin.png" width="150" height="150"/>|<img src="https://github.com/shin-yeseong.png" width="150" height="150"/>|<img src="https://github.com/yonjinoh.png" width="150" height="150"/>|<img src="https://github.com/ISEViper.png" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|
 |김희진<br>[@Kim-Hee-Jin](https://github.com/Kim-Hee-Jin) |신예성<br>[@shin-yeseong](https://github.com/shin-yeseong)|오연진<br>[@yonjinoh](https://github.com/yonjinoh)|현광수<br>[@ISEViper](https://github.com/ISEViper)|
 |프론트엔드 |프론트엔드 |백엔드, 배포 | 백엔드 |
