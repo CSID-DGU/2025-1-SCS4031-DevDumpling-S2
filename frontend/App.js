@@ -22,7 +22,8 @@ import NewsList from './src/screens/NewsList';
 import Quiz from './src/screens/Quiz';
 import MyDataConsent from './src/screens/MyDataConsent';
 import NewsDetail from './src/screens/NewsDetail';
-
+import BankSelection from './src/screens/BankSelection';
+import MyDataComplete from './src/screens/MyDataComplete';
 
 const Stack = createNativeStackNavigator();
 
@@ -120,6 +121,16 @@ export default function App() {
           <Stack.Screen
             name="NewsDetail"
             component={NewsDetail}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="BankSelection"
+            component={BankSelection}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MyDataComplete"
+            component={MyDataComplete}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

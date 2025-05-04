@@ -7,6 +7,7 @@ import {
     FlatList,
     ActivityIndicator,
     Image,
+    ScrollView,
 } from 'react-native';
 import Header from '../components/layout/Header';
 import { useNavigation } from '@react-navigation/native';
@@ -21,6 +22,7 @@ const UserAccountList = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('bank');
     const [selectedAccounts, setSelectedAccounts] = useState({});
+    const [imageErrors, setImageErrors] = useState({}); // 이미지 에러 상태를 객체로 관리
 
     useEffect(() => {
         fetchData();
@@ -47,6 +49,8 @@ const UserAccountList = () => {
             const data = Array.isArray(response.data)
                 ? response.data
                 : response.data.data || [];
+
+            console.log('받아온 데이터 확인:', JSON.stringify(data, null, 2));
             setAccounts(data);
         } catch (err) {
             console.error('fetchData error:', err.code, err.config?.url, err.message);
@@ -107,6 +111,13 @@ const UserAccountList = () => {
         console.log('선택된 항목:', selectedItems);
     };
 
+    const handleImageError = (id) => {
+        setImageErrors(prev => ({
+            ...prev,
+            [id]: true
+        }));
+    };
+
     const renderAccountItem = ({ item }) => {
         // 각 탭별로 다른 id 필드를 사용
         let id;
@@ -119,6 +130,7 @@ const UserAccountList = () => {
         }
 
         const isSelected = selectedAccounts[id] || false;
+        const hasImageError = imageErrors[id] || false;
 
         // 항목 이름 가져오기 (각 탭별로 다른 필드 사용)
         const getItemName = () => {
@@ -141,10 +153,22 @@ const UserAccountList = () => {
             return '';
         };
 
-        // 항목 첫 글자 가져오기 (아이콘 표시용)
+        // 항목 첫 글자 가져오기 (이미지가 없을 경우 대체용)
         const getItemInitial = () => {
             const name = getItemName();
             return name ? name[0] : '-';
+        };
+
+        // 이미지 URL 가져오기
+        const getImageUrl = () => {
+            // bankImage 필드에서 이미지 URL을 가져옵니다
+            const url = item.bankImage || '';
+            console.log(`계정 ID: ${id}, 이미지 URL:`, url);
+            // URL이 상대 경로인 경우 기본 URL을 붙여줍니다
+            if (url && !url.startsWith('http')) {
+                return `${API_BASE_URL}${url}`;
+            }
+            return url;
         };
 
         return (
@@ -152,10 +176,23 @@ const UserAccountList = () => {
                 className="flex-row items-center p-3"
                 onPress={() => toggleSelection(id)}
             >
-                {/* 은행/금융기관 아이콘 - 빈 원으로 표시 */}
-                <View className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center">
-                    <Text className="text-gray-500 font-bold text-sm">{getItemInitial()}</Text>
-                </View>
+                {/* 은행/금융기관 아이콘 - 이미지가 있으면 이미지, 없으면 빈 원에 첫 글자 */}
+                {getImageUrl() && !hasImageError ? (
+                    <Image
+                        source={{ uri: getImageUrl() }}
+                        className="w-8 h-8 rounded-full"
+                        style={{ backgroundColor: '#f0f0f0', borderWidth: 1, borderColor: '#ddd' }}
+                        resizeMode="cover"
+                        onError={() => {
+                            console.log(`이미지 로드 오류: ${getImageUrl()}`);
+                            handleImageError(id);
+                        }}
+                    />
+                ) : (
+                    <View className="w-8 h-8 rounded-full bg-gray-200 items-center justify-center">
+                        <Text className="text-gray-500 font-bold text-sm">{getItemInitial()}</Text>
+                    </View>
+                )}
 
                 {/* 은행/금융기관명 및 부가 정보 */}
                 <View className="flex-1 ml-3">
