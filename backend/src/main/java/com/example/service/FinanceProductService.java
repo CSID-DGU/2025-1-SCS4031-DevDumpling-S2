@@ -565,26 +565,33 @@ public class FinanceProductService {
         return products.get(random.nextInt(products.size())).getFinPrdtNm();
     }
 
-    @Transactional(readOnly = true)
     public String getBankImage(String bankName) {
-        try {
-            FinanceCompany bank = companyRepository.findByKorCoNm(bankName)
-                    .orElseThrow(() -> new RuntimeException("Bank not found: " + bankName));
-            
-            // 은행 이미지가 null이거나 비어있는 경우 기본 이미지 반환
-            if (bank.getBankImage() == null || bank.getBankImage().isEmpty()) {
-                return "https://your-bucket.s3.your-region.amazonaws.com/bank-logos/default.png";
-            }
-            return bank.getBankImage();
-        } catch (Exception e) {
-            log.error("Error getting bank image for: " + bankName, e);
-            // 기본 이미지 URL 반환
-            if (bankName.equals("ETF")) {
-                return "https://your-bucket.s3.your-region.amazonaws.com/investment-logos/etf.png";
-            } else if (bankName.equals("주식")) {
-                return "https://your-bucket.s3.your-region.amazonaws.com/investment-logos/stock.png";
-            }
-            return "https://your-bucket.s3.your-region.amazonaws.com/bank-logos/default.png";
+        String s3BaseUrl = "https://myapp-logos.s3.amazonaws.com/bank-logos/";
+        String fileName = mapBankNameToFileName(bankName);
+        return s3BaseUrl + fileName + ".png";
+    }
+
+    private String mapBankNameToFileName(String bankName) {
+        switch (bankName) {
+            case "우리은행": return "wooribank";
+            case "한국스탠다드차타드은행": return "standardcharteredbank";
+            case "아이엠뱅크": return "iambank";
+            case "부산은행": return "busanbank";
+            case "광주은행": return "kjbank";
+            case "제주은행": return "jejubank";
+            case "전북은행": return "jbbank";
+            case "경남은행": return "knbank";
+            case "중소기업은행": return "ibkbank";
+            case "한국산업은행": return "kdbbank";
+            case "국민은행": return "kbbank";
+            case "신한은행": return "shinhanbank";
+            case "농협은행주식회사": return "nonghyupbank";
+            case "하나은행": return "hanabank";
+            case "주식회사 케이뱅크": return "kbank";
+            case "수협은행": return "suhyupbank";
+            case "주식회사 카카오뱅크": return "kakaobank";
+            case "토스뱅크 주식회사": return "tossbank";
+            default: return "default";
         }
     }
 
