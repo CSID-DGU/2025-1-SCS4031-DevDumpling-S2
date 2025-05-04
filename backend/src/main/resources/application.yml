@@ -22,6 +22,8 @@ spring:
     open-in-view: false
   transaction:
     default-timeout: 30s
+  profiles:
+    active: aws
 
 # AWS S3 설정
 cloud:
@@ -51,6 +53,8 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate: DEBUG
     org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   file:
@@ -80,6 +84,7 @@ gemini:
   api:
     key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
 
+# FSS API 설정
 fss:
   api:
     key: a20ba820e53668dd39b7f7f91bf451aa
@@ -88,6 +93,11 @@ fss:
 krx:
   api:
     key: 90D107060B904DB9AA0A0F8E03F594A97136BFB9
+
+# 공공데이터포털 API
+dgk:
+  api:
+    key: TNlmYfsf9AvoMTQxqjTwxSp1UPi1mENgDSkAJ0aKGWyV6DGZ8WEaWfhK6yaHByWwfY5bArd%2BMcQxndKCk3arPg%3D%3D
 
 ---
 # AWS 환경 설정
