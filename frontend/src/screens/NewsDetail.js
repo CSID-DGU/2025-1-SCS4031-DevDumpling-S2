@@ -16,7 +16,7 @@ export default function NewsDetailScreen() {
     const navigation = useNavigation()
     const { articleId } = params
     const [article, setArticle] = useState(null)
-    const [tab, setTab] = useState('summary')  // 'summary' | 'explanation' | 'keywords'
+    const [tab, setTab] = useState('summary')
     const [isBookmarked, setIsBookmarked] = useState(false)
     const { showLoading, hideLoading } = useLoading()
     const { width } = useWindowDimensions()
