@@ -18,6 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com.example.entity.challenge.ChallengeCategory;
+import com.example.dto.challenge.CategoryInfoResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -174,5 +178,18 @@ public class ChallengeController {
             log.error("[챌린지 포기] 오류 발생: {}", e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryInfoResponse>> getCategories() {
+        String s3BaseUrl = "https://myapp-logos.s3.amazonaws.com/ChallengeIcons/";
+        List<CategoryInfoResponse> categories =
+            List.of(ChallengeCategory.values()).stream()
+                .map(cat -> new CategoryInfoResponse(
+                    cat.getDisplayName(),
+                    s3BaseUrl + cat.getDisplayName() + ".png"
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(categories);
     }
 } 
