@@ -300,4 +300,13 @@ public class ChallengeService {
         participation.setAbandonDate(LocalDate.now());
         participationRepository.save(participation);
     }
+
+    public Challenge getChallengeById(Long challengeId) {
+        return challengeRepository.findById(challengeId)
+            .orElse(null);
+    }
+
+    public List<Participation> getParticipants(Challenge challenge) {
+        return participationRepository.findByChallenge(challenge);
+    }
 } 
