@@ -283,4 +283,49 @@ public class DummyAccountController {
     public static class SelectedInvestmentsRequest {
         private List<String> selectedAccountNumbers;
     }
+
+    @PostMapping("/card/consent/add")
+    public ResponseEntity<Void> addCardConsent(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody CardConsentRequest request
+    ) {
+        log.info("[더미계좌] 카드 동의 추가 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 카드 수: {}", user.getId(), request.getSelectedCardIds().size());
+            dummyAccountService.processSelectedCards(user.getId(), request.getSelectedCardIds());
+            log.info("[더미계좌] 카드 동의 추가 완료");
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("[더미계좌] 카드 동의 추가 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @PostMapping("/card/consent/revoke")
+    public ResponseEntity<Void> revokeCardConsent(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedCardsRequest request
+    ) {
+        log.info("[더미계좌] 카드 동의 철회 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 카드 수: {}", user.getId(), request.getSelectedCardIds().size());
+            
+            for (String cardId : request.getSelectedCardIds()) {
+                dummyAccountService.revokeCardConsent(user.getId(), cardId);
+            }
+            
+            log.info("[더미계좌] 카드 동의 철회 완료");
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("[더미계좌] 카드 동의 철회 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @Data
+    public static class SelectedCardsRequest {
+        private List<String> selectedCardIds;
+    }
 } 
