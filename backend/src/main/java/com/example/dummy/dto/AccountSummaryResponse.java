@@ -2,7 +2,7 @@ package com.example.dummy.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-
+import lombok.Setter;
 import java.util.List;
 
 @Getter
@@ -31,6 +31,7 @@ public class AccountSummaryResponse {
         private String cardName;
         private String cardType;
         private Long monthlyBillAmount;
+        private String cardImage;
     }
 
     @Getter
@@ -61,5 +62,11 @@ public class AccountSummaryResponse {
         private Long loanAmount;
         private String bankName;
         private String bankImage;
+    }
+
+    @Getter
+    @Setter
+    public static class CardConsentRequest {
+        private List<String> selectedCardIds;
     }
 } 

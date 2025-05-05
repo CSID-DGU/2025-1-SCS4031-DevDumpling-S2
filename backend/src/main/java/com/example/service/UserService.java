@@ -6,7 +6,11 @@ import com.example.dummy.service.InvestmentDummyDataService;
 import com.example.dummy.service.InsuranceDummyDataService;
 import com.example.dummy.service.LoanDummyDataService;
 import com.example.entity.User;
+import com.example.entity.CheckCard;
+import com.example.entity.CreditCard;
 import com.example.repository.UserRepository;
+import com.example.repository.CheckCardRepository;
+import com.example.repository.CreditCardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.Random;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +36,8 @@ public class UserService implements UserDetailsService {
     private final InsuranceDummyDataService insuranceDummyDataService;
     private final LoanDummyDataService loanDummyDataService;
     private final FinanceProductService financeProductService;
+    private final CheckCardRepository checkCardRepository;
+    private final CreditCardRepository creditCardRepository;
     private final Random random = new Random();
     private final EtfService etfService;
     private final StockService stockService;
@@ -99,10 +106,20 @@ public class UserService implements UserDetailsService {
             bankDummyDataService.createBankBalance(userId);
         }
 
-        // 카드 2~3개 생성
-        int cardCount = 2 + random.nextInt(2);
-        for (int i = 0; i < cardCount; i++) {
-            cardDummyDataService.createCardSpent(userId);
+        // 체크카드 1~5개 생성
+        List<CheckCard> checkCards = checkCardRepository.findAll();
+        int checkCardCount = Math.min(1 + random.nextInt(5), checkCards.size());
+        for (int i = 0; i < checkCardCount; i++) {
+            CheckCard selectedCard = checkCards.get(random.nextInt(checkCards.size()));
+            cardDummyDataService.createCardSpent(userId, selectedCard);
+        }
+
+        // 신용카드 0~2개 생성
+        List<CreditCard> creditCards = creditCardRepository.findAll();
+        int creditCardCount = Math.min(random.nextInt(3), creditCards.size());
+        for (int i = 0; i < creditCardCount; i++) {
+            CreditCard selectedCard = creditCards.get(random.nextInt(creditCards.size()));
+            cardDummyDataService.createCardSpent(userId, selectedCard);
         }
 
         // 투자 계좌 1~2개 생성
