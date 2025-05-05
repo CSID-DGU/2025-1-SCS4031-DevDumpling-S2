@@ -54,6 +54,7 @@ public class DummyAccountService {
                         .cardName(card.getCardName())
                         .cardType(card.getCardType())
                         .monthlyBillAmount(card.getMonthlyBillAmount())
+                        .cardImage("https://myapp-logos.s3.ap-northeast-2.amazonaws.com/bank-logos/default.png")
                         .build())
                 .collect(Collectors.toList());
     }

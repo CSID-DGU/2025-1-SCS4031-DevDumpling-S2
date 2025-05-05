@@ -31,6 +31,7 @@ public class AccountSummaryResponse {
         private String cardName;
         private String cardType;
         private Long monthlyBillAmount;
+        private String cardImage;
     }
 
     @Getter

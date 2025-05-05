@@ -19,15 +19,9 @@ public class DummyDataGenerator {
     };
 
     // 카드 관련 상수
-    public static final String[] CARD_COMPANIES = {
-        "삼성카드", "신한카드", "KB국민카드", "하나카드", "우리카드",
-        "롯데카드", "BC카드", "아멕스", "비자", "마스터"
-    };
-
-    public static final String[] CARD_TYPES = {
-        "신용카드", "체크카드", "선불카드", "기프트카드", "법인카드",
-        "해외전용카드", "비즈니스카드", "학생카드", "청소년카드", "가족카드"
-    };
+    // public static final String[] CARD_TYPES = {
+    //     "체크카드", "신용카드"
+    // };
 
     public static final String[] MERCHANT_NAMES = {
         "스타벅스", "이마트", "홈플러스", "롯데마트", "쿠팡",
