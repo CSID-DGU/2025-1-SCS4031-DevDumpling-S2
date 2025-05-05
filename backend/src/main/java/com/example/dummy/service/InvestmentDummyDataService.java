@@ -34,6 +34,10 @@ public class InvestmentDummyDataService {
     private static final String[] DUMMY_STOCK_NAMES = {
         "삼성전자", "NAVER", "카카오", "현대차", "LG화학"
     };
+    private static final String[] SECURITIES_COMPANIES = {
+        "유안타증권", "미래에셋증권", "한국투자증권", "교보증권", "LS증권", "대신증권", "한화투자증권", "신한금융투자", "유진투자증권", "(NH투자증권)모바일증권 나무", "IBK투자증권",
+        "KB증권", "삼성증권", "NH투자증권", "키움증권", "SK증권", "(대신증권)크레온", "하나금융투자", "DB금융투자", "메리츠종합금융증권", "하이투자증권", "다올투자증권"
+    };
 
     @Transactional
     public void generateDummyData(Long userId) {
@@ -52,6 +56,9 @@ public class InvestmentDummyDataService {
         boolean isEtf = random.nextBoolean();
         String today = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
         
+        // 증권사 이름을 랜덤하게 선택
+        String accountName = SECURITIES_COMPANIES[random.nextInt(SECURITIES_COMPANIES.length)];
+
         String productName;
         if (isEtf) {
             List<Etf> etfs = etfService.getEtfsByDate(today);
@@ -74,7 +81,7 @@ public class InvestmentDummyDataService {
         InvestmentRecord record = InvestmentRecord.builder()
                 .userId(userId)
                 .accountNumber(accountNumber)
-                .accountName(productName)
+                .accountName(accountName)
                 .investmentType(isEtf ? "ETF" : "주식")
                 .openDate(openDate.toLocalDate())
                 .balance(0L)
