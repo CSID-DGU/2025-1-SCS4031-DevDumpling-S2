@@ -85,9 +85,17 @@ public class ChallengeController {
 
     @GetMapping("/{challengeId}")
     public ResponseEntity<ChallengeDetailResponse> getChallengeDetail(
-            @PathVariable Long challengeId) {
+            @PathVariable Long challengeId,
+            Authentication authentication) {
         try {
+            User user = userService.findByKakaoId(authentication.getName());
             ChallengeDetailResponse response = challengeService.getChallengeDetail(challengeId);
+            
+            if (response == null) {
+                log.error("[챌린지 상세 조회] 응답 생성 실패: {}", challengeId);
+                return ResponseEntity.internalServerError().build();
+            }
+            
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             log.error("[챌린지 상세 조회] 챌린지를 찾을 수 없음: {}", e.getMessage());

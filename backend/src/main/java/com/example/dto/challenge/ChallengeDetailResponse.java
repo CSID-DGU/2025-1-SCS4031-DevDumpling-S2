@@ -22,6 +22,7 @@ public class ChallengeDetailResponse {
     private Double participationRate;
     private String creatorNickname;
     private List<ParticipantInfo> participants;
+    private List<ChallengeRankingResponse> rankings;
 
     @Data
     public static class ParticipantInfo {
@@ -72,6 +73,13 @@ public class ChallengeDetailResponse {
         response.setParticipants(
             participants.stream()
                 .map(ParticipantInfo::from)
+                .collect(Collectors.toList())
+        );
+        
+        // 상세 순위 정보 설정
+        response.setRankings(
+            participants.stream()
+                .map(ChallengeRankingResponse::from)
                 .collect(Collectors.toList())
         );
 

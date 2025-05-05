@@ -33,10 +33,17 @@ public class Participation {
     private Integer rank;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isAbandoned = false;
 
     @Column
     private LocalDate abandonDate;
 
     private Double totalScore;  // 종합 점수 (0~100)
+
+    @Column(columnDefinition = "TEXT")
+    private String rankDetails;
+    
+    @Column(columnDefinition = "TEXT")
+    private String metrics;
 }
