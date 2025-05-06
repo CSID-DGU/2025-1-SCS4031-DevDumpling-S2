@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useLoading } from '../hooks/useLoading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/layout/Header';
+import DumplingLoading from '../components/common/DumplingLoading';
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
@@ -13,6 +14,7 @@ export default function Quiz() {
     // 상태 관리
     const [quiz, setQuiz] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [normalLoading, setNormalLoading] = useState(false); // 일반 로딩 상태
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [isCorrect, setIsCorrect] = useState(false);
@@ -53,22 +55,20 @@ export default function Quiz() {
         }
     };
 
-    // 랜덤 퀴즈 가져오기 (사용자 유형에 맞는)
     const fetchRandomQuiz = async () => {
         try {
             setLoading(true);
 
-            // AsyncStorage에서 사용자 정보 가져오기
             const userDataStr = await AsyncStorage.getItem('userData');
             const userData = JSON.parse(userDataStr);
 
-            // 사용자 유형 가져오기
             const userType = userData.userType;
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
             const response = await axios.get(`${API_BASE_URL}/api/quizzes/user-type/${userType}`);
 
             if (response.data && response.data.length > 0) {
-                // 랜덤으로 퀴즈 선택
                 const randomIndex = Math.floor(Math.random() * response.data.length);
                 setQuiz(response.data[randomIndex]);
             } else {
@@ -93,6 +93,9 @@ export default function Quiz() {
                 // AsyncStorage에서 토큰 가져오기
                 const token = await AsyncStorage.getItem('userToken');
 
+                // 정답 확인 - 클라이언트에서 먼저 확인
+                const isAnswerCorrect = quiz.answer === answer;
+
                 // 선택한 답을 서버에 제출
                 const response = await axios.post(
                     `${API_BASE_URL}/api/quiz-results/${quiz.id}/submit`,
@@ -108,8 +111,13 @@ export default function Quiz() {
                     }
                 );
 
-                setIsCorrect(response.data.isCorrect);
+                // 서버 응답 대신 클라이언트에서 계산한 결과 사용
+                setIsCorrect(isAnswerCorrect);
                 setSubmitted(true);
+
+                console.log('quiz.answer:', quiz.answer);
+                console.log('user selected:', answer);
+                console.log('isCorrect:', isAnswerCorrect);
             } catch (error) {
                 console.error('답변 제출에 실패했습니다:', error);
                 if (error.response) {
@@ -124,14 +132,40 @@ export default function Quiz() {
     };
 
     // 다음 퀴즈 가져오기
-    const loadNextQuiz = () => {
+    const loadNextQuiz = async () => {
         setSelectedAnswer(null);
         setSubmitted(false);
         setIsCorrect(false);
-        fetchRandomQuiz();
+        setNormalLoading(true); // 일반 로딩 상태 활성화
+
+        try {
+            // AsyncStorage에서 사용자 정보 가져오기
+            const userDataStr = await AsyncStorage.getItem('userData');
+            const userData = JSON.parse(userDataStr);
+
+            // 사용자 유형 가져오기
+            const userType = userData.userType;
+
+            // 인위적인 지연 추가 (1초)
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const response = await axios.get(`${API_BASE_URL}/api/quizzes/user-type/${userType}`);
+
+            if (response.data && response.data.length > 0) {
+                // 랜덤으로 퀴즈 선택
+                const randomIndex = Math.floor(Math.random() * response.data.length);
+                setQuiz(response.data[randomIndex]);
+            } else {
+                Alert.alert('알림', '사용 가능한 퀴즈가 없습니다.');
+            }
+        } catch (error) {
+            console.error('퀴즈를 불러오는데 실패했습니다:', error);
+            Alert.alert('오류', '퀴즈를 불러오는데 실패했습니다.');
+        } finally {
+            setNormalLoading(false);
+        }
     };
 
-    // 메인 화면으로 돌아가기
     const goToHome = () => {
         navigation.navigate('Home');
     };
@@ -151,27 +185,99 @@ export default function Quiz() {
                 <Text className="text-sm text-gray-500 text-center mt-4">
                     이 문제를 맞추면 포인트를 받아요!
                 </Text>
+
             </View>
 
             <View className="space-y-3 mx-6">
-                {options.map((option, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        className={`mt-5 bg-white py-4 px-6 rounded-[30px] text-xl ${selectedAnswer === String(index + 1) ? 'bg-Fineed-green' : ''}`}
-                        onPress={() => !submitted && submitAnswer(String(index + 1))}
-                        disabled={submitted}
-                    >
-                        <View className="flex-row">
-                            <Text className={`text-base font-medium ${selectedAnswer === String(index + 1) ? 'text-white' : 'text-black'}`}>
-                                {`${index + 1}. `}
-                            </Text>
-                            <Text className={`text-base font-medium flex-1 ${selectedAnswer === String(index + 1) ? 'text-white' : 'text-black'}`}>
-                                {option}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                ))}
+                {options.map((option, index) => {
+                    const optionNumber = String(index + 1);
+                    const correctAnswer = quiz.answer || "1"; // 정답 필드명은 answer
+                    const isCorrectOption = correctAnswer === optionNumber; // 변수명 변경
+                    const isSelected = selectedAnswer === optionNumber;
+
+                    // 디버깅용 출력
+                    console.log(`옵션 ${optionNumber}: 정답=${isCorrectOption}, 선택됨=${isSelected}, 제출됨=${submitted}`);
+                    if (isCorrectOption) {
+                        console.log(`정답은 옵션 ${optionNumber}입니다. 전체 정답 여부: ${isCorrect}`);
+                    }
+
+                    let backgroundColor = "white";
+                    let textColor = "black";
+
+                    if (submitted) {
+                        // 이미 제출된 상태
+                        if (isCorrectOption) {
+                            // 정답은 무조건 초록색
+                            backgroundColor = "#014029"; // Fineed-green
+                        } else if (isSelected) {
+                            // 선택한 오답은 회색
+                            backgroundColor = "#6B7280"; // gray-500
+                            textColor = "white";
+                        }
+                    } else if (isSelected) {
+                        // 선택했지만 아직 제출 전 - 초록색
+                        backgroundColor = "#014029"; // Fineed-green
+                    }
+
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            style={{
+                                marginTop: 20,
+                                padding: 16,
+                                borderRadius: 30,
+                                backgroundColor: backgroundColor
+                            }}
+                            onPress={() => !submitted && submitAnswer(optionNumber)}
+                            disabled={submitted}
+                        >
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{
+                                    fontWeight: '500',
+                                    color: (isSelected && !isCorrectOption && submitted) ? "white" : "black"
+                                }}>
+                                    {`${index + 1}. `}
+                                </Text>
+                                <Text style={{
+                                    fontWeight: '500',
+                                    flex: 1,
+                                    color: (isSelected && !isCorrectOption && submitted) ? "white" : "black"
+                                }}>
+                                    {option}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    );
+                })}
             </View>
+
+            {/* 정답/오답 피드백 */}
+            {submitted && (
+                <View className="bg-gray-200 rounded-[15px] p-6 my-4 mx-6">
+                    <View className="items-center justify-center mb-2">
+                        <Text className="text-xl font-bold text-center">
+                            {isCorrect ? '정답입니다!' : '오답입니다...'}
+                        </Text>
+                        <Text className="text-center text-gray-600 mt-2">
+                            {quiz.explanation || ""}
+                        </Text>
+                    </View>
+
+                    <View className="items-center justify-center mt-4">
+                        <TouchableOpacity
+                            className="bg-Fineed-green py-3 px-6 rounded-[15px] items-center justify-center w-full"
+                            onPress={loadNextQuiz}
+                            disabled={normalLoading}
+                        >
+                            {normalLoading ? (
+                                <ActivityIndicator color="white" size="small" />
+                            ) : (
+                                <Text className="text-white font-medium">다음 문제</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
 
             <TouchableOpacity
                 className="py-2 items-center justify-center mt-6"
@@ -182,42 +288,14 @@ export default function Quiz() {
         </>
     );
 
-    // 퀴즈 결과 피드백 UI 렌더링
-    const renderFeedback = () => (
-        <View className="p-6 bg-gray-200 rounded-[15px] my-4">
-            <Text className="text-xl font-bold text-center mb-2">
-                {isCorrect ? '정답입니다!' : '오답입니다...'}
-            </Text>
 
-            <Text className="text-base text-center mb-4">
-                {quiz.explanation}
-            </Text>
-
-            <TouchableOpacity
-                className="bg-Fineed-green py-3 rounded-[15px] items-center justify-center mt-2"
-                onPress={loadNextQuiz}
-            >
-                <Text className="text-white font-medium">다음 문제</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                className="py-2 items-center justify-center mt-2"
-                onPress={goToHome}
-            >
-                <Text className="text-gray-600">메인으로 돌아가기</Text>
-            </TouchableOpacity>
-        </View>
-    );
-
-    // 로딩 UI 렌더링
     const renderLoading = () => (
-        <View className="flex-1 justify-center items-center p-10">
-            <ActivityIndicator size="large" color="#014029" />
-            <Text className="mt-4 text-gray-600">퀴즈를 불러오는 중...</Text>
-        </View>
+        <DumplingLoading
+            message="오늘의 기사는 확인해보셨나요? 함께 퀴즈 풀러 가봐요!"
+            onLoadingComplete={() => { }}
+        />
     );
 
-    // 에러 UI 렌더링
     const renderError = () => (
         <View className="flex-1 justify-center items-center p-10">
             <Text className="text-gray-600">퀴즈를 불러올 수 없습니다.</Text>
@@ -230,21 +308,43 @@ export default function Quiz() {
         </View>
     );
 
-    // 메인 컨텐츠 결정
     const renderContent = () => {
         if (loading) return renderLoading();
         if (!quiz) return renderError();
-        return submitted ? renderFeedback() : renderQuiz();
+        return renderQuiz();
     };
 
     return (
         <>
             <Header />
-            <SafeAreaView className="flex-1 bg-Fineed-background">
-                <ScrollView className="flex-1 px-4">
-                    {renderContent()}
-                </ScrollView>
-            </SafeAreaView>
+            {loading ? (
+                <DumplingLoading
+                    message={["오늘의 기사는 확인해보셨나요?", "함께 퀴즈 풀러 가봐요!"]}
+                    onLoadingComplete={() => { }}
+                />
+            ) : (
+                <SafeAreaView className="flex-1 bg-Fineed-background">
+                    <ScrollView className="flex-1 px-4">
+                        {!quiz ? renderError() : renderQuiz()}
+                    </ScrollView>
+                </SafeAreaView>
+            )}
+
+            {normalLoading && (
+                <View style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    zIndex: 1000
+                }}>
+                    <ActivityIndicator size="large" color="#014029" />
+                </View>
+            )}
         </>
     );
 }

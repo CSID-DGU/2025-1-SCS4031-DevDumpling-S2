@@ -56,7 +56,7 @@ const Header = () => {
                 <View className="flex-row items-center">
 
 
-                    <TouchableOpacity onPress={() => navigation.navigate('BankSelection')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Mypage')}>
                         <Text
                             style={{ fontFamily: 'Pretendard-Regular' }}
                             className="text-[14px] leading-[22px] text-black"
