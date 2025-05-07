@@ -2,10 +2,7 @@ package com.example.dummy.service;
 
 import com.example.dummy.dto.AccountSummaryResponse.*;
 import com.example.dummy.repository.*;
-import com.example.dummy.entity.BankTransaction;
-import com.example.dummy.entity.BankBalance;
-import com.example.dummy.entity.LoanAccount;
-import com.example.dummy.entity.InvestmentRecord;
+import com.example.dummy.entity.*;
 import com.example.dummy.util.DummyDataGenerator;
 import com.example.service.FinanceProductService;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +21,14 @@ public class DummyAccountService {
     private final BankBalanceRepository bankBalanceRepository;
     private final BankTransactionRepository bankTransactionRepository;
     private final CardSpentRepository cardSpentRepository;
+    private final CardTransactionRepository cardTransactionRepository;
     private final InvestmentRecordRepository investmentRecordRepository;
     private final InsuranceAccountRepository insuranceAccountRepository;
     private final LoanAccountRepository loanAccountRepository;
     private final BankDummyDataService bankDummyDataService;
     private final LoanDummyDataService loanDummyDataService;
     private final InvestmentDummyDataService investmentDummyDataService;
+    private final CardDummyDataService cardDummyDataService;
     private final FinanceProductService financeProductService;
     private final Random random = new Random();
 
@@ -54,6 +53,7 @@ public class DummyAccountService {
                         .cardName(card.getCardName())
                         .cardType(card.getCardType())
                         .monthlyBillAmount(card.getMonthlyBillAmount())
+                        .cardImage("https://myapp-logos.s3.ap-northeast-2.amazonaws.com/bank-logos/default.png")
                         .build())
                 .collect(Collectors.toList());
     }
@@ -157,5 +157,41 @@ public class DummyAccountService {
     @Transactional
     public void revokeLoanConsent(Long userId, String loanId) {
         loanDummyDataService.revokeLoanConsent(userId, loanId);
+    }
+
+    @Transactional
+    public void processSelectedCards(Long userId, List<String> selectedCardIds) {
+        // 선택된 각 카드에 대해 거래내역 생성
+        for (String cardId : selectedCardIds) {
+            // 카드 존재 여부 확인
+            CardSpent cardSpent = cardSpentRepository.findByCardId(cardId)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 카드입니다: " + cardId));
+
+            // 카드 활성화
+            cardSpent.setIsActive(true);
+            cardSpentRepository.save(cardSpent);
+
+            // 활성화된 카드에 대해 거래내역 생성
+            cardDummyDataService.generateCardTransactions(userId, cardId);
+        }
+    }
+
+    @Transactional
+    public void revokeCardConsent(Long userId, String cardId) {
+        // 카드 존재 여부 확인
+        CardSpent cardSpent = cardSpentRepository.findByCardId(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카드를 찾을 수 없습니다."));
+
+        // 이미 동의하지 않은 카드인 경우
+        if (!cardSpent.getIsActive()) {
+            throw new IllegalArgumentException("이미 동의가 철회된 카드입니다.");
+        }
+
+        // 카드 비활성화
+        cardSpent.setIsActive(false);
+        cardSpentRepository.save(cardSpent);
+
+        // 해당 카드의 거래내역 삭제
+        cardTransactionRepository.deleteByCardId(cardId);
     }
 } 

@@ -71,7 +71,6 @@ const DumplingLoading = ({ message, onLoadingComplete }) => {
 
     return (
         <>
-            <Header />
             <SafeAreaView style={styles.screen}>
                 <View style={styles.center}>
                     <View style={styles.container}>
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
     steamSegmentMedium: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.7)', marginBottom: 3 },
     steamSegmentSmall: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.6)' },
     bubble: { backgroundColor: 'white', padding: 16, borderRadius: 24, marginHorizontal: 24, marginTop: 24, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 },
-    bubbleText: { textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: '#2A9D8F' },
+    bubbleText: { textAlign: 'center', fontSize: 18, fontWeight: 'bold', color: '#014029' },
 });
 
 export default DumplingLoading;

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -53,8 +54,21 @@ public class CardSpent {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private boolean isActive;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        isActive = false; // 기본값 설정
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 } 

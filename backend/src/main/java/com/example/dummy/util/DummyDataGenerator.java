@@ -7,17 +7,6 @@ import java.util.Random;
 public class DummyDataGenerator {
     private static final Random random = new Random();
 
-    // 은행 관련 상수
-    public static final String[] BANK_NAMES = {
-        "KB국민은행", "신한은행", "하나은행", "우리은행", "SC제일은행",
-        "NH농협은행", "IBK기업은행", "카카오뱅크", "토스뱅크", "케이뱅크"
-    };
-
-    public static final String[] ACCOUNT_TYPES = {
-        "저축예금", "정기예금", "자유적금", "정기적금", "입출금통장",
-        "CMA", "MMDA", "펀드", "연금저축", "주택청약"
-    };
-
     public static final String[] TRANSACTION_TYPES = {
         "입금", "출금", "이체", "자동이체", "급여",
         "이자", "환전", "해외송금", "대출", "상환"
@@ -30,41 +19,14 @@ public class DummyDataGenerator {
     };
 
     // 카드 관련 상수
-    public static final String[] CARD_COMPANIES = {
-        "삼성카드", "신한카드", "KB국민카드", "하나카드", "우리카드",
-        "롯데카드", "BC카드", "아멕스", "비자", "마스터"
-    };
-
-    public static final String[] CARD_TYPES = {
-        "신용카드", "체크카드", "선불카드", "기프트카드", "법인카드",
-        "해외전용카드", "비즈니스카드", "학생카드", "청소년카드", "가족카드"
-    };
+    // public static final String[] CARD_TYPES = {
+    //     "체크카드", "신용카드"
+    // };
 
     public static final String[] MERCHANT_NAMES = {
         "스타벅스", "이마트", "홈플러스", "롯데마트", "쿠팡",
         "배달의민족", "요기요", "네이버", "카카오", "우아한형제들",
         "CGV", "롯데시네마", "메가박스", "교보문고", "영풍문고"
-    };
-
-    // 투자 관련 상수
-    public static final String[] INVESTMENT_TYPES = {
-        "주식", "펀드", "채권", "ETF", "파생상품"
-    };
-
-    public static final String[] STOCK_NAMES = {
-        "삼성전자", "SK하이닉스", "현대차", "LG전자", "네이버",
-        "카카오", "셀트리온", "삼성바이오로직스", "현대모비스", "POSCO"
-    };
-
-    // 대출 관련 상수
-    public static final String[] LOAN_PRODUCTS = {
-        "신용대출", "담보대출", "전세자금대출", "주택담보대출", "마이너스통장",
-        "카드론", "학자금대출", "사업자대출", "개인사업자대출", "소상공인대출"
-    };
-
-    public static final String[] LOAN_PURPOSES = {
-        "생활자금", "주택구입", "전세보증금", "사업자금", "학자금",
-        "결혼자금", "여행자금", "자동차구입", "의료비", "기타"
     };
 
     public static final String[] LOAN_STATUS = {
@@ -94,9 +56,7 @@ public class DummyDataGenerator {
         "정상", "해지", "만기", "실효", "효력정지"
     };
     
-    
     // 거래내역 생성에 필요한 메서드
-    // 난수 생성 메서드
     public static LocalDateTime getRandomDate(LocalDateTime startDate, LocalDateTime endDate) {
         long startMillis = startDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli();
         long endMillis = endDate.toInstant(java.time.ZoneOffset.UTC).toEpochMilli();
@@ -112,10 +72,17 @@ public class DummyDataGenerator {
         return min + (long) (random.nextDouble() * (max - min));
     }
 
-    // 계좌번호 생성
+    // 은행 계좌번호 생성
     public static String generateAccountNumber() {
         return String.format("%03d-%02d-%06d",
             random.nextInt(1000),
+            random.nextInt(100),
+            random.nextInt(1000000));
+    }
+
+    // 투자 계좌번호 생성
+    public static String generateInvestmentAccountNumber() {
+        return String.format("INV-%02d-%06d",
             random.nextInt(100),
             random.nextInt(1000000));
     }
@@ -129,7 +96,7 @@ public class DummyDataGenerator {
             random.nextInt(10000));
     }
 
-    // 대출번호 생성
+    // 대출번호 생성 - FSS API 형식에 맞게 수정
     public static String generateLoanNumber() {
         return String.format("LOAN-%02d-%06d",
             random.nextInt(100),
@@ -159,6 +126,11 @@ public class DummyDataGenerator {
         }
     }
 
+    // 투자 거래금액 생성
+    public static long generateInvestmentAmount(double price, int quantity) {
+        return (long) (price * quantity);
+    }
+
     // 거래내용 생성
     public static String generateTransactionDescription(String transactionType, String merchantName) {
         switch (transactionType) {
@@ -175,6 +147,11 @@ public class DummyDataGenerator {
             default:
                 return merchantName + " " + transactionType;
         }
+    }
+
+    // 투자 거래내용 생성
+    public static String generateInvestmentDescription(String transactionType, String stockName) {
+        return stockName + " " + transactionType;
     }
 
     // 랜덤 퍼센트 생성 (min ~ max)
