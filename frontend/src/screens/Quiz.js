@@ -70,7 +70,11 @@ export default function Quiz() {
 
             if (response.data && response.data.length > 0) {
                 const randomIndex = Math.floor(Math.random() * response.data.length);
-                setQuiz(response.data[randomIndex]);
+                const quizData = response.data[randomIndex];
+                console.log('백엔드에서 받은 퀴즈 데이터:', quizData);
+                console.log('정답 데이터(answer):', quizData.answer);
+                console.log('정답 데이터 타입:', typeof quizData.answer);
+                setQuiz(quizData);
             } else {
                 Alert.alert('알림', '사용 가능한 퀴즈가 없습니다.');
             }
@@ -93,8 +97,19 @@ export default function Quiz() {
                 // AsyncStorage에서 토큰 가져오기
                 const token = await AsyncStorage.getItem('userToken');
 
-                // 정답 확인 - 클라이언트에서 먼저 확인
-                const isAnswerCorrect = quiz.answer === answer;
+                // 정답 확인 - 백엔드에서 정답은 옵션 번호로 시작하는 텍스트 형태 ("2.특정 종목이나...")
+                // 시작 문자를 확인해서 몇 번 선택지인지 파악
+                
+                // 옵션 번호 추출 ("2.특정 종목..." 에서 2 배출)
+                const correctOptionNumber = quiz.answer && quiz.answer.match(/^(\d+)\./) ? quiz.answer.match(/^(\d+)\./)[1] : null;
+                
+                // 사용자가 선택한 옵션 번호와 정답 옵션 번호 비교
+                const isAnswerCorrect = correctOptionNumber && answer === correctOptionNumber;
+                
+                console.log('정답에서 추출한 옵션 번호:', correctOptionNumber);
+                console.log('사용자가 선택한 옵션 번호:', answer);
+                console.log('백엔드 정답 전체:', quiz.answer);
+                console.log('정답 여부:', isAnswerCorrect);
 
                 // 선택한 답을 서버에 제출
                 const response = await axios.post(
@@ -190,12 +205,32 @@ export default function Quiz() {
 
             <View className="space-y-3 mx-6">
                 {options.map((option, index) => {
-                    const optionNumber = String(index + 1);
-                    const correctAnswer = quiz.answer || "1"; // 정답 필드명은 answer
-                    const isCorrectOption = correctAnswer === optionNumber; // 변수명 변경
-                    const isSelected = selectedAnswer === optionNumber;
+                    // index는 0부터 시작하지만 UI에는 1부터 표시
+                    const optionIndex = index; // 0, 1, 2, 3
+                    const optionNumber = index + 1; // 1, 2, 3, 4 (화면에 표시되는 번호)
+                    const optionKey = `option${optionNumber}`; // "option1", "option2", "option3", "option4"
+                    
+                    // 백엔드 정답이 어떤 형식인지 출력해서 확인
+                    console.log(`백엔드 정답: ${quiz.answer}, 타입: ${typeof quiz.answer}`);
+                    
+                    // 정답 비교 - 여러 가능한 형식 고려
+                    let isCorrectOption = false;
+                    
+                    // 1부터 시작하는 숫자 문자열 ("1", "2", "3", "4")
+                    if (String(quiz.answer) === String(optionNumber)) {
+                        isCorrectOption = true;
+                    }
+                    // 0부터 시작하는 숫자 문자열 ("0", "1", "2", "3")
+                    else if (String(quiz.answer) === String(optionIndex)) {
+                        isCorrectOption = true;
+                    }
+                    // 옵션 키 이름 ("option1", "option2", "option3", "option4")
+                    else if (quiz.answer === optionKey) {
+                        isCorrectOption = true;
+                    }
+                    
+                    const isSelected = selectedAnswer === String(optionNumber);
 
-                    // 디버깅용 출력
                     console.log(`옵션 ${optionNumber}: 정답=${isCorrectOption}, 선택됨=${isSelected}, 제출됨=${submitted}`);
                     if (isCorrectOption) {
                         console.log(`정답은 옵션 ${optionNumber}입니다. 전체 정답 여부: ${isCorrect}`);
@@ -207,29 +242,27 @@ export default function Quiz() {
                     if (submitted) {
                         // 이미 제출된 상태
                         if (isCorrectOption) {
-                            // 정답은 무조건 초록색
-                            backgroundColor = "#014029"; // Fineed-green
+                            backgroundColor = "#014029";
                         } else if (isSelected) {
-                            // 선택한 오답은 회색
-                            backgroundColor = "#6B7280"; // gray-500
+                            backgroundColor = "#6B7280";
                             textColor = "white";
                         }
                     } else if (isSelected) {
-                        // 선택했지만 아직 제출 전 - 초록색
-                        backgroundColor = "#014029"; // Fineed-green
+                        backgroundColor = "#014029";
                     }
 
                     return (
                         <TouchableOpacity
-                            key={index}
-                            style={{
-                                marginTop: 20,
-                                padding: 16,
-                                borderRadius: 30,
-                                backgroundColor: backgroundColor
-                            }}
-                            onPress={() => !submitted && submitAnswer(optionNumber)}
-                            disabled={submitted}
+                        key={index}
+                        style={{
+                            marginTop: 20,
+                            padding: 16,
+                            borderRadius: 30,
+                            backgroundColor: backgroundColor
+                        }}
+                        // 정답 제출 시 index + 1 (UI에 표시된 번호)를 문자열로 보냄
+                        onPress={() => !submitted && submitAnswer(String(optionNumber))}
+                        disabled={submitted}
                         >
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={{
