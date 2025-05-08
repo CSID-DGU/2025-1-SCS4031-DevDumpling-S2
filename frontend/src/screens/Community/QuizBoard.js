@@ -1,25 +1,27 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
+import { fetchBoardPosts } from './CommunityApi';
 
 export default function QuizBoardScreen({ navigation }) {
-    const posts = [
-        {
-            title: "오늘 퀴즈",
-            content: "재밌당",
-            author: "퀴즈마스터",
-        },
-        {
-            title: "퀴즈 한 달 기록 달성",
-            content: "꾸준히 한 게 보이니까 뿌듯허네",
-            author: "퀴즈조아",
-        },
-        // ... 추가 게시글들
-    ];
-
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
+
+    useEffect(() => {
+        fetchBoardPosts('QUIZ')
+            .then(data => {
+                console.log('퀴즈 게시판 API 응답:', data);
+                setPosts(data.content);
+            })
+            .catch(err => {
+                setPosts([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
 
     return (
         <>
@@ -40,14 +42,21 @@ export default function QuizBoardScreen({ navigation }) {
                         paddingBottom: 24
                     }}>
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
-                        {posts.map((post, index) => (
-                            <BoardPostItem
-                                key={index}
-                                post={post}
-                                isLastItem={index === posts.length - 1}
-                                onPress={() => {/* TODO: 게시글 상세 페이지로 이동 */}}
-                            />
-                        ))}
+                        {loading ? (
+                            <ActivityIndicator />
+                        ) : (
+                            posts.map((post, index) => (
+                                <BoardPostItem
+                                    key={post.id}
+                                    post={post}
+                                    isLastItem={index === posts.length - 1}
+                                    onPress={() => navigation.navigate('CommunityPosts', {
+                                        boardType: 'QUIZ',
+                                        postId: post.id
+                                    })}
+                                />
+                            ))
+                        )}
                     </View>
                 </ScrollView>
 
