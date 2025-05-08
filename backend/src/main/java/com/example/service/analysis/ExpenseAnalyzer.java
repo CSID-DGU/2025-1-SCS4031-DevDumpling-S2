@@ -129,7 +129,7 @@ public class ExpenseAnalyzer implements ChallengeAnalyzer {
     
     private void updateParticipantRankings(
         List<Participation> participants,
-        Map<RankingType, List<Participation>> rankings,
+        Map<? extends Enum<?>, List<Participation>> rankings,
         List<Participation> overallRankings
     ) {
         // 각 참여자의 순위 정보 업데이트
@@ -137,15 +137,15 @@ public class ExpenseAnalyzer implements ChallengeAnalyzer {
             Long userId = participation.getUser().getId();
             
             // 각 순위 유형별 순위 저장
-            Map<RankingType, Integer> rankMap = new EnumMap<>(RankingType.class);
-            for (Map.Entry<RankingType, List<Participation>> entry : rankings.entrySet()) {
+            Map<String, Integer> rankMap = new HashMap<>();
+            for (Map.Entry<? extends Enum<?>, List<Participation>> entry : rankings.entrySet()) {
                 int rank = entry.getValue().indexOf(participation) + 1;
-                rankMap.put(entry.getKey(), rank);
+                rankMap.put(entry.getKey().name(), rank);
             }
             
             // 전체 순위 저장
             int overallRank = overallRankings.indexOf(participation) + 1;
-            rankMap.put(RankingType.OVERALL, overallRank);
+            rankMap.put("OVERALL", overallRank);
             
             // 순위 정보를 JSON으로 변환하여 저장
             participation.setRankDetails(convertRankMapToJson(rankMap));
@@ -154,11 +154,11 @@ public class ExpenseAnalyzer implements ChallengeAnalyzer {
         }
     }
     
-    private String convertRankMapToJson(Map<RankingType, Integer> rankMap) {
+    private String convertRankMapToJson(Map<String, Integer> rankMap) {
         // 순위 정보를 JSON 문자열로 변환
         StringBuilder json = new StringBuilder("{");
         rankMap.forEach((type, rank) -> {
-            json.append("\"").append(type.name()).append("\":").append(rank).append(",");
+            json.append("\"").append(type).append("\":").append(rank).append(",");
         });
         json.setLength(json.length() - 1); // 마지막 콤마 제거
         json.append("}");
@@ -579,10 +579,290 @@ public class ExpenseAnalyzer implements ChallengeAnalyzer {
 
     private void analyzeCafeSnack(Challenge challenge) {
         log.info("[카페/간식 분석] 시작 - 챌린지 ID: {}", challenge.getChallengeID());
-        // TODO: 카페/간식 분석 로직 구현
-        // 1. 카페 방문 빈도 분석
-        // 2. 선호 메뉴 패턴 분석
-        // 3. 시간대별 소비 패턴 분석
+        
+        List<Participation> participants = participationRepository.findByChallenge(challenge);
+        LocalDate startDate = challenge.getStartDate();
+        LocalDate endDate = challenge.getEndDate();
+        
+        // 챌린지 목표 유형 파싱
+        CafeSnackChallengeGoal goal = parseCafeSnackGoal(challenge.getDescription());
+        
+        Map<Long, CafeSnackAnalysisResult> analysisResults = new HashMap<>();
+        
+        // 각 참여자의 카페/간식 분석 수행
+        for (Participation participation : participants) {
+            Long userId = participation.getUser().getId();
+            
+            // 1. 기간 내 총 카페/간식 지출 금액 분석
+            List<CardTransaction> cafeSnackTransactions = cardTransactionRepository
+                .findByUserIdAndTransactionDateBetween(userId, startDate, endDate)
+                .stream()
+                .filter(transaction -> isCafeSnackTransaction(transaction))
+                .collect(Collectors.toList());
+            
+            // 2. 카페/간식 분야별 지출 금액 분석
+            Map<String, Long> categoryExpenses = analyzeCafeSnackCategories(cafeSnackTransactions);
+            
+            // 3. 목표 달성률 계산
+            double achievementRate = calculateCafeSnackAchievementRate(cafeSnackTransactions, goal);
+            
+            // 4. 추가 지표 계산
+            Map<String, Double> additionalMetrics = calculateCafeSnackMetrics(cafeSnackTransactions, goal);
+            
+            // 분석 결과 저장
+            CafeSnackAnalysisResult result = new CafeSnackAnalysisResult(
+                categoryExpenses,
+                achievementRate,
+                additionalMetrics
+            );
+            analysisResults.put(userId, result);
+        }
+        
+        // 각 목표별 순위 계산
+        Map<CafeSnackRankingType, List<Participation>> rankings = new EnumMap<>(CafeSnackRankingType.class);
+        rankings.put(CafeSnackRankingType.ACHIEVEMENT, calculateCafeSnackAchievementRankings(participants, analysisResults));
+        rankings.put(CafeSnackRankingType.DAILY_LIMIT, calculateDailyLimitRankings(participants, analysisResults));
+        rankings.put(CafeSnackRankingType.WEEKLY_LIMIT, calculateWeeklyLimitRankings(participants, analysisResults));
+        rankings.put(CafeSnackRankingType.MONTHLY_LIMIT, calculateMonthlyLimitRankings(participants, analysisResults));
+        
+        // 전체 순위 계산
+        List<Participation> overallRankings = calculateCafeSnackOverallRankings(participants, rankings, goal);
+        
+        // 참여자들의 순위 업데이트
+        updateParticipantRankings(participants, rankings, overallRankings);
+    }
+
+    private boolean isCafeSnackTransaction(CardTransaction transaction) {
+        String category = transaction.getCategory().toLowerCase();
+        String storeName = transaction.getStoreName().toLowerCase();
+        return category.contains("카페") || 
+               category.contains("간식") || 
+               category.contains("디저트") ||
+               storeName.contains("스타벅스") ||
+               storeName.contains("투썸") ||
+               storeName.contains("할리스") ||
+               storeName.contains("이디야") ||
+               storeName.contains("커피빈") ||
+               storeName.contains("파리바게트") ||
+               storeName.contains("뚜레쥬르") ||
+               storeName.contains("던킨") ||
+               storeName.contains("크리스피");
+    }
+
+    private Map<String, Long> analyzeCafeSnackCategories(List<CardTransaction> transactions) {
+        Map<String, Long> categoryExpenses = new HashMap<>();
+        
+        for (CardTransaction transaction : transactions) {
+            String category = determineCafeSnackCategory(transaction);
+            categoryExpenses.merge(category, transaction.getAmount(), Long::sum);
+        }
+        
+        return categoryExpenses;
+    }
+
+    private String determineCafeSnackCategory(CardTransaction transaction) {
+        String storeName = transaction.getStoreName().toLowerCase();
+        String category = transaction.getCategory().toLowerCase();
+        
+        if (storeName.contains("스타벅스") || 
+            storeName.contains("투썸") || 
+            storeName.contains("할리스") || 
+            storeName.contains("이디야") || 
+            storeName.contains("커피빈")) {
+            return "카페";
+        } else if (storeName.contains("파리바게트") || 
+                   storeName.contains("뚜레쥬르") || 
+                   storeName.contains("던킨") || 
+                   storeName.contains("크리스피")) {
+            return "베이커리";
+        } else if (category.contains("간식") || category.contains("디저트")) {
+            return "간식";
+        } else {
+            return "기타";
+        }
+    }
+
+    private double calculateCafeSnackAchievementRate(List<CardTransaction> transactions, CafeSnackChallengeGoal goal) {
+        switch (goal.getType()) {
+            case DAILY_LIMIT:
+                return calculateDailyLimitAchievement(transactions, goal.getDailyLimit());
+            case WEEKLY_LIMIT:
+                return calculateWeeklyLimitAchievement(transactions, goal.getWeeklyLimit());
+            case MONTHLY_LIMIT:
+                return calculateMonthlyLimitAchievement(transactions, goal.getMonthlyLimit());
+            default:
+                return 0.0;
+        }
+    }
+
+    private Map<String, Double> calculateCafeSnackMetrics(List<CardTransaction> transactions, CafeSnackChallengeGoal goal) {
+        Map<String, Double> metrics = new HashMap<>();
+        
+        // 기본 지표
+        metrics.put("totalExpense", calculateTotalExpense(transactions));
+        metrics.put("averageDailyExpense", calculateAverageDailyExpense(transactions));
+        metrics.put("visitFrequency", calculateVisitFrequency(transactions));
+        
+        return metrics;
+    }
+
+    private double calculateVisitFrequency(List<CardTransaction> transactions) {
+        long totalDays = java.time.temporal.ChronoUnit.DAYS.between(
+            transactions.get(0).getTransactionDate(), 
+            transactions.get(transactions.size() - 1).getTransactionDate()
+        ) + 1;
+        return (double) transactions.size() / totalDays;
+    }
+
+    private CafeSnackChallengeGoal parseCafeSnackGoal(String description) {
+        CafeSnackChallengeGoal goal = new CafeSnackChallengeGoal();
+        
+        if (description.contains("일일")) {
+            goal.setType(GoalType.DAILY_LIMIT);
+            goal.setDailyLimit(extractAmount(description));
+        } else if (description.contains("주간")) {
+            goal.setType(GoalType.WEEKLY_LIMIT);
+            goal.setWeeklyLimit(extractAmount(description));
+        } else if (description.contains("월간")) {
+            goal.setType(GoalType.MONTHLY_LIMIT);
+            goal.setMonthlyLimit(extractAmount(description));
+        } else {
+            // 기본값: 일일 1만원 제한
+            goal.setType(GoalType.DAILY_LIMIT);
+            goal.setDailyLimit(10000L);
+        }
+        
+        return goal;
+    }
+
+    private List<Participation> calculateCafeSnackAchievementRankings(
+        List<Participation> participants,
+        Map<Long, CafeSnackAnalysisResult> analysisResults
+    ) {
+        return participants.stream()
+            .sorted((p1, p2) -> Double.compare(
+                analysisResults.get(p2.getUser().getId()).achievementRate,
+                analysisResults.get(p1.getUser().getId()).achievementRate
+            ))
+            .collect(Collectors.toList());
+    }
+
+    private List<Participation> calculateDailyLimitRankings(
+        List<Participation> participants,
+        Map<Long, CafeSnackAnalysisResult> analysisResults
+    ) {
+        return participants.stream()
+            .sorted((p1, p2) -> Double.compare(
+                analysisResults.get(p1.getUser().getId()).additionalMetrics.get("averageDailyExpense"),
+                analysisResults.get(p2.getUser().getId()).additionalMetrics.get("averageDailyExpense")
+            ))
+            .collect(Collectors.toList());
+    }
+
+    private List<Participation> calculateWeeklyLimitRankings(
+        List<Participation> participants,
+        Map<Long, CafeSnackAnalysisResult> analysisResults
+    ) {
+        return participants.stream()
+            .sorted((p1, p2) -> Double.compare(
+                analysisResults.get(p1.getUser().getId()).additionalMetrics.get("totalExpense") / 4, // 주간 평균
+                analysisResults.get(p2.getUser().getId()).additionalMetrics.get("totalExpense") / 4
+            ))
+            .collect(Collectors.toList());
+    }
+
+    private List<Participation> calculateMonthlyLimitRankings(
+        List<Participation> participants,
+        Map<Long, CafeSnackAnalysisResult> analysisResults
+    ) {
+        return participants.stream()
+            .sorted((p1, p2) -> Double.compare(
+                analysisResults.get(p1.getUser().getId()).additionalMetrics.get("totalExpense"),
+                analysisResults.get(p2.getUser().getId()).additionalMetrics.get("totalExpense")
+            ))
+            .collect(Collectors.toList());
+    }
+
+    private List<Participation> calculateCafeSnackOverallRankings(
+        List<Participation> participants,
+        Map<CafeSnackRankingType, List<Participation>> rankings,
+        CafeSnackChallengeGoal goal
+    ) {
+        // 각 순위 유형별 가중치 설정
+        Map<CafeSnackRankingType, Double> weights = new EnumMap<>(CafeSnackRankingType.class);
+        
+        // 목표 유형에 따른 가중치 설정
+        switch (goal.getType()) {
+            case DAILY_LIMIT:
+                weights.put(CafeSnackRankingType.ACHIEVEMENT, 0.6);  // 목표 달성률
+                weights.put(CafeSnackRankingType.DAILY_LIMIT, 0.4);  // 일일 제한
+                break;
+            case WEEKLY_LIMIT:
+                weights.put(CafeSnackRankingType.ACHIEVEMENT, 0.6);  // 목표 달성률
+                weights.put(CafeSnackRankingType.WEEKLY_LIMIT, 0.4); // 주간 제한
+                break;
+            case MONTHLY_LIMIT:
+                weights.put(CafeSnackRankingType.ACHIEVEMENT, 0.6);  // 목표 달성률
+                weights.put(CafeSnackRankingType.MONTHLY_LIMIT, 0.4); // 월간 제한
+                break;
+            default:
+                weights.put(CafeSnackRankingType.ACHIEVEMENT, 1.0);  // 기본값
+                break;
+        }
+        
+        // 각 참여자의 종합 점수 계산
+        Map<Long, Double> scores = new HashMap<>();
+        for (Participation participant : participants) {
+            double score = 0.0;
+            for (Map.Entry<CafeSnackRankingType, List<Participation>> entry : rankings.entrySet()) {
+                int rank = entry.getValue().indexOf(participant) + 1;
+                double weight = weights.getOrDefault(entry.getKey(), 0.0);
+                double rankScore = (double) (participants.size() - rank + 1) / participants.size();
+                score += rankScore * weight;
+            }
+            scores.put(participant.getUser().getId(), score);
+        }
+        
+        // 점수 기준으로 정렬
+        return participants.stream()
+            .sorted((p1, p2) -> Double.compare(
+                scores.get(p2.getUser().getId()),
+                scores.get(p1.getUser().getId())
+            ))
+            .collect(Collectors.toList());
+    }
+
+    @Data
+    private static class CafeSnackAnalysisResult {
+        private final Map<String, Long> categoryExpenses;
+        private final double achievementRate;
+        private final Map<String, Double> additionalMetrics;
+
+        public CafeSnackAnalysisResult(
+            Map<String, Long> categoryExpenses,
+            double achievementRate,
+            Map<String, Double> additionalMetrics
+        ) {
+            this.categoryExpenses = categoryExpenses;
+            this.achievementRate = achievementRate;
+            this.additionalMetrics = additionalMetrics;
+        }
+    }
+
+    @Data
+    private static class CafeSnackChallengeGoal {
+        private GoalType type;
+        private Long dailyLimit;
+        private Long weeklyLimit;
+        private Long monthlyLimit;
+    }
+
+    private enum CafeSnackRankingType {
+        ACHIEVEMENT,    // 목표 달성률 순위
+        DAILY_LIMIT,    // 일일 제한 순위
+        WEEKLY_LIMIT,   // 주간 제한 순위
+        MONTHLY_LIMIT,  // 월간 제한 순위
+        OVERALL         // 전체 순위
     }
 
     private void analyzeTravel(Challenge challenge) {

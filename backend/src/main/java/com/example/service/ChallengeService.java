@@ -8,6 +8,7 @@ import com.example.dto.challenge.ChallengeSummaryResponse;
 import com.example.dto.challenge.ChallengeDetailResponse;
 import com.example.dto.challenge.UpdateChallengeRequest;
 import com.example.dto.challenge.CompleteChallengeRequest;
+import com.example.dto.challenge.ChallengeRankingResponse;
 import com.example.entity.Challenge;
 import com.example.entity.Participation;
 import com.example.entity.User;
@@ -137,9 +138,14 @@ public class ChallengeService {
         });
     }
 
-    public ChallengeDetailResponse getChallengeDetail(Long challengeId) {
+    public ChallengeDetailResponse getChallengeDetail(Long challengeId, User user) {
         Challenge challenge = challengeRepository.findById(challengeId)
             .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        // 비공개 챌린지인 경우 참여자만 접근 가능
+        if (!challenge.isPublic() && (user == null || !participationRepository.existsByUserAndChallenge(user, challenge))) {
+            throw new IllegalStateException("비공개 챌린지는 참여자만 접근할 수 있습니다.");
+        }
 
         List<Participation> participants = participationRepository.findByChallenge(challenge);
         
@@ -147,6 +153,21 @@ public class ChallengeService {
         calculateRanks(participants);
         
         return ChallengeDetailResponse.from(challenge, participants);
+    }
+
+    public ChallengeRankingResponse getUserRanking(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+
+        Participation participation = participationRepository.findByUserAndChallenge(user, challenge)
+            .orElseThrow(() -> new IllegalArgumentException("해당 챌린지에 참여하고 있지 않습니다."));
+
+        // 참여자들의 랭크를 다시 계산
+        List<Participation> participants = participationRepository.findByChallenge(challenge);
+        calculateRanks(participants);
+
+        // 업데이트된 랭크 정보로 응답 생성
+        return ChallengeRankingResponse.from(participation);
     }
 
     /**

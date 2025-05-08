@@ -52,6 +52,10 @@ public class Challenge {
         PUBLIC, PRIVATE
     }
 
+    public boolean isPublic() {
+        return type == ChallengeType.PUBLIC;
+    }
+
     public enum ChallengeCategory {
         NEW_DISCOUNT(AnalysisType.DISCOUNT_ANALYSIS),
         FOOD(AnalysisType.EXPENSE_ANALYSIS),

@@ -8,6 +8,7 @@ import com.example.dto.challenge.ChallengeSummaryResponse;
 import com.example.dto.challenge.ChallengeDetailResponse;
 import com.example.dto.challenge.UpdateChallengeRequest;
 import com.example.dto.challenge.CompleteChallengeRequest;
+import com.example.dto.challenge.ChallengeRankingResponse;
 import com.example.entity.User;
 import com.example.service.ChallengeService;
 import com.example.service.UserService;
@@ -88,8 +89,9 @@ public class ChallengeController {
             @PathVariable Long challengeId,
             Authentication authentication) {
         try {
-            User user = userService.findByKakaoId(authentication.getName());
-            ChallengeDetailResponse response = challengeService.getChallengeDetail(challengeId);
+            User user = authentication != null ? 
+                userService.findByKakaoId(authentication.getName()) : null;
+            ChallengeDetailResponse response = challengeService.getChallengeDetail(challengeId, user);
             
             if (response == null) {
                 log.error("[챌린지 상세 조회] 응답 생성 실패: {}", challengeId);
@@ -100,8 +102,28 @@ public class ChallengeController {
         } catch (IllegalArgumentException e) {
             log.error("[챌린지 상세 조회] 챌린지를 찾을 수 없음: {}", e.getMessage());
             return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            log.error("[챌린지 상세 조회] 접근 권한 없음: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             log.error("[챌린지 상세 조회] 오류 발생: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/{challengeId}/personalrank")
+    public ResponseEntity<ChallengeRankingResponse> getMyRanking(
+            @PathVariable Long challengeId,
+            Authentication authentication) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            ChallengeRankingResponse response = challengeService.getUserRanking(challengeId, user);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            log.error("[랭킹 조회] 유효성 오류: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("[랭킹 조회] 오류 발생: {}", e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
