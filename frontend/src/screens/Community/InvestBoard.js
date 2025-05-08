@@ -1,25 +1,24 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
+import { fetchBoardPosts } from './CommunityApi';
 
 export default function InvestBoardScreen({ navigation }) {
-    const posts = [
-        {
-            title: "주식 투자 초보를 위한 팁",
-            content: "주식 투자를 시작하는 분들을 위한 기본적인 조언들입니다...",
-            author: "투자마스터",
-        },
-        {
-            title: "부동산 투자 전략",
-            content: "부동산 시장 분석과 투자 전략에 대해 알아봅시다...",
-            author: "부동산전문가",
-        },
-        // ... 추가 게시글들
-    ];
-
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
+
+    useEffect(() => {
+        fetchBoardPosts('INVEST')
+            .then(data => setPosts(data))
+            .catch(err => {
+                setPosts([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
 
     return (
         <>
@@ -40,14 +39,21 @@ export default function InvestBoardScreen({ navigation }) {
                         paddingBottom: 24
                     }}>
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
-                        {posts.map((post, index) => (
-                            <BoardPostItem
-                                key={index}
-                                post={post}
-                                isLastItem={index === posts.length - 1}
-                                onPress={() => {/* TODO: 게시글 상세 페이지로 이동 */}}
-                            />
-                        ))}
+                        {loading ? (
+                            <ActivityIndicator />
+                        ) : (
+                            posts.map((post, index) => (
+                                <BoardPostItem
+                                    key={post.id}
+                                    post={post}
+                                    isLastItem={index === posts.length - 1}
+                                    onPress={() => navigation.navigate('CommunityPosts', {
+                                        boardType: 'INVEST',
+                                        postId: post.id
+                                    })}
+                                />
+                            ))
+                        )}
                     </View>
                 </ScrollView>
 

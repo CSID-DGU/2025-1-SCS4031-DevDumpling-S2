@@ -1,7 +1,16 @@
-import { View, ScrollView, Text, TextInput, useWindowDimensions, TouchableOpacity, KeyboardAvoidingView, Platform, } from 'react-native';
+import { View, ScrollView, Text, TextInput, useWindowDimensions, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import Header from '../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useState } from 'react';
+import { createBoardPost } from './CommunityApi';
+
+const categoryMap = {
+    'HOT게시판': 'HOT',
+    '투자게시판': 'INVEST',
+    '챌린지게시판': 'CHALLENGE',
+    '퀴즈게시판': 'QUIZ',
+    '자유게시판': 'FREE',
+};
 
 export default function CommunityWriteScreen({ navigation }) {
     const { width } = useWindowDimensions();
@@ -11,15 +20,27 @@ export default function CommunityWriteScreen({ navigation }) {
     const [content, setContent] = useState('');
     const [category, setCategory] = useState('자유게시판');
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const categories = ['HOT게시판', '투자게시판', '챌린지게시판', '퀴즈게시판', '자유게시판']
 
-    const handleSubmit = () => {
-        // TODO: 게시글 등록 로직 구현
-        console.log('카테고리:', category)
-        console.log('제목:', title);
-        console.log('내용:', content);
-        navigation.goBack();
+    const handleSubmit = async () => {
+        setLoading(true);
+        try {
+            const boardType = categoryMap[category];
+            await createBoardPost(boardType, { title, content });
+            navigation.goBack();
+        } catch (e) {
+            // 인증 오류(401, 403)일 때
+            if (e?.response?.status === 401 || e?.response?.status === 403) {
+                alert('로그인 후 이용 가능한 기능입니다.');
+            } else {
+                alert('게시글 등록에 실패했습니다.');
+            }
+            console.log('게시글 등록 에러:', e?.response?.data || e.message || e);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -97,15 +118,19 @@ export default function CommunityWriteScreen({ navigation }) {
                         <TouchableOpacity
                             onPress={() => navigation.goBack()}
                             className="bg-[#D9D9D9] px-4 py-2 rounded-full"
+                            disabled={loading}
                         >
-                            <Text className="text-black text-xs">취소</Text>
+                            <Text className="text-black text-sm font-medium">취소</Text>
                         </TouchableOpacity>
                         {/* 등록 버튼 */}
                         <TouchableOpacity
                             onPress={handleSubmit}
                             className="bg-[#014029] px-4 py-2 rounded-full"
+                            disabled={loading}
                         >
-                            <Text className="text-white text-sm font-medium">등록</Text>
+                            <Text className="text-white text-sm font-medium">
+                                {loading ? '등록 중...' : '등록'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

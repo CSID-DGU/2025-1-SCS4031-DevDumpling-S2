@@ -1,25 +1,27 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
+import { fetchBoardPosts } from './CommunityApi';
 
 export default function ChallengeBoardScreen({ navigation }) {
-    const posts = [
-        {
-            title: "매일 1만원 저축 챌린지",
-            content: "매일 1만원씩 저축하는 챌린지에 참여하세요!",
-            author: "저축마스터",
-        },
-        {
-            title: "한 달 동안 카드값 30% 줄이기",
-            content: "카드값을 줄이는 방법을 공유하고 함께 실천해봐요!",
-            author: "절약전문가",
-        },
-        // ... 추가 게시글들
-    ];
-
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
+
+    useEffect(() => {
+        fetchBoardPosts('CHALLENGE')
+            .then(data => {
+                console.log('챌린지 게시판 API 응답:', data);
+                setPosts(data.content);
+            })
+            .catch(err => {
+                setPosts([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
 
     return (
         <>
@@ -40,14 +42,21 @@ export default function ChallengeBoardScreen({ navigation }) {
                         paddingBottom: 24
                     }}>
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
-                        {posts.map((post, index) => (
-                            <BoardPostItem
-                                key={index}
-                                post={post}
-                                isLastItem={index === posts.length - 1}
-                                onPress={() => {/* TODO: 게시글 상세 페이지로 이동 */}}
-                            />
-                        ))}
+                        {loading ? (
+                            <ActivityIndicator />
+                        ) : (
+                            posts.map((post, index) => (
+                                <BoardPostItem
+                                    key={post.id}
+                                    post={post}
+                                    isLastItem={index === posts.length - 1}
+                                    onPress={() => navigation.navigate('CommunityPosts', {
+                                        boardType: 'CHALLENGE',
+                                        postId: post.id
+                                    })}
+                                />
+                            ))
+                        )}
                     </View>
                 </ScrollView>
 
