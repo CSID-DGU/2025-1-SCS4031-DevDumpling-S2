@@ -99,13 +99,13 @@ export default function Quiz() {
 
                 // 정답 확인 - 백엔드에서 정답은 옵션 번호로 시작하는 텍스트 형태 ("2.특정 종목이나...")
                 // 시작 문자를 확인해서 몇 번 선택지인지 파악
-                
+
                 // 옵션 번호 추출 ("2.특정 종목..." 에서 2 배출)
                 const correctOptionNumber = quiz.answer && quiz.answer.match(/^(\d+)\./) ? quiz.answer.match(/^(\d+)\./)[1] : null;
-                
+
                 // 사용자가 선택한 옵션 번호와 정답 옵션 번호 비교
                 const isAnswerCorrect = correctOptionNumber && answer === correctOptionNumber;
-                
+
                 console.log('정답에서 추출한 옵션 번호:', correctOptionNumber);
                 console.log('사용자가 선택한 옵션 번호:', answer);
                 console.log('백엔드 정답 전체:', quiz.answer);
@@ -205,83 +205,52 @@ export default function Quiz() {
 
             <View className="space-y-3 mx-6">
                 {options.map((option, index) => {
-                    // index는 0부터 시작하지만 UI에는 1부터 표시
-                    const optionIndex = index; // 0, 1, 2, 3
-                    const optionNumber = index + 1; // 1, 2, 3, 4 (화면에 표시되는 번호)
-                    const optionKey = `option${optionNumber}`; // "option1", "option2", "option3", "option4"
-                    
-                    // 백엔드 정답이 어떤 형식인지 출력해서 확인
-                    console.log(`백엔드 정답: ${quiz.answer}, 타입: ${typeof quiz.answer}`);
-                    
-                    // 정답 비교 - 여러 가능한 형식 고려
-                    let isCorrectOption = false;
-                    
-                    // 1부터 시작하는 숫자 문자열 ("1", "2", "3", "4")
-                    if (String(quiz.answer) === String(optionNumber)) {
-                        isCorrectOption = true;
-                    }
-                    // 0부터 시작하는 숫자 문자열 ("0", "1", "2", "3")
-                    else if (String(quiz.answer) === String(optionIndex)) {
-                        isCorrectOption = true;
-                    }
-                    // 옵션 키 이름 ("option1", "option2", "option3", "option4")
-                    else if (quiz.answer === optionKey) {
-                        isCorrectOption = true;
-                    }
-                    
+                    const optionNumber = index + 1;
+                    const isCorrectOption = String(optionNumber) === String(quiz.answer.match(/^(\d+)\./)?.[1]);
                     const isSelected = selectedAnswer === String(optionNumber);
 
-                    console.log(`옵션 ${optionNumber}: 정답=${isCorrectOption}, 선택됨=${isSelected}, 제출됨=${submitted}`);
-                    if (isCorrectOption) {
-                        console.log(`정답은 옵션 ${optionNumber}입니다. 전체 정답 여부: ${isCorrect}`);
-                    }
-
+                    // 배경색 결정
                     let backgroundColor = "white";
-                    let textColor = "black";
-
                     if (submitted) {
-                        // 이미 제출된 상태
                         if (isCorrectOption) {
+                            // 정답은 초록
                             backgroundColor = "#014029";
                         } else if (isSelected) {
+                            // 틀린 선택지만 회색
                             backgroundColor = "#6B7280";
-                            textColor = "white";
                         }
                     } else if (isSelected) {
+                        // 제출 전 선택된 답은 초록 (원래대로)
                         backgroundColor = "#014029";
                     }
 
+                    // 글자 색 결정 (흰 배경일 땐 검정, 초록/회색일 땐 흰색)
+                    const textColor = (backgroundColor === "white") ? "black" : "white";
+
                     return (
                         <TouchableOpacity
-                        key={index}
-                        style={{
-                            marginTop: 20,
-                            padding: 16,
-                            borderRadius: 30,
-                            backgroundColor: backgroundColor
-                        }}
-                        // 정답 제출 시 index + 1 (UI에 표시된 번호)를 문자열로 보냄
-                        onPress={() => !submitted && submitAnswer(String(optionNumber))}
-                        disabled={submitted}
+                            key={index}
+                            style={{
+                                marginTop: 20,
+                                padding: 16,
+                                borderRadius: 30,
+                                backgroundColor
+                            }}
+                            onPress={() => !submitted && submitAnswer(String(optionNumber))}
+                            disabled={submitted}
                         >
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{
-                                    fontWeight: '500',
-                                    color: (isSelected && !isCorrectOption && submitted) ? "white" : "black"
-                                }}>
-                                    {`${index + 1}. `}
+                                <Text style={{ fontWeight: '500', color: textColor }}>
+                                    {`${optionNumber}. `}
                                 </Text>
-                                <Text style={{
-                                    fontWeight: '500',
-                                    flex: 1,
-                                    color: (isSelected && !isCorrectOption && submitted) ? "white" : "black"
-                                }}>
+                                <Text style={{ fontWeight: '500', flex: 1, color: textColor }}>
                                     {option}
                                 </Text>
                             </View>
                         </TouchableOpacity>
                     );
                 })}
+
             </View>
 
             {/* 정답/오답 피드백 */}
