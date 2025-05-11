@@ -39,6 +39,7 @@ public class Board {
     @Column(name = "board_type", nullable = false)
     private BoardType boardType;
 
+    @Builder.Default
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 

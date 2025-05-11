@@ -2,9 +2,11 @@ package com.example.dto.fss;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class SavingProductResponse extends BaseResponse {
     @JsonProperty("result")
     private Result result;

@@ -180,8 +180,12 @@ public class CardDummyDataService {
         // 카드 혜택 정보 조회
         String cardName = cardSpent.getCardName();
         CheckCard checkCard = checkCardRepository.findByCardName(cardName)
+                .stream()
+                .findFirst()
                 .orElse(null);
         CreditCard creditCard = creditCardRepository.findByCardName(cardName)
+                .stream()
+                .findFirst()
                 .orElse(null);
 
         // 카드 혜택 정보 파싱
