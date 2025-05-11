@@ -11,10 +11,10 @@ const MyDataConsent = () => {
     const navigation = useNavigation();
 
     const handleLoadingComplete = async () => {
-        // 실제 로딩이 끝나면 홈으로 이동
+        // 실제 로딩이 끝나면 자산 연결 화면으로 이동
         navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }]
+            routes: [{ name: 'BankSelection' }]
         });
     };
 
