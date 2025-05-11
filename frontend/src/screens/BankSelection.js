@@ -99,16 +99,34 @@ const UserAccountList = () => {
         }));
     };
 
-    const handleConnect = () => {
-        const selectedItems = Object.keys(selectedAccounts).filter(id => selectedAccounts[id]);
+    const handleConnect = async () => {
+        const selectedIds = Object.keys(selectedAccounts).filter(id => selectedAccounts[id]);
 
-        if (selectedItems.length === 0) {
+        if (selectedIds.length === 0) {
             alert('하나 이상의 항목을 선택해주세요.');
             return;
         }
 
-        alert('선택한 은행과 연결되었습니다!');
-        console.log('선택된 항목:', selectedItems);
+        try {
+            // 선택된 자산 정보를 백엔드로 전송
+            const token = await AsyncStorage.getItem('userToken');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            await axios.post(
+                `${API_BASE_URL}/api/mydata/connect`,
+                { accountIds: selectedIds },
+                { headers }
+            );
+
+            // 완료 화면으로 이동
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'MyDataComplete' }]
+            });
+        } catch (error) {
+            console.error('자산 연결 실패:', error);
+            alert('자산 연결에 실패했습니다. 다시 시도해주세요.');
+        }
     };
 
     const handleImageError = (id) => {
