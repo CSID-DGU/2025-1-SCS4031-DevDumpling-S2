@@ -13,7 +13,7 @@ export default function InvestBoardScreen({ navigation }) {
 
     useEffect(() => {
         fetchBoardPosts('INVEST')
-            .then(data => setPosts(data))
+            .then(data => setPosts(data.content))
             .catch(err => {
                 setPosts([]);
             })
