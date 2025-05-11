@@ -26,9 +26,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.1'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.jsoup:jsoup:1.17.2'
+	
+	// XML 처리
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 	
 	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -38,24 +41,33 @@ dependencies {
 	// Jakarta EE
 	implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 	implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	
 	annotationProcessor 'org.projectlombok:lombok'
 	
+	// Database
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+	testImplementation 'org.springframework:spring-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 
+	// Monitoring
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// AWS S3
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.261'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	// MockMultipartFile을 위한 의존성
-	testImplementation 'org.springframework:spring-test'
+	// Web
 	implementation 'org.springframework:spring-web'
+
+	// Apache HttpClient
+	implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 }
 
 tasks.named('test') {

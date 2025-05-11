@@ -40,9 +40,11 @@ public class Challenge {
     private String inviteCode;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isDeleted = false;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isCompleted = false;
 
     @Column

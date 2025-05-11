@@ -55,7 +55,7 @@ public class FssApiClient {
             SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
             requestFactory.setConnectTimeout(5000);
             requestFactory.setReadTimeout(5000);
-            requestFactory.setOutputStreaming(false);
+            requestFactory.setBufferRequestBody(false);
             this.restTemplate.setRequestFactory(requestFactory);
         } catch (Exception e) {
             System.err.println("SSL 설정 중 오류 발생: " + e.getMessage());
