@@ -16,7 +16,7 @@ const MyDataComplete = () => {
     return (
         <>
             <Header />
-            <SafeAreaView className="flex-1 bg-white">
+            <SafeAreaView className="flex-1 bg-background">
                 <View className="flex-1 justify-center items-center px-6">
                     <View className="w-16 h-16 rounded-full bg-Fineed-green mb-6 items-center justify-center">
                         <Text className="text-white text-3xl">✓</Text>

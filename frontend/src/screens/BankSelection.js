@@ -107,27 +107,56 @@ const UserAccountList = () => {
             return;
         }
 
-        try {
-            // 선택된 자산 정보를 백엔드로 전송
-            const token = await AsyncStorage.getItem('userToken');
-            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const token = await AsyncStorage.getItem('userToken');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-            await axios.post(
-                `${API_BASE_URL}/api/mydata/connect`,
-                { accountIds: selectedIds },
+        let consentEndpoint = '';
+        let requestBody = {};
+
+        switch (activeTab) {
+            case 'loan': {
+                consentEndpoint = '/api/dummy/loans/consent/add';
+                const selectedLoanNumbers = selectedIds.map(id => {
+                    const matched = accounts.find(acc => acc.loanNumber === id || acc.id === id);
+                    return matched?.loanNumber;
+                }).filter(Boolean);
+                requestBody = { selectedLoanIds: selectedLoanNumbers };
+                break;
+            }
+            case 'investment': {
+                consentEndpoint = '/api/dummy/investments/consent/add';
+                requestBody = { selectedAccountNumbers: selectedIds };
+                break;
+            }
+            default: {
+                consentEndpoint = '/api/dummy/bank/consent/add';
+                requestBody = { selectedAccountNumbers: selectedIds };
+                break;
+            }
+        }
+
+        console.log('보낼 요청:', requestBody);
+        console.log('요청 URL:', `${API_BASE_URL}${consentEndpoint}`);
+
+        try {
+            const response = await axios.post(
+                `${API_BASE_URL}${consentEndpoint}`,
+                requestBody,
                 { headers }
             );
 
-            // 완료 화면으로 이동
             navigation.reset({
                 index: 0,
                 routes: [{ name: 'MyDataComplete' }]
             });
         } catch (error) {
-            console.error('자산 연결 실패:', error);
-            alert('자산 연결에 실패했습니다. 다시 시도해주세요.');
+            console.error('자산 연결 실패:', error.response?.data || error.message);
+            alert(`자산 연결에 실패했습니다.\n${error.response?.data?.message || error.message}`);
         }
     };
+
+
+
 
     const handleImageError = (id) => {
         setImageErrors(prev => ({
