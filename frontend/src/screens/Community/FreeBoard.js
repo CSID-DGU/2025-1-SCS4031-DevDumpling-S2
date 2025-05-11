@@ -12,14 +12,18 @@ export default function FreeBoardScreen({ navigation }) {
     const horizontalPadding = width > 380 ? 16 : 12;
 
     useEffect(() => {
-        fetchBoardPosts('free')
-            .then(data => setPosts(data))
+        fetchBoardPosts('FREE') // ✅ 대문자로 수정
+            .then(data => {
+                console.log('📦 받아온 게시글 목록:', data);
+                setPosts(data);
+            })
             .catch(err => {
+                console.error('❌ 게시글 목록 불러오기 실패:', err);
                 setPosts([]);
-                // 필요시 에러 처리
             })
             .finally(() => setLoading(false));
     }, []);
+
 
     return (
         <>

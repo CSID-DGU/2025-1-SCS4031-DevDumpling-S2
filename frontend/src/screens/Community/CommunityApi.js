@@ -12,7 +12,7 @@ export const fetchBoardPosts = async (boardType) => {
 
 // 게시글 작성
 export const createBoardPost = async (boardType, postData) => {
-  const token = await AsyncStorage.getItem('token'); // 저장된 토큰 키에 맞게 수정
+  const token = await AsyncStorage.getItem('userToken');
   const res = await axios.post(
     `${BASE_URL}/boards/${boardType}/create`,
     postData,
