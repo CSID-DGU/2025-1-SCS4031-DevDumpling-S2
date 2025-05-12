@@ -101,4 +101,36 @@ public class InsuranceDummyDataService {
             insuranceAccountRepository.save(insuranceAccount);
         }
     }
+
+    @Transactional
+    public void processSelectedInsurances(Long userId, List<String> selectedInsuranceIds) {
+        for (String insuranceId : selectedInsuranceIds) {
+            // 보험 계좌 존재 여부 확인
+            InsuranceAccount insuranceAccount = insuranceAccountRepository.findByInsuranceId(insuranceId);
+            if (insuranceAccount != null && insuranceAccount.getUserId().equals(userId)) {
+                // 보험 계좌 활성화
+                insuranceAccount.setIsActive(true);
+                insuranceAccountRepository.save(insuranceAccount);
+                
+                // 활성화된 보험 계좌에 대해 거래내역 생성
+                generateInsuranceTransactions(userId, insuranceId);
+            }
+        }
+    }
+
+    @Transactional
+    public void revokeInsuranceConsent(Long userId, String insuranceId) {
+        // 보험 계좌 존재 여부 확인
+        InsuranceAccount insuranceAccount = insuranceAccountRepository.findByInsuranceId(insuranceId);
+        if (insuranceAccount == null || !insuranceAccount.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("해당 보험 계좌를 찾을 수 없습니다.");
+        }
+
+        // 보험 계좌 비활성화
+        insuranceAccount.setIsActive(false);
+        insuranceAccountRepository.save(insuranceAccount);
+
+        // 해당 보험의 거래내역 삭제
+        insuranceTransactionRepository.deleteByInsuranceId(insuranceId);
+    }
 } 

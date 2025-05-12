@@ -12,4 +12,5 @@ public interface InsuranceTransactionRepository extends JpaRepository<InsuranceT
     List<InsuranceTransaction> findByUserId(Long userId);
     List<InsuranceTransaction> findByInsuranceId(String insuranceId);
     List<InsuranceTransaction> findByInsuranceIdAndPaymentDateBetween(String insuranceId, LocalDate startDate, LocalDate endDate);
+    void deleteByInsuranceId(String insuranceId);
 } 

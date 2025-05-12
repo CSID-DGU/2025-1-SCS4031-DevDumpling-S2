@@ -5,6 +5,7 @@ import com.example.dummy.entity.*;
 import com.example.dummy.repository.*;
 import com.example.entity.User;
 import com.example.dummy.service.DummyAccountService;
+import com.example.dummy.service.InsuranceDummyDataService;
 import com.example.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class DummyAccountController {
     private final CardTransactionRepository cardTransactionRepository;
     private final InvestmentRecordRepository investmentRecordRepository;
     private final InvestmentTransactionRepository investmentTransactionRepository;
+    private final InsuranceDummyDataService insuranceDummyDataService;
 
     @GetMapping("/bank")
     public ResponseEntity<List<BankAccountDto>> getBankAccounts(
@@ -282,6 +284,61 @@ public class DummyAccountController {
     @Data
     public static class SelectedInvestmentsRequest {
         private List<String> selectedAccountNumbers;
+    }
+
+    @PostMapping("/insurances/consent/add")
+    public ResponseEntity<?> handleSelectedInsurances(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedInsurancesRequest request
+    ) {
+        log.info("[더미계좌] 선택된 보험 계좌 처리 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 보험 수: {}", user.getId(), request.getSelectedInsuranceIds().size());
+            
+            insuranceDummyDataService.processSelectedInsurances(user.getId(), request.getSelectedInsuranceIds());
+            
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            log.error("[더미계좌] 선택된 보험 계좌 처리 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @PostMapping("/insurances/consent/revoke")
+    public ResponseEntity<?> revokeInsuranceConsent(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody SelectedInsurancesRequest request
+    ) {
+        log.info("[더미계좌] 보험 계좌 동의 철회 요청");
+        try {
+            User user = userService.findByKakaoId(userDetails.getUsername());
+            log.info("[더미계좌] 사용자 ID: {}, 선택된 보험 수: {}", user.getId(), request.getSelectedInsuranceIds().size());
+            
+            for (String insuranceId : request.getSelectedInsuranceIds()) {
+                insuranceDummyDataService.revokeInsuranceConsent(user.getId(), insuranceId);
+            }
+            
+            log.info("[더미계좌] 보험 계좌 동의 철회 완료");
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "보험 계좌 동의가 철회되었습니다."
+            ));
+        } catch (IllegalArgumentException e) {
+            log.error("[더미계좌] 보험 계좌 동의 철회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            log.error("[더미계좌] 보험 계좌 동의 철회 중 오류 발생", e);
+            throw e;
+        }
+    }
+
+    @Data
+    public static class SelectedInsurancesRequest {
+        private List<String> selectedInsuranceIds;
     }
 
     @PostMapping("/card/consent/add")
