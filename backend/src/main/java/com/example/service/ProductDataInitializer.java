@@ -66,14 +66,17 @@ public class ProductDataInitializer implements ApplicationRunner {
     }
 
     private void syncInsuranceProducts() {
-        log.info("보험 상품 정보 동기화 시작");
+        log.info("보험 상품 정보 동기화 시작 (페이지: 10)");
         try {
             // 기존 데이터 삭제
             insuranceRepository.deleteAll();
             log.info("기존 보험 상품 데이터 삭제 완료");
 
-            // API 호출하여 데이터 저장
-            InsuranceResponse response = dgkApiClient.fetchInsurance(1, 100);
+            // 10번째 페이지, 100건 데이터 가져오기
+            int pageNo = 10;
+            log.info("보험 상품 정보 조회 중 - 페이지: {}, 건수: 100", pageNo);
+            InsuranceResponse response = dgkApiClient.fetchInsurance(pageNo, 100);
+            
             if (response != null && response.getBody() != null && response.getBody().getItems() != null) {
                 List<Insurance> insurances = Arrays.stream(response.getBody().getItems().getItem())
                     .map(item -> Insurance.builder()
@@ -91,8 +94,9 @@ public class ProductDataInitializer implements ApplicationRunner {
                     .collect(Collectors.toList());
                 
                 insuranceRepository.saveAll(insurances);
-                log.info("보험 상품 정보 동기화 완료 - {}건", insurances.size());
+                log.info("보험 상품 정보 저장 완료 - 페이지: {}, 건수: {}", pageNo, insurances.size());
             }
+            log.info("보험 상품 정보 동기화 완료 (페이지: 10)");
         } catch (Exception e) {
             log.error("보험 상품 정보 동기화 실패: {}", e.getMessage(), e);
         }
