@@ -46,6 +46,10 @@ public class InsuranceAccount {
     @Column(name = "created_at", nullable = false, updatable = false) // 생성일
     private LocalDateTime createdAt;
 
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = false;  // 기본값은 false로 설정
+
     public enum InsuranceType {
         LIFE,           // 생명보험
         AUTO,          // 자동차보험
