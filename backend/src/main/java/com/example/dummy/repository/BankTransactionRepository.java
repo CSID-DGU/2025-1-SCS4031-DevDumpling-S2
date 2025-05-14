@@ -16,6 +16,9 @@ public interface BankTransactionRepository extends JpaRepository<BankTransaction
     List<BankTransaction> findByUserIdAndTransactionDateBetween(
         Long userId, LocalDateTime startDate, LocalDateTime endDate);
     
+    List<BankTransaction> findByUserIdAndAccountNumberAndTransactionDateBetween(
+        Long userId, String accountNumber, LocalDateTime startDate, LocalDateTime endDate);
+    
     @Modifying
     @Query("DELETE FROM BankTransaction bt WHERE bt.accountNumber = :accountNumber")
     void deleteByAccountNumber(@Param("accountNumber") String accountNumber);
