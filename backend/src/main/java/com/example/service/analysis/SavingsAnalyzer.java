@@ -3,6 +3,7 @@ package com.example.service.analysis;
 import com.example.entity.Challenge;
 import com.example.entity.Participation;
 import com.example.entity.User;
+import com.example.entity.Challenge.SavingsGoalType;
 import com.example.dummy.entity.BankBalance; // 은행 계좌 정보 엔티티
 import com.example.dummy.entity.BankTransaction; // 은행 거래내역 엔티티
 import com.example.dummy.repository.BankBalanceRepository; // 은행 계좌 리포지토리
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,13 +48,15 @@ public class SavingsAnalyzer implements ChallengeAnalyzer {
             return;
         }
 
-        // 2. 챌린지 목표 파싱 (가정: 챌린지 설명에 목표 금액이 명시되어 있다고 가정)
-        //    예: "100만원 모으기", "월 50만원 저축"
-        //    실제로는 더 정교한 파싱 로직 필요
-        SavingsChallengeGoal goal = parseSavingsChallengeGoal(challenge.getDescription());
-        if (goal == null) {
-            log.warn("[저축 분석] 챌린지 목표를 파싱할 수 없습니다. ID: {}", challenge.getChallengeID());
-            // 목표 파싱 실패 시 분석을 어떻게 처리할지 결정 (예: 기본 목표 설정 또는 분석 중단)
+        // 2. 챌린지 목표 가져오기 (Challenge 엔티티에서 직접 사용)
+        SavingsChallengeGoal goal = new SavingsChallengeGoal(challenge.getTargetSavingsAmount(), challenge.getSavingsGoalType());
+        
+        if (goal.getTargetAmount() == null || goal.getTargetAmount() <= 0 || goal.getGoalType() == null) {
+            log.warn("[저축 분석] 유효한 챌린지 목표가 설정되지 않았습니다. ID: {}. 목표 금액: {}, 목표 유형: {}", 
+                     challenge.getChallengeID(), challenge.getTargetSavingsAmount(), challenge.getSavingsGoalType());
+            // 목표가 유효하지 않을 경우 분석을 어떻게 처리할지 결정
+            // (예: 참여자 결과에 "목표 미설정"으로 기록하고 분석 중단 또는 기본값 사용)
+             participants.forEach(p -> updateParticipationResult(p, 0.0, "챌린지 목표 미설정"));
             return;
         }
 
@@ -76,10 +80,12 @@ public class SavingsAnalyzer implements ChallengeAnalyzer {
 
             long totalSavingsAmount = 0;
             int totalSavingsCount = 0;
+            // Declare a list to aggregate all transactions for the current user over the period
+            List<BankTransaction> allUserTransactionsInPeriod = new ArrayList<>();
 
             // 3.2. 각 저축 계좌별로 챌린지 기간 동안의 입금 내역 분석
             for (BankBalance account : userSavingAccounts) {
-                List<BankTransaction> transactions = bankTransactionRepository
+                List<BankTransaction> transactionsForAccount = bankTransactionRepository
                         .findByUserIdAndAccountNumberAndTransactionDateBetween(
                                 user.getId(),
                                 account.getAccountNumber(),
@@ -90,17 +96,20 @@ public class SavingsAnalyzer implements ChallengeAnalyzer {
                         .filter(tx -> "입금".equals(tx.getTransactionType()) || "이자".equals(tx.getTransactionType())) // 입금 또는 이자 거래만
                         .collect(Collectors.toList());
 
-                for (BankTransaction tx : transactions) {
+                for (BankTransaction tx : transactionsForAccount) {
                     totalSavingsAmount += tx.getAmount();
                     totalSavingsCount++;
                 }
+                allUserTransactionsInPeriod.addAll(transactionsForAccount); // Aggregate transactions
+
                 log.info("[저축 분석] 사용자 ID: {}, 계좌: {}, 기간 내 입금/이자 건수: {}, 금액: {}",
-                         user.getId(), account.getAccountNumber(), transactions.size(),
-                         transactions.stream().mapToLong(BankTransaction::getAmount).sum());
+                         user.getId(), account.getAccountNumber(), transactionsForAccount.size(),
+                         transactionsForAccount.stream().mapToLong(BankTransaction::getAmount).sum());
             }
 
             // 3.3. 목표 달성률 계산
-            double achievementRate = calculateAchievementRate(totalSavingsAmount, goal);
+            // Pass the aggregated list of all transactions for the user
+            double achievementRate = calculateAchievementRate(totalSavingsAmount, goal, challenge, allUserTransactionsInPeriod);
             log.info("[저축 분석] 사용자 ID: {}, 총 저축액: {}, 총 저축 건수: {}, 목표 달성률: {}%",
                      user.getId(), totalSavingsAmount, totalSavingsCount, String.format("%.2f", achievementRate * 100));
 
@@ -115,88 +124,6 @@ public class SavingsAnalyzer implements ChallengeAnalyzer {
         // 4. (선택) 챌린지 전체 결과 집계 및 알림 등 후처리
 
         log.info("[저축 분석] 완료 - 챌린지 ID: {}", challenge.getChallengeID());
-    }
-
-    // 챌린지 설명으로부터 저축 목표를 파싱하는 메소드 (구체적인 로직 필요)
-    private SavingsChallengeGoal parseSavingsChallengeGoal(String description) {
-        if (description == null || description.trim().isEmpty()) {
-            log.warn("저축 목표 파싱 실패: 설명이 비어있습니다.");
-            return new SavingsChallengeGoal(1000000L, SavingsGoalType.TOTAL_AMOUNT); // 기본 목표
-        }
-
-        // 정규 표현식 패턴 정의
-        // 패턴1: "1,000,000원 모으기", "1000000원 저축" (총액 목표)
-        Pattern totalAmountPattern1 = Pattern.compile("(\\d{1,3}(,\\d{3})*|\\d+)\\s*원(?:\\s*(모으기|저축|달성))?");
-        // 패턴2: "100만원", "50 만원" (단위 포함 총액 목표) - "만원"만 우선 처리
-        Pattern totalAmountPattern2 = Pattern.compile("(\\d+)\\s*만\\s*원(?:\\s*(모으기|저축|달성))?");
-        // 패턴3: "매월 500,000원 저축", "월 50만원 납입" (월간 목표)
-        Pattern monthlyAmountPattern1 = Pattern.compile("(?:매월|월)\\s*(\\d{1,3}(,\\d{3})*|\\d+)\\s*원(?:\\s*(모으기|저축|납입))?");
-        Pattern monthlyAmountPattern2 = Pattern.compile("(?:매월|월)\\s*(\\d+)\\s*만\\s*원(?:\\s*(모으기|저축|납입))?");
-
-        Matcher matcher;
-
-        // 월간 목표 우선 검사 (만원 단위)
-        matcher = monthlyAmountPattern2.matcher(description);
-        if (matcher.find()) {
-            try {
-                long amount = Long.parseLong(matcher.group(1).replaceAll("[^0-9]", "")) * 10000;
-                return new SavingsChallengeGoal(amount, SavingsGoalType.MONTHLY_AMOUNT);
-            } catch (NumberFormatException e) {
-                log.error("월간 목표 금액(만원) 파싱 오류: {}", matcher.group(1), e);
-            }
-        }
-
-        // 월간 목표 우선 검사 (원 단위)
-        matcher = monthlyAmountPattern1.matcher(description);
-        if (matcher.find()) {
-            try {
-                long amount = Long.parseLong(matcher.group(1).replaceAll("[^0-9]", ""));
-                return new SavingsChallengeGoal(amount, SavingsGoalType.MONTHLY_AMOUNT);
-            } catch (NumberFormatException e) {
-                log.error("월간 목표 금액(원) 파싱 오류: {}", matcher.group(1), e);
-            }
-        }
-
-        // 총액 목표 검사 (만원 단위)
-        matcher = totalAmountPattern2.matcher(description);
-        if (matcher.find()) {
-            try {
-                long amount = Long.parseLong(matcher.group(1).replaceAll("[^0-9]", "")) * 10000;
-                return new SavingsChallengeGoal(amount, SavingsGoalType.TOTAL_AMOUNT);
-            } catch (NumberFormatException e) {
-                log.error("총액 목표 금액(만원) 파싱 오류: {}", matcher.group(1), e);
-            }
-        }
-        
-        // 총액 목표 검사 (원 단위)
-        matcher = totalAmountPattern1.matcher(description);
-        if (matcher.find()) {
-            try {
-                long amount = Long.parseLong(matcher.group(1).replaceAll("[^0-9]", ""));
-                return new SavingsChallengeGoal(amount, SavingsGoalType.TOTAL_AMOUNT);
-            } catch (NumberFormatException e) {
-                log.error("총액 목표 금액(원) 파싱 오류: {}", matcher.group(1), e);
-            }
-        }
-        
-        // 기존 키워드 기반 파싱 (Fallback)
-        try {
-            if (description.contains("목표금액:")) {
-                String amountStr = description.split("목표금액:")[1].replaceAll("[^0-9]", "");
-                long targetAmount = Long.parseLong(amountStr);
-                return new SavingsChallengeGoal(targetAmount, SavingsGoalType.TOTAL_AMOUNT);
-            } else if (description.contains("월간목표:")) {
-                 String amountStr = description.split("월간목표:")[1].replaceAll("[^0-9]", "");
-                long targetAmount = Long.parseLong(amountStr);
-                return new SavingsChallengeGoal(targetAmount, SavingsGoalType.MONTHLY_AMOUNT);
-            }
-        } catch (Exception e) {
-            log.error("기존 방식 목표 파싱 중 오류 발생: {}", description, e);
-            // Fallthrough to default
-        }
-
-        log.warn("저축 목표 파싱 실패, 기본 목표로 설정: {}", description);
-        return new SavingsChallengeGoal(1000000L, SavingsGoalType.TOTAL_AMOUNT); // 기본 목표 100만원
     }
 
     // 계좌 유형 문자열을 보고 저축성 계좌인지 판별하는 메소드 (개선 필요)
@@ -229,13 +156,25 @@ public class SavingsAnalyzer implements ChallengeAnalyzer {
     }
 
     // 목표 달성률 계산
-    private double calculateAchievementRate(long currentSavings, SavingsChallengeGoal goal) {
-        if (goal == null || goal.getTargetAmount() <= 0) {
+    private double calculateAchievementRate(long currentSavings, SavingsChallengeGoal goal, Challenge challenge, List<BankTransaction> userTransactionsInChallengePeriod) {
+        if (goal == null || goal.getTargetAmount() <= 0 || goal.getGoalType() == null) {
             return 0.0; // 목표가 없거나 0 이하면 달성률 0
         }
-        // 목표 유형에 따라 계산 방식 변경 가능 (예: 월별 목표, 기간 총액 목표 등)
-        // 현재는 단순 총액 목표로 가정
-        double rate = (double) currentSavings / goal.getTargetAmount();
+
+        double rate = 0.0;
+
+        if (goal.getGoalType() == SavingsGoalType.TOTAL_AMOUNT_IN_PERIOD) {
+            rate = (double) currentSavings / goal.getTargetAmount();
+        } else if (goal.getGoalType() == SavingsGoalType.MONTHLY_TARGET) {
+            // 월별 목표액 달성 로직 (구현 필요)
+            // 예시: 챌린지 기간 동안 매월 말일 기준으로 userTransactionsInChallengePeriod를 분석하여
+            // 각 월별 목표 달성 여부 확인 후 전체 챌린지 성공 여부 판단
+            log.warn("[저축 분석] 월별 목표 달성 방식에 대한 분석 로직은 아직 구현되지 않았습니다. 챌린지 ID: {}", challenge.getChallengeID());
+            // 우선 총액 기준으로 계산하거나, 별도 처리 필요
+            // 여기서는 임시로 총액 기준으로 계산
+             rate = (double) currentSavings / goal.getTargetAmount(); 
+        }
+        
         return Math.min(rate, 1.0); // 최대 100% (1.0)
     }
 
@@ -248,25 +187,20 @@ public class SavingsAnalyzer implements ChallengeAnalyzer {
 
     // 저축 목표를 나타내는 내부 클래스 (또는 별도 DTO)
     private static class SavingsChallengeGoal {
-        private final long targetAmount;
-        private final SavingsGoalType goalType; // 목표 유형 (총액, 월별 등)
+        private final Long targetAmount; // 목표 금액
+        private final Challenge.SavingsGoalType goalType; // 목표 유형 (총액, 월별 등)
 
-        public SavingsChallengeGoal(long targetAmount, SavingsGoalType goalType) {
+        public SavingsChallengeGoal(Long targetAmount, Challenge.SavingsGoalType goalType) {
             this.targetAmount = targetAmount;
             this.goalType = goalType;
         }
 
-        public long getTargetAmount() {
+        public Long getTargetAmount() {
             return targetAmount;
         }
 
-        public SavingsGoalType getGoalType() {
+        public Challenge.SavingsGoalType getGoalType() {
             return goalType;
         }
-    }
-
-    private enum SavingsGoalType {
-        TOTAL_AMOUNT, // 챌린지 기간 전체 목표 금액
-        MONTHLY_AMOUNT // 월별 목표 금액 (더 복잡한 계산 필요)
     }
 } 

@@ -45,6 +45,16 @@ public class ChallengeService {
                 .maxParticipants(request.getMaxParticipants())
                 .type(request.getType())
                 .category(request.getCategory())
+                .targetSavingsAmount(request.getTargetSavingsAmount())
+                .savingsGoalType(request.getSavingsGoalType())
+                .foodGoalType(request.getFoodGoalType())
+                .foodTargetAmount(request.getFoodTargetAmount())
+                .foodTargetCount(request.getFoodTargetCount())
+                .foodTargetRatio(request.getFoodTargetRatio())
+                .cafeSnackGoalType(request.getCafeSnackGoalType())
+                .cafeSnackTargetAmount(request.getCafeSnackTargetAmount())
+                .cafeSnackTargetDailyAmount(request.getCafeSnackTargetDailyAmount())
+                .cafeSnackTargetWeeklyCount(request.getCafeSnackTargetWeeklyCount())
                 .build();
 
         if (challenge.getType() == Challenge.ChallengeType.PRIVATE) {
