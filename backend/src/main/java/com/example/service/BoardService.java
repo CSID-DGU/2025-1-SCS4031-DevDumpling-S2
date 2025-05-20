@@ -40,12 +40,18 @@ public class BoardService {
 
     @Transactional
     public Board createBoard(Board board, User user) {
+        if (user.getKakaoId() == null) {
+            throw new RuntimeException("카카오 로그인 사용자만 게시글을 작성할 수 있습니다.");
+        }
         board.setUser(user);
         return boardRepository.save(board);
     }
 
     @Transactional
     public Board updateBoard(Long id, Board board, User user) {
+        if (user.getKakaoId() == null) {
+            throw new RuntimeException("카카오 로그인 사용자만 게시글을 수정할 수 있습니다.");
+        }
         Board existingBoard = getBoardById(id);
         if (!existingBoard.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("수정 권한이 없습니다.");
@@ -57,6 +63,9 @@ public class BoardService {
 
     @Transactional
     public void deleteBoard(Long id, User user) {
+        if (user.getKakaoId() == null) {
+            throw new RuntimeException("카카오 로그인 사용자만 게시글을 삭제할 수 있습니다.");
+        }
         Board board = getBoardById(id);
         if (!board.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("삭제 권한이 없습니다.");
