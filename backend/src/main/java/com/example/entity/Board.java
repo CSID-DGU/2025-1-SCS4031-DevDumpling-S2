@@ -35,6 +35,9 @@ public class Board {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "kakao_id", nullable = false)
+    private String kakaoId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "board_type", nullable = false)
     private BoardType boardType;
@@ -54,6 +57,9 @@ public class Board {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (user != null) {
+            kakaoId = user.getKakaoId();
+        }
     }
 
     @PreUpdate
