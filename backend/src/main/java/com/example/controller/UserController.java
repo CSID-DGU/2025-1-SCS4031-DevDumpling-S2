@@ -93,4 +93,14 @@ public class UserController {
             )
         ));
     }
+
+    @GetMapping("/user-type")
+    public ResponseEntity<?> getUserType(Authentication authentication) {
+        User user = userService.findByKakaoId(authentication.getName());
+        User.UserType userType = user.getUserType();
+        if (userType == null) {
+            userType = userService.determineAndSaveUserType(user);
+        }
+        return ResponseEntity.ok(Map.of("userType", userType));
+    }
 } 

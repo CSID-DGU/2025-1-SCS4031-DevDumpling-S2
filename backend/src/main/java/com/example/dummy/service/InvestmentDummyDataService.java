@@ -41,7 +41,7 @@ public class InvestmentDummyDataService {
 
     @Transactional
     public void generateDummyData(Long userId) {
-        // 투자 계좌 1~2개 생성
+        // 투자 계좌 생성
         int accountCount = 1 + random.nextInt(2);
         for (int i = 0; i < accountCount; i++) {
             InvestmentRecord record = createInvestmentRecord(userId);
