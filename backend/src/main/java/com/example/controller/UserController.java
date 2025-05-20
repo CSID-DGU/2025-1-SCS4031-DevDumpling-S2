@@ -4,6 +4,7 @@ import com.example.dummy.entity.*;
 import com.example.dummy.repository.*;
 import com.example.entity.User;
 import com.example.service.UserService;
+import com.example.service.ProductRecommendationService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class UserController {
     private final CardTransactionRepository cardTransactionRepository;
     private final InvestmentRecordRepository investmentRecordRepository;
     private final InvestmentTransactionRepository investmentTransactionRepository;
+    private final ProductRecommendationService productRecommendationService;
 
     @GetMapping("/mydata-consent")
     public ResponseEntity<?> checkMyDataConsent(Authentication authentication) {
@@ -92,5 +94,26 @@ public class UserController {
                 "transactions", investmentTransactions.size()
             )
         ));
+    }
+
+    @GetMapping("/user-type")
+    public ResponseEntity<?> getUserType(Authentication authentication) {
+        User user = userService.findByKakaoId(authentication.getName());
+        User.UserType userType = user.getUserType();
+        if (userType == null) {
+            userType = userService.determineAndSaveUserType(user);
+        }
+        return ResponseEntity.ok(Map.of("userType", userType));
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> getRecommendedProducts(Authentication authentication) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            Map<String, List<?>> recommendations = productRecommendationService.getRecommendedProducts(user);
+            return ResponseEntity.ok(recommendations);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 } 

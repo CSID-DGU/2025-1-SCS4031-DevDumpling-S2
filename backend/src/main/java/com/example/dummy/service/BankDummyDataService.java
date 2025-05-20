@@ -59,7 +59,7 @@ public class BankDummyDataService {
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusMonths(3);
 
-        // 90개의 거래 내역 생성 (하루에 약 1건)
+        // 90개의 거래 내역 생성
         for (int i = 0; i < 90; i++) {
             BankTransaction transaction = createTransaction(
                 userId,

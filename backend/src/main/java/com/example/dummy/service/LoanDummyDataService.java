@@ -32,7 +32,7 @@ public class LoanDummyDataService {
 
     @Transactional
     public void generateDummyData(Long userId) {
-        // 대출 계좌 1~2개 생성
+        // 대출 계좌 생성
         int loanCount = 1 + random.nextInt(2);
         for (int i = 0; i < loanCount; i++) {
             boolean isShortTerm = random.nextBoolean(); // 랜덤하게 단기/장기 결정

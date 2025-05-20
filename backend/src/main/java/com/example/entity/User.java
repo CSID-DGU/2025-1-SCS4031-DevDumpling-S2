@@ -34,7 +34,7 @@ public class User {
     private boolean myDataConsent;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_type", nullable = false)
+    @Column(name = "user_type", nullable = true)
     private UserType userType;
 
     @Column(nullable = false)

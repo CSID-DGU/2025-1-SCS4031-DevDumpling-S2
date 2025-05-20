@@ -28,7 +28,7 @@ public class CardDummyDataService {
 
     @Transactional
     public void generateDummyData(Long userId) {
-        // 체크카드 1~5개 생성
+        // 체크카드 생성
         List<CheckCard> checkCards = checkCardRepository.findAll();
         int checkCardCount = Math.min(1 + random.nextInt(5), checkCards.size());
         for (int i = 0; i < checkCardCount; i++) {
@@ -38,7 +38,7 @@ public class CardDummyDataService {
             updateMonthlyBillAmount(cardSpent);
         }
 
-        // 신용카드 0~2개 생성
+        // 신용카드 생성
         List<CreditCard> creditCards = creditCardRepository.findAll();
         int creditCardCount = Math.min(random.nextInt(3), creditCards.size());
         for (int i = 0; i < creditCardCount; i++) {

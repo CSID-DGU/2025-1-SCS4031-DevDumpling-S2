@@ -20,6 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import com.example.dummy.repository.BankTransactionRepository;
+import com.example.dummy.repository.InvestmentRecordRepository;
+import com.example.dummy.repository.CardTransactionRepository;
+import com.example.dummy.repository.BankBalanceRepository;
+import com.example.dummy.repository.InvestmentTransactionRepository;
+import com.example.dummy.repository.InsuranceAccountRepository;
 
 import java.util.Collections;
 import java.util.Random;
@@ -42,6 +48,12 @@ public class UserService implements UserDetailsService {
     private final EtfService etfService;
     private final StockService stockService;
     private final RestTemplate restTemplate = new RestTemplate();
+    private final BankTransactionRepository bankTransactionRepository;
+    private final InvestmentRecordRepository investmentRecordRepository;
+    private final CardTransactionRepository cardTransactionRepository;
+    private final BankBalanceRepository bankBalanceRepository;
+    private final InsuranceAccountRepository insuranceAccountRepository;
+    private final InvestmentTransactionRepository investmentTransactionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -77,7 +89,7 @@ public class UserService implements UserDetailsService {
                 .nickname(nickname)
                 .profileImage(profileImage)
                 .myDataConsent(myDataConsent)
-                .userType(User.UserType.A)
+                .userType(null)
                 .build();
         user = userRepository.save(user);
 
@@ -157,5 +169,63 @@ public class UserService implements UserDetailsService {
     public boolean checkMyDataConsent(String kakaoId) {
         User user = findByKakaoId(kakaoId);
         return user.isMyDataConsent();
+    }
+
+    /**
+     * 스코어링 기반 금융성향 4분류 로직
+     * - 신용카드 사용액 10만원당 1점
+     * - 투자 계좌 1개당 10점
+     * - 투자 거래 1건당 2점
+     * - 월평균 소비액 10만원당 1점
+     * - 예적금 50만원당 1점
+     * - 보험 1개당 5점
+     *
+     * 총점 구간:
+     * 50점 이상: 도전러(A)
+     * 35~49점: 계획러(B)
+     * 20~34점: 편안러(C)
+     * 0~19점: 안심러(D)
+     */
+    @Transactional
+    public User.UserType determineAndSaveUserType(User user) {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime oneMonthAgo = now.minusMonths(1);
+        Long userId = user.getId();
+        // 1. 신용카드 사용액(최근 1개월)
+        long cardSpent = cardTransactionRepository.findByUserIdAndTransactionDateBetween(userId, oneMonthAgo.toLocalDate(), now.toLocalDate())
+            .stream().filter(t -> t.getAmount() < 0).mapToLong(t -> Math.abs(t.getAmount())).sum();
+        // 2. 투자 계좌 개수 및 거래 빈도(최근 1개월)
+        var investmentRecords = investmentRecordRepository.findByUserId(userId);
+        int investmentCount = investmentRecords.size();
+        long investmentTxCount = investmentRecords.stream()
+            .mapToLong(record -> investmentTransactionRepository.findByAccountNumberAndTransactionDateBetween(
+                record.getAccountNumber(), oneMonthAgo.toLocalDate(), now.toLocalDate()).size()).sum();
+        // 3. 월평균 소비액(은행+카드, 최근 1개월)
+        long bankSpent = bankTransactionRepository.findByUserIdAndTransactionDateBetween(userId, oneMonthAgo, now)
+            .stream().filter(t -> t.getAmount() < 0).mapToLong(t -> Math.abs(t.getAmount())).sum();
+        long totalSpent = bankSpent + cardSpent;
+        // 4. 예적금(저축) 잔액
+        long savingsBalance = bankBalanceRepository.findByUserId(userId).stream()
+            .filter(b -> b.getAccountType() != null && (b.getAccountType().contains("예금") || b.getAccountType().contains("적금")))
+            .mapToLong(b -> b.getBalance() != null ? b.getBalance() : 0L).sum();
+        // 5. 보험 계좌 개수
+        int insuranceCount = insuranceAccountRepository.findByUserId(userId).size();
+        // 스코어 계산
+        int score = 0;
+        score += (int)(cardSpent / 100000); // 신용카드 사용액 10만원당 1점
+        score += investmentCount * 10;      // 투자계좌 1개당 10점
+        score += investmentTxCount * 2;     // 투자 거래 1건당 2점
+        score += (int)(totalSpent / 100000); // 월평균 소비액 10만원당 1점
+        score += (int)(savingsBalance / 500000); // 예적금 50만원당 1점
+        score += insuranceCount * 5;        // 보험 1개당 5점
+        // 유형 결정
+        User.UserType type;
+        if (score >= 50)      type = User.UserType.A; // 도전러
+        else if (score >= 35) type = User.UserType.B; // 계획러
+        else if (score >= 20) type = User.UserType.C; // 편안러
+        else                  type = User.UserType.D; // 안심러
+        user.setUserType(type);
+        userRepository.save(user);
+        return type;
     }
 } 
