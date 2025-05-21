@@ -1,5 +1,6 @@
 [
-    {
+    { 
+      "productId": "p001",
       "productName": "청년도약계좌",
       "summary": "청년의 중장기 자산 형성을 지원하는 정부 지원 적금 상품",
       "category": "적금 / 정부지원상품",
@@ -58,6 +59,7 @@
       }
     },
     {
+      "productId": "p002",
       "productName": "서울시 청년수당",
       "summary": "서울시 거주 미취업 청년에게 월 50만원씩 최대 6개월 지원하는 활동 지원금 사업",
       "category": "복지 / 문화",
@@ -101,6 +103,7 @@
       }
     },
     {
+      "productId": "p003",
       "productName": "청년내일저축계좌",
       "summary": "일하는 저소득층 청년의 자산 형성을 지원하는 정부 매칭형 적금 사업",
       "category": "복지 / 문화",
@@ -147,6 +150,7 @@
       }
     },
     {
+      "productId": "p004",
       "productName": "사회복무요원 장병내일준비적금",
       "summary": [
         "사회복무요원이 장병내일준비적금 가입 시",
@@ -206,6 +210,7 @@
       }
     },
     {
+      "productId": "p005",
       "productName": "청년 주택드림 청약통장",
       "summary": "무주택 청년의 주택 구입과 자산 형성을 동시에 지원하는 고금리 청약 연계 통장 상품",
       "category": "주거 / 청약",
@@ -255,6 +260,7 @@
       }
     },
     {
+      "productId": "p006",
       "productName": "직장적응 지원",
       "summary": "산업단지 입주기업의 관리자와 청년 직원에게 조직문화 교육과 직장 적응 프로그램을 제공하는 고용노동부 일자리 연계 사업",
       "category": "일자리 / 조직문화",
@@ -303,6 +309,7 @@
       }
     },
     {
+      "productId": "p007",
       "productName": "청년형 소득공제 장기펀드",
       "summary": [
         "19~34세 청년이 장기펀드에 가입할 경우",
@@ -359,6 +366,7 @@
       }
     },
     {
+      "productId": "p008",
       "productName": "청년희망적금",
       "summary": "19~34세 청년의 자산형성과 저축습관 형성을 위해 정부가 추가 장려금과 비과세 혜택을 제공한 고금리 적금 상품 (운영 종료됨)",
       "category": "적금 / 정부지원",
@@ -413,6 +421,7 @@
       }
     },
     {
+      "productId": "p009",
       "productName": "희망두배 청년통장",
       "summary": "근로하는 청년이 목돈을 마련해 자립하고 미래계획을 실현할 수 있도록 서울시와 후원기관이 매칭지원금을 함께 적립해주는 자산형성 지원사업",
       "category": [
@@ -463,6 +472,7 @@
       }
     },
     {
+      "productId": "p010",
       "productName": "청년 소상공인 창업응원금 지원",
       "summary": "충북 내 청년 (예비)창업자에게 창업응원금 30만원과 교육자료를 제공하여 자생력을 강화하고 창업 초기 정착을 지원하는 사업",
       "category": [
@@ -516,6 +526,7 @@
       }
     },
     {
+      "productId": "p011",
       "productName": "전북특별자치도 기술창업 활성화 금융지원",
       "summary": "전북 내 기술창업자 및 청년창업자에게 창업자금 특례보증을 제공하여 창업 초기 자금부담 완화 및 성공 창업을 유도하는 사업",
       "category": "일자리 / 보조금",
@@ -556,6 +567,7 @@
       }
     },
     {
+      "productId": "p012",
       "productName": "내일채움공제 (3년형)",
       "summary": [
         "중소·중견기업 근로자의 장기 재직을 유도하고 자산 형성을 지원하는 제도. 근로자와 기업이 일정 금액을 공동 적립하여",
@@ -600,6 +612,7 @@
       }
     },
     {
+      "productId": "p013",
       "productName": "청년월세지원",
       "summary": "청년을 대상으로 월세 일부를 보조해주는 제도",
       "category": "복지 / 주거",
@@ -646,6 +659,7 @@
       }
     },
     {
+      "productId": "p014",
       "productName": "청년안심주택 공급활성화(임차보증금 무이자지원)",
       "summary": [
         "서울시와 SH공사가 공동으로 추진하는 무이자 임차보증금 지원 정책으로",
@@ -703,6 +717,7 @@
       }
     },
     {
+      "productId": "p015",
       "productName": "신한 청년 처음적금",
       "summary": "신한은행을 주거래로 이용하도록 청년들에게 우대이자율을 제공하는 상품",
       "category": "적금",
@@ -737,6 +752,7 @@
       }
     },
     {
+      "productId": "p016",
       "productName": "청년형 ISA",
       "summary": [
         "개인의 종합적 자산관리를 통한 재산형성을 지원하려는 취지로 도입한 절세계좌로",
@@ -779,6 +795,7 @@
       }
     },
     {
+      "productId": "p017",
       "productName": "장병 내일 준비 적금",
       "summary": "의무복무 중인 병사들에게 정부 지원금과 우대 이율을 제공하여 전역 후 목돈 마련을 지원하는 적금 상품",
       "category": "군인 / 적금",
@@ -813,6 +830,7 @@
       }
     },
     {
+      "productId": "p018",
       "productName": "경기도 청년기본소득",
       "summary": [
         "청년기본소득은 행복추구",
@@ -848,6 +866,7 @@
       }
     },
     {
+      "productId": "p019",
       "productName": "국민취업지원제도 (청년특례)",
       "summary": "취업을 준비하고 있는 청년들을 대상으로 취업지원서비스와 생계를 위한 최소한의 소득 지원",
       "category": "지원금 / 복지",
@@ -895,6 +914,7 @@
       }
     },
     {
+      "productId": "p020",
       "productName": "해외취업정착지원금",
       "summary": "해외취업에 성공한 도전적인 청년의 원활한 현지 정착과 장기근속을 위해 지원금 지급",
       "category": "지원금 / 일자리",
@@ -937,7 +957,8 @@
       }
     },
     {
-      "productName": "청년수당당",
+      "productId": "p021",
+      "productName": "청년수당",
       "summary": [
         "서울에 거주하고 있는 만 19세~34세 미취업 또는 단기 근로 청년에게 활동지원금(월 50만원 최대 6개월)을 지급하고",
         "강점진단 종합지원",
@@ -967,8 +988,8 @@
       },
       "benefits": "주민등록상 서울시에 거주하는 최종학력 졸업 후 미취업 상태인 청년 대상 월 50만원 (최대 6개월) 취업지원금 제공",
       "cautions": [
-        "미취업자만 신청가능 단",
-        "주30시간 이하 또는 3개월 이하 단기근로자 신청 가능"
+        "미취업자만 신청가능",
+        "단, 주30시간 이하 또는 3개월 이하 단기근로자 신청 가능"
       ],
       "providersDetail": null,
       "applicationUrl": "https://youth.seoul.go.kr/youthConts.do?key=2310100061&sc_bbsCtgrySn=2310200011&sc_pbancSeCd=012",
@@ -978,6 +999,7 @@
       }
     },
     {
+      "productId": "p022",
       "productName": "청년전용 보증부 월세대출",
       "eligibility": {
         "ageRange": "만 19세~34세",
@@ -985,7 +1007,7 @@
         "combinedNetAssetCeiling": "순자산가액 3억 2천5백만원 이하",
         "householdStatus": "무주택 세대주(예정자 포함)"
       },
-      "category": "월세지원금 / 대출출",
+      "category": "월세지원금 / 대출",
       "tags": [
         "청년",
         "월세지원금",
@@ -1056,13 +1078,26 @@
       }
     },
     {
+      "productId": "p023",
       "productName": "청년전용 보증부 월세대출",
       "Summary": "무주택 세대주 청년을 대상으로 보증금 및 월세를 저금리로 지원하는 대출",
-      "Keywords": "월세대출, 보증부, 저금리, 청년지원",
-      "ageRange": "만 19세~34세",
-      "householdStatus": "무주택 세대주(예정자 포함)",
-      "incomeCeiling": "부부합산 연 5천만원 이하",
-      "netAssetCeiling": "순자산가액 3.25억원 이하",
+      "tags": [
+        "월세대출", 
+        "보증부", 
+        "저금리", 
+        "청년지원"  
+      ],
+      "eligibility": {
+        "ageRange": "만 19세~34세",
+        "householdStatus": "무주택 세대주(예정자 포함)",
+        "incomeCeiling": "부부합산 연 5천만원 이하",
+        "netAssetCeiling": "순자산가액 3.25억원 이하"
+      },
+      "propertyCriteria": {
+        "maxAreaSqm": 60,
+        "maxSecurityDeposit": "보증금 5천만원 이하",
+        "maxMonthlyRent": "월세 70만원 이하"
+      },
       "accountRequirement": "",
       "depositLimitMetro": "5천만원",
       "depositLimitOther": "",
@@ -1076,8 +1111,20 @@
       "repaymentMethod": "만기일시상환",
       "lifecyclePreferentialRate": "",
       "applicationPeriodDeadline": "상시 신청",
-      "applicationMethods": "온라인 https://enhuf.molit.go.kr, 은행 지점",
-      "requiredDocuments": "신분증, 주민등록등본, 건강보험 자격, 소득증빙, 임대차계약서, 건축물대장, 보증인 자격, 담보서류",
+      "applicationMethods": [
+        "온라인 https://enhuf.molit.go.kr", 
+        "은행 지점"
+      ],
+      "requiredDocuments": [
+        "신분증", 
+        "주민등록등본", 
+        "건강보험 자격", 
+        "소득증빙", 
+        "확정일자 임대차계약서", 
+        "건축물대장", 
+        "보증인 자격", 
+        "담보제공 관련 서류"
+      ],
       "serviceBanks": [
         "우리은행", 
         "신한은행", 
@@ -1089,13 +1136,21 @@
       "borrowerCosts": ""
   },
   {
+      "productId": "p024",
       "productName": "청년전용 버팀목 전세자금 대출",
       "Summary": "만 19~34세 청년 무주택 세대주에게 전세자금 최대 2억원까지 지원",
-      "Keywords": "전세자금, 저금리, 연장가능, 청년지원",
-      "ageRange": "만 19세~34세",
-      "householdStatus": "무주택 세대주",
-      "incomeCeiling": "부부합산 연 5천만원 이하",
-      "netAssetCeiling": "순자산가액 3.37억원 이하",
+      "tags": [
+        "전세자금", 
+        "저금리", 
+        "연장가능", 
+        "청년지원"
+      ],
+      "eligibility": {
+        "ageRange": "만 19세~34세",
+        "householdStatus": "무주택 세대주",
+        "incomeCeiling": "부부합산 연 5천만원 이하",
+        "netAssetCeiling": "순자산가액 3.37억원 이하"
+      },
       "accountRequirement": "",
       "depositLimitMetro": "",
       "depositLimitOther": "",
@@ -1109,7 +1164,10 @@
       "repaymentMethod": "만기일시상환",
       "lifecyclePreferentialRate": "",
       "applicationPeriodDeadline": "계약금/입금일 또는 전입일 중 빠른 날부터 3개월 이내",
-      "applicationMethods": "온라인 https://enhuf.molit.go.kr, 은행 지점",
+      "applicationMethods": [
+        "온라인 https://enhuf.molit.go.kr", 
+        "은행 지점"
+      ],
       "requiredDocuments": [
         "신분증", 
         "주민등록등본", 
@@ -1119,6 +1177,7 @@
         "보증인 자격", 
         "담보서류"
       ],
+      "serviceBanks": [
         "우리은행", 
         "신한은행", 
         "KB국민은행", 
@@ -1129,13 +1188,21 @@
       "borrowerCosts": ""
   },
   {
+      "productId": "p025",
       "productName": "청년주택드림 디딤돌 대출",
       "Summary": "청년 대상 주택구입용 정책모기지 대출",
-      "Keywords": "디딤돌, 주택구입, 정책모기지, 저금리",
-      "ageRange": "만 20세~39세",
-      "householdStatus": "무주택 세대주",
-      "incomeCeiling": "미혼 연 7천만원 이하, 신혼 부부합산 연 1억원 이하",
-      "netAssetCeiling": "순자산가액 4.88억원 이하",
+      "tags": [
+        "디딤돌", 
+        "주택구입", 
+        "정책모기지", 
+        "저금리"
+      ],
+      "eligibility": {
+        "ageRange": "만 20세~39세",
+        "householdStatus": "무주택 세대주",
+        "incomeCeiling": "미혼 연 7천만원 이하, 신혼 부부합산 연 1억원 이하",
+        "netAssetCeiling": "순자산가액 4.88억원 이하"
+      },
       "accountRequirement": "주택드림청약통장 가입·당첨(1년 이상, 1천만원 이상)",
       "depositLimitMetro": "",
       "depositLimitOther": "",
@@ -1162,13 +1229,21 @@
       "borrowerCosts": "인지세 50%/50%, 근저당 설정 은행 부담, 채권매입 고객 부담, 감정비용 기금 부담"
   },
   {
+      "productId": "p026",
       "productName": "KB 청년 맞춤형 전세자금대출",
       "Summary": "청년 무주택자 대상 전세 보증금 최대 2억원 대출",
-      "Keywords": "전세자금, 맞춤형대출, 자격확인, 금리우대",
-      "ageRange": "만 19세~34세",
-      "householdStatus": "무주택 세대주 또는 예비세대주",
-      "incomeCeiling": "부부합산 연 7천만원 이하",
-      "netAssetCeiling": "",
+      "tags": [
+        "전세자금", 
+        "맞춤형대출", 
+        "자격확인", 
+        "금리우대"
+      ],
+      "eligibility": {
+        "ageRange": "만 19세~34세",
+        "householdStatus": "무주택 세대주 또는 예비세대주",
+        "incomeCeiling": "부부합산 연 7천만원 이하",
+        "netAssetCeiling": ""
+      },
       "accountRequirement": "",
       "depositLimitMetro": "7억원 이하",
       "depositLimitOther": "5억원 이하",
@@ -1182,8 +1257,19 @@
       "repaymentMethod": "만기일시상환",
       "lifecyclePreferentialRate": "",
       "applicationPeriodDeadline": "잔금/전입일 중 빠른 날부터 3개월, 갱신계약 시작일로부터 3개월, 대출실행 후 6개월 경과 시",
-      "applicationMethods": "KB스타뱅킹",
-      "requiredDocuments": "신분증, 재직·소득확인, 임대차계약서, 등기사항전부증명서, 계약금 영수증, 주민등록등본, 금융거래확인서, 가족관계증명서",
+      "applicationMethods": [
+        "KB스타뱅킹"
+      ],
+      "requiredDocuments": [
+        "신분증", 
+        "재직·소득확인", 
+        "임대차계약서", 
+        "등기사항전부증명서", 
+        "계약금 영수증", 
+        "주민등록등본", 
+        "금융거래확인서", 
+        "가족관계증명서"
+      ],
       "serviceBanks": [
         "KB국민은행"
       ],
@@ -1191,13 +1277,21 @@
       "borrowerCosts": "인지세 50%, 보증료 0.02~0.4%, 근저당 설정 은행 부담, 채권매입 고객 부담, 감정비용 기금 부담, 연체가산금리 최고 연15%"
   },
   {
+      "productId": "p027",
       "productName": "중소기업취업청년 전월세보증금대출",
       "Summary": "중소·중견기업 재직 청년에게 임차보증금을 저금리로 지원",
-      "Keywords": "중소기업취업청년, 전월세보증금, 저금리, 보증",
-      "ageRange": "만 19세~34세 (최대 39세 병역연장)",
-      "householdStatus": "무주택 세대주 및 예정자",
-      "incomeCeiling": "부부합산 연 5천만원 이하 (외벌이 3,500만원 이하)",
-      "netAssetCeiling": "순자산가액 3.25억원 이하",
+      "tags": [
+        "중소기업취업청년", 
+        "전월세보증금", 
+        "저금리", 
+        "보증금"
+      ],
+      "eligibility": {
+        "ageRange": "만 19세~34세 (최대 39세 병역연장)",
+        "householdStatus": "무주택 세대주 및 예정자",
+        "incomeCeiling": "부부합산 연 5천만원 이하 (외벌이 3,500만원 이하)",
+        "netAssetCeiling": "순자산가액 3.25억원 이하"
+      },
       "accountRequirement": "임차보증금의 5% 이상 지불",
       "depositLimitMetro": "2억원 이하",
       "depositLimitOther": "",
@@ -1229,13 +1323,21 @@
       "borrowerCosts": ""
   },
   {
+      "productId": "p028",
       "productName": "하나 청년전세론",
       "Summary": "만 19~34세 무주택 청년 세대주 대상 임차보증금 최대 2억원 지원",
-      "Keywords": "전세론, 하나은행, 무주택청년, 보증금90%",
-      "ageRange": "만 19세~34세",
-      "householdStatus": "무주택 세대주",
-      "incomeCeiling": "부부합산 연 7천만원 이하",
-      "netAssetCeiling": "",
+      "tags": [
+        "전세론", 
+        "하나은행", 
+        "무주택청년", 
+        "보증금90%"
+      ],
+      "eligibility": {
+        "ageRange": "만 19세~34세",
+        "householdStatus": "무주택 세대주",
+        "incomeCeiling": "부부합산 연 7천만원 이하",
+        "netAssetCeiling": ""
+      },
       "accountRequirement": "임차보증금의 5% 이상 지급",
       "depositLimitMetro": "7억원 이하",
       "depositLimitOther": "5억원 이하",
@@ -1264,13 +1366,21 @@
       "borrowerCosts": ""
   },
   {
+      "productId": "p029",
       "productName": "신한 청년전세대출",
       "Summary": "만 19~34세 청년 무주택 세대주 대상 전세자금 대출",
-      "Keywords": "전세대출, 신한은행, 무주택청년, 보증금90%",
-      "ageRange": "만 19세~34세",
-      "householdStatus": "무주택 세대주",
-      "incomeCeiling": "",
-      "netAssetCeiling": "",
+      "tags": [
+        "전세대출", 
+        "신한은행", 
+        "무주택청년", 
+        "보증금90%"
+      ],
+      "eligibility": {
+        "ageRange": "만 19세~34세",
+        "householdStatus": "무주택 세대주",
+        "incomeCeiling": "부부합산 연 7천만원 이하",
+        "netAssetCeiling": ""
+      },
       "accountRequirement": "",
       "depositLimitMetro": "",
       "depositLimitOther": "",
@@ -1296,7 +1406,5 @@
       ],
       "contacts": "1599-8000",
       "borrowerCosts": ""
-  }
+    }
   ]
-
-  
