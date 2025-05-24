@@ -25,13 +25,14 @@ import NewsDetail from './src/screens/NewsDetail';
 import BankSelection from './src/screens/BankSelection';
 import MyDataComplete from './src/screens/MyDataComplete';
 import ProductsHome from './src/screens/Products/ProductsHome';
-import YouthProduct from './src/screens/Products/YouthProduct';
-import DepositProduct from './src/screens/Products/DepositProduct';
-import CardProduct from './src/screens/Products/CardProduct';
-import LoanProduct from './src/screens/Products/LoanProduct';
-import InsuranceProduct from './src/screens/Products/InsuranceProduct';
-import ETFProduct from './src/screens/Products/ETFProduct';
-import InvestProduct from './src/screens/Products/InvestProduct';
+import YouthProductList from './src/screens/Products/Youth/YouthProductList';
+import DepositProduct from './src/screens/Products/Others/DepositProduct';
+import CardProduct from './src/screens/Products/Others/CardProduct';
+import LoanProduct from './src/screens/Products/Others/LoanProduct';
+import InsuranceProduct from './src/screens/Products/Others/InsuranceProduct';
+import ETFProduct from './src/screens/Products/Others/ETFProduct';
+import InvestProduct from './src/screens/Products/Others/InvestProduct';
+import AddYouthInfo from './src/screens/Products/Youth/AddYouthInfo';
 
 const Stack = createNativeStackNavigator();
 
@@ -147,8 +148,8 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="YouthProduct"
-            component={YouthProduct}
+            name="YouthProductList"
+            component={YouthProductList}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -176,11 +177,15 @@ export default function App() {
             name="ETFProduct"
             component={ETFProduct}
             options={{ headerShown: false }}
-          />
-          
+          />          
           <Stack.Screen
             name="InvestProduct"
             component={InvestProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AddYouthInfo"
+            component={AddYouthInfo}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
