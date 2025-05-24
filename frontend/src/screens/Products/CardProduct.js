@@ -30,3 +30,4 @@ const CardProduct = ({ navigation }) => {
 
 export default CardProduct;
 
+
