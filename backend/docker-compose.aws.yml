@@ -6,51 +6,234 @@ services:
     container_name: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: myapp
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_INNODB_BUFFER_POOL_SIZE: 256M
+      MYSQL_INNODB_LOG_FILE_SIZE: 64M
+      MYSQL_INNODB_FLUSH_LOG_AT_TRX_COMMIT: 2
+      MYSQL_INNODB_FLUSH_METHOD: O_DIRECT
+      MYSQL_MAX_CONNECTIONS: 200
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d
     networks:
       - app-network
-    command: --default-authentication-plugin=mysql_native_password
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --bind-address=0.0.0.0
+      - --skip-ssl
+      - --performance_schema=off
+      - --table_definition_cache=400
+      - --table_open_cache=256
+      - --innodb_buffer_pool_size=256M
+      - --max_connections=200
+      - --innodb_flush_log_at_trx_commit=2
+      - --innodb_flush_method=O_DIRECT
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     container_name: spring-backend
     restart: always
-    ports:
-      - "8080:8080"
     depends_on:
       mysql:
         condition: service_healthy
+      ml-service:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: aws
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      JAVA_OPTS: -Xmx512m -Xms256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/heapdump.hprof
+      TZ: Asia/Seoul
+      ML_SERVICE_URL: http://ml-service:8000
+      SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_BATCH_SIZE: 50
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_BATCH_FETCH_SIZE: 50
+      SPRING_JPA_PROPERTIES_HIBERNATE_ORDER_INSERTS: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_ORDER_UPDATES: true
+      SPRING_JPA_PROPERTIES_HIBERNATE_BATCH_VERSIONED_DATA: true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./logs:/var/log
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 768M
+        reservations:
+          cpus: '0.3'
+          memory: 384M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  ml-service:
+    build:
+      context: ../ml_service
+      dockerfile: Dockerfile
+    container_name: ml-service
+    restart: always
+    ports:
+      - "8000:8000"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/myapp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=false
-      - SPRING_JPA_PROPERTIES_HIBERNATE_SHOW_SQL=false
-      - SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_BATCH_SIZE=10
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_BATCH_FETCH_SIZE=10
-      - SPRING_PROFILES_ACTIVE=prod
-      - TZ=Asia/Seoul
+      - DATA_DIR=/app/data
+      - WORKERS=2
+      - BATCH_SIZE=100
+      - MODEL_CACHE_SIZE=1000
+      - PREDICTION_TIMEOUT=30
+      - MAX_CONNECTIONS=100
+      - LOG_LEVEL=INFO
+    volumes:
+      - ../ml_service/data:/app/data
+      - ./ml_logs:/app/logs
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 768M
+        reservations:
+          cpus: '0.3'
+          memory: 384M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mysql_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  mysql_data:
-    name: backend_mysql_data
-    driver: local
