@@ -30,6 +30,7 @@ import com.example.dummy.repository.InsuranceAccountRepository;
 import java.util.Collections;
 import java.util.Random;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -176,60 +177,115 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 스코어링 기반 금융성향 4분류 로직
-     * - 신용카드 사용액 10만원당 1점
-     * - 투자 계좌 1개당 10점
-     * - 투자 거래 1건당 2점
-     * - 월평균 소비액 10만원당 1점
-     * - 예적금 50만원당 1점
-     * - 보험 1개당 5점
-     *
-     * 총점 구간:
-     * 50점 이상: 도전러(A)
-     * 35~49점: 계획러(B)
-     * 20~34점: 편안러(C)
-     * 0~19점: 안심러(D)
+     * 개선된 스코어링 기반 금융성향 4분류 로직
+     * - 각 항목을 Z-score로 정규화하여 상대적 비교
+     * - 투자 성향에 더 높은 가중치 부여
+     * - 소비와 저축 간 균형 고려
      */
     @Transactional
     public User.UserType determineAndSaveUserType(User user) {
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         java.time.LocalDateTime oneMonthAgo = now.minusMonths(1);
         Long userId = user.getId();
-        // 1. 신용카드 사용액(최근 1개월)
+
+        // 1. 기본 데이터 수집
+        // 1.1 신용카드 사용액(최근 1개월)
         long cardSpent = cardTransactionRepository.findByUserIdAndTransactionDateBetween(userId, oneMonthAgo.toLocalDate(), now.toLocalDate())
             .stream().filter(t -> t.getAmount() < 0).mapToLong(t -> Math.abs(t.getAmount())).sum();
-        // 2. 투자 계좌 개수 및 거래 빈도(최근 1개월)
+
+        // 1.2 투자 계좌 및 거래 데이터
         var investmentRecords = investmentRecordRepository.findByUserId(userId);
         int investmentCount = investmentRecords.size();
         long investmentTxCount = investmentRecords.stream()
             .mapToLong(record -> investmentTransactionRepository.findByAccountNumberAndTransactionDateBetween(
                 record.getAccountNumber(), oneMonthAgo.toLocalDate(), now.toLocalDate()).size()).sum();
-        // 3. 월평균 소비액(은행+카드, 최근 1개월)
+        long totalInvestmentAmount = investmentRecords.stream()
+            .mapToLong(record -> record.getBalance()).sum();
+
+        // 1.3 은행 거래 데이터
         long bankSpent = bankTransactionRepository.findByUserIdAndTransactionDateBetween(userId, oneMonthAgo, now)
             .stream().filter(t -> t.getAmount() < 0).mapToLong(t -> Math.abs(t.getAmount())).sum();
         long totalSpent = bankSpent + cardSpent;
-        // 4. 예적금(저축) 잔액
+
+        // 1.4 예적금 잔액
         long savingsBalance = bankBalanceRepository.findByUserId(userId).stream()
             .filter(b -> b.getAccountType() != null && (b.getAccountType().contains("예금") || b.getAccountType().contains("적금")))
             .mapToLong(b -> b.getBalance() != null ? b.getBalance() : 0L).sum();
-        // 5. 보험 계좌 개수
+
+        // 1.5 보험 계좌
         int insuranceCount = insuranceAccountRepository.findByUserId(userId).size();
-        // 스코어 계산
-        int score = 0;
-        score += (int)(cardSpent / 100000); // 신용카드 사용액 10만원당 1점
-        score += investmentCount * 10;      // 투자계좌 1개당 10점
-        score += investmentTxCount * 2;     // 투자 거래 1건당 2점
-        score += (int)(totalSpent / 100000); // 월평균 소비액 10만원당 1점
-        score += (int)(savingsBalance / 500000); // 예적금 50만원당 1점
-        score += insuranceCount * 5;        // 보험 1개당 5점
-        // 유형 결정
+
+        // 2. 전체 사용자 데이터 수집 (정규화를 위해)
+        List<Long> allCardSpent = cardTransactionRepository.findAll().stream()
+            .filter(t -> t.getAmount() < 0)
+            .map(t -> Math.abs(t.getAmount()))
+            .collect(Collectors.toList());
+
+        List<Long> allInvestmentAmounts = investmentRecordRepository.findAll().stream()
+            .map(record -> record.getBalance())
+            .collect(Collectors.toList());
+
+        List<Long> allSavingsBalances = bankBalanceRepository.findAll().stream()
+            .filter(b -> b.getAccountType() != null && (b.getAccountType().contains("예금") || b.getAccountType().contains("적금")))
+            .map(b -> b.getBalance() != null ? b.getBalance() : 0L)
+            .collect(Collectors.toList());
+
+        // 3. Z-score 계산
+        double cardSpentZScore = calculateZScore(cardSpent, allCardSpent);
+        double investmentAmountZScore = calculateZScore(totalInvestmentAmount, allInvestmentAmounts);
+        double savingsBalanceZScore = calculateZScore(savingsBalance, allSavingsBalances);
+
+        // 4. 투자 성향 점수 (가중치 0.4)
+        double investmentScore = (
+            normalize(investmentCount, 0, 10) * 0.3 +  // 투자 계좌 수
+            normalize(investmentTxCount, 0, 100) * 0.3 +  // 투자 거래 빈도
+            normalize(investmentAmountZScore, -3, 3) * 0.4  // 투자 금액
+        ) * 0.4;
+
+        // 5. 소비 성향 점수 (가중치 0.3)
+        double consumptionScore = (
+            normalize(cardSpentZScore, -3, 3) * 0.6 +  // 신용카드 사용
+            normalize(bankSpent, 0, 10000000) * 0.4  // 은행 거래
+        ) * 0.3;
+
+        // 6. 저축 성향 점수 (가중치 0.3)
+        double savingsScore = (
+            normalize(savingsBalanceZScore, -3, 3) * 0.7 +  // 예적금 잔액
+            normalize(insuranceCount, 0, 5) * 0.3  // 보험 계약 수
+        ) * 0.3;
+
+        // 7. 최종 점수 계산
+        double finalScore = investmentScore + consumptionScore + savingsScore;
+
+        // 8. 유형 결정
         User.UserType type;
-        if (score >= 50)      type = User.UserType.A; // 도전러
-        else if (score >= 35) type = User.UserType.B; // 계획러
-        else if (score >= 20) type = User.UserType.C; // 편안러
-        else                  type = User.UserType.D; // 안심러
+        if (finalScore >= 0.7)      type = User.UserType.A; // 도전러
+        else if (finalScore >= 0.4) type = User.UserType.B; // 계획러
+        else if (finalScore >= 0.2) type = User.UserType.C; // 편안러
+        else                        type = User.UserType.D; // 안심러
+
         user.setUserType(type);
         userRepository.save(user);
         return type;
+    }
+
+    private double calculateZScore(double value, List<Long> allValues) {
+        if (allValues.isEmpty()) return 0;
+        
+        double mean = allValues.stream()
+            .mapToDouble(Long::doubleValue)
+            .average()
+            .orElse(0.0);
+            
+        double stdDev = Math.sqrt(allValues.stream()
+            .mapToDouble(v -> Math.pow(v - mean, 2))
+            .average()
+            .orElse(0.0));
+            
+        return stdDev == 0 ? 0 : (value - mean) / stdDev;
+    }
+
+    private double normalize(double value, double min, double max) {
+        return (value - min) / (max - min);
     }
 } 
