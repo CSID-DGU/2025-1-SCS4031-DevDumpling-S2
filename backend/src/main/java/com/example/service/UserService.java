@@ -67,9 +67,13 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    @Transactional(readOnly = true)
     public User findByKakaoId(String kakaoId) {
-        return userRepository.findByKakaoId(kakaoId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByKakaoId(kakaoId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        // Lazy Loading 컬렉션을 명시적으로 초기화
+        user.getScrappedArticles().size();
+        return user;
     }
 
     public User save(User user) {

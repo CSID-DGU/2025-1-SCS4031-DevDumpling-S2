@@ -1,10 +1,14 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Getter
@@ -14,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @Table(name = "user")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +47,15 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_scrapped_articles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "article_id")
+    )
+    @JsonBackReference
+    private Set<Article> scrappedArticles = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
