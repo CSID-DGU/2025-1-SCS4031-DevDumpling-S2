@@ -1,9 +1,13 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -12,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "article")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Article {
 
     @Id
@@ -49,6 +54,10 @@ public class Article {
 
     @Enumerated(EnumType.STRING)
     private ProcessingStatus status;
+
+    @ManyToMany(mappedBy = "scrappedArticles")
+    @JsonManagedReference
+    private Set<User> scrappedBy = new HashSet<>();
 
     public enum ProcessingStatus {
         PENDING,    // Gemini API 처리 전
