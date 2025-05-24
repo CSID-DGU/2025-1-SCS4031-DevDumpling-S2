@@ -140,9 +140,11 @@ export default function HomeScreen() {
           <ChallengeSection />
         </View>
 
-        {/* 다른 사람들의 평점 */}
+        {/* 금융 상품 보러가기 */}
         <View className="mb-8">
-          <Text className="text-[20px] font-bold text-black mb-2">다른 사람들의 평점은 어떨까?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('ProductsHome')}>
+            <Text className="text-[20px] font-bold text-black mb-2">신청 가능한 청년 우대 상품</Text>
+          </TouchableOpacity>
           <RatingSection />
         </View>
 
