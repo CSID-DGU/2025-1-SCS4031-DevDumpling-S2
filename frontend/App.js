@@ -24,6 +24,14 @@ import MyDataConsent from './src/screens/MyDataConsent';
 import NewsDetail from './src/screens/NewsDetail';
 import BankSelection from './src/screens/BankSelection';
 import MyDataComplete from './src/screens/MyDataComplete';
+import ProductsHome from './src/screens/Products/ProductsHome';
+import YouthProduct from './src/screens/Products/YouthProduct';
+import DepositProduct from './src/screens/Products/DepositProduct';
+import CardProduct from './src/screens/Products/CardProduct';
+import LoanProduct from './src/screens/Products/LoanProduct';
+import InsuranceProduct from './src/screens/Products/InsuranceProduct';
+import ETFProduct from './src/screens/Products/ETFProduct';
+import InvestProduct from './src/screens/Products/InvestProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -131,6 +139,48 @@ export default function App() {
           <Stack.Screen
             name="MyDataComplete"
             component={MyDataComplete}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ProductsHome"
+            component={ProductsHome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="YouthProduct"
+            component={YouthProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="DepositProduct"
+            component={DepositProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CardProduct"
+            component={CardProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="LoanProduct"
+            component={LoanProduct}
+            options={{ headerShown: false }}
+          />
+          
+          <Stack.Screen
+            name="InsuranceProduct"
+            component={InsuranceProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ETFProduct"
+            component={ETFProduct}
+            options={{ headerShown: false }}
+          />
+          
+          <Stack.Screen
+            name="InvestProduct"
+            component={InvestProduct}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
