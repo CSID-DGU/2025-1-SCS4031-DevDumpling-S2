@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import Header from '../../components/layout/Header';
+import Header from '../../../components/layout/Header';
 
 const LoanProduct = ({ navigation }) => {
     return (

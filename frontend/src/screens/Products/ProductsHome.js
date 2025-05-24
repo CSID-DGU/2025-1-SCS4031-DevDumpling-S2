@@ -1,7 +1,7 @@
 import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
 import { useNavigation } from '@react-navigation/native';
-import DepositProduct from './DepositProduct';
+import DepositProduct from './Others/DepositProduct';
 
 
 export default function ProductsHomeScreen({ navigation }) {
@@ -11,7 +11,7 @@ export default function ProductsHomeScreen({ navigation }) {
     const cardWidth = (width - 100) / 2 - 8;
 
     const navigateToYouthProduct = () => {
-        navigation.navigate('YouthProduct');
+        navigation.navigate('YouthProductList');
     };
     const navigateToDepositProduct = () => {
         navigation.navigate('DepositProduct');
