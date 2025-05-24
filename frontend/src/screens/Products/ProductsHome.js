@@ -46,7 +46,7 @@ export default function ProductsHomeScreen({ navigation }) {
 
                 {/* 게시판 카드 리스트 */}
                 <ScrollView
-                    contentContainerClassName="flex-1justify-center items-center py-5"
+                    contentContainerClassName="justify-center items-center py-5"
                     contentContainerStyle={{
                         paddingHorizontal: horizontalPadding,
                         paddingTop: 16,
