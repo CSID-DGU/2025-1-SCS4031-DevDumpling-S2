@@ -136,7 +136,9 @@ export default function HomeScreen() {
       >
         {/* 지금 뜨고 있는 챌린지 */}
         <View className="mb-8">
-          <Text className="text-[20px] font-bold text-black mb-2">지금 뜨고 있는 챌린지</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('ChallengeHomeScreen')}>
+            <Text className="text-[20px] font-bold text-black mb-2">지금 뜨고 있는 챌린지</Text>
+          </TouchableOpacity>
           <ChallengeSection />
         </View>
 

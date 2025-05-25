@@ -33,6 +33,9 @@ import InsuranceProduct from './src/screens/Products/Others/InsuranceProduct';
 import ETFProduct from './src/screens/Products/Others/ETFProduct';
 import InvestProduct from './src/screens/Products/Others/InvestProduct';
 import AddYouthInfo from './src/screens/Products/Youth/AddYouthInfo';
+import ChallengeHomeScreen from './src/screens/Challenge/ChallengeHomeScreen';
+import CategoryDetailScreen from './src/screens/Challenge/CategoryDetailScreen';
+import ChallengeDetailScreen from './src/screens/Challenge/ChallengeDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -167,7 +170,7 @@ export default function App() {
             component={LoanProduct}
             options={{ headerShown: false }}
           />
-          
+
           <Stack.Screen
             name="InsuranceProduct"
             component={InsuranceProduct}
@@ -177,7 +180,7 @@ export default function App() {
             name="ETFProduct"
             component={ETFProduct}
             options={{ headerShown: false }}
-          />          
+          />
           <Stack.Screen
             name="InvestProduct"
             component={InvestProduct}
@@ -186,6 +189,21 @@ export default function App() {
           <Stack.Screen
             name="AddYouthInfo"
             component={AddYouthInfo}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ChallengeHomeScreen"
+            component={ChallengeHomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CategoryDetailScreen"
+            component={CategoryDetailScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ChallengeDetailScreen"
+            component={ChallengeDetailScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
