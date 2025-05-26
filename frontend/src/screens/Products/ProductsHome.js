@@ -35,7 +35,7 @@ export default function ProductsHomeScreen({ navigation }) {
     return (
         <>
             <Header />
-            <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
+            <View className="flex-1 bg-Fineed-background pt-12 px-4">
 
                 {/* 카테고리 탭 */}
                 <View className="flex-row justify-center mb-4">
