@@ -35,6 +35,7 @@ public class Challenge {
     private ChallengeType type;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ChallengeCategory category;
     
     private String inviteCode;
