@@ -150,6 +150,10 @@ public class ChallengeService {
             return challenges.map(challenge -> {
                 try {
                     Integer currentParticipants = participationRepository.countByChallenge(challenge).intValue();
+                    Integer maxParticipants = challenge.getMaxParticipants();
+                    if (maxParticipants == null) {
+                        maxParticipants = 100; // 기본값 설정
+                    }
                     return ChallengeSummaryResponse.from(challenge, currentParticipants);
                 } catch (Exception e) {
                     log.error("[챌린지 목록 조회] 응답 변환 실패 - 챌린지 ID: {}, 오류: {}", 
