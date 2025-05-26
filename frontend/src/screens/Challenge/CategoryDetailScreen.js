@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { fetchChallengesByCategory } from './ChallengeApi';
 import Header from '../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
+import SecretChallengeImg from '../../../assets/images/secretchallenge.png';
+import VectorImg from '../../../assets/images/Vector.png';
 
 export default function CategoryDetailScreen({ route }) {
   const { categoryName } = route.params;
@@ -11,7 +13,6 @@ export default function CategoryDetailScreen({ route }) {
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('ALL'); // ALL, ONGOING, UPCOMING, COMPLETED
 
   // 카테고리명을 영어로 변환하는 함수 (백엔드 API 호출용)
   const getCategoryCode = (name) => {
@@ -33,117 +34,73 @@ export default function CategoryDetailScreen({ route }) {
       '교통': 'TRANSPORTATION',
       '의료/건강/피트니스': 'HEALTH_EXERCISE'
     };
-    
+
     return categoryMap[name] || 'FOOD'; // 기본값으로 FOOD 사용
   };
 
   useEffect(() => {
     loadChallenges();
-  }, [categoryName, activeFilter]);
+  }, [categoryName]);
 
   const loadChallenges = async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      setLoading(true);
-      const status = activeFilter === 'ALL' ? null : activeFilter.toLowerCase();
+      // 카테고리 코드 가져오기
       const categoryCode = getCategoryCode(categoryName);
-      const data = await fetchChallengesByCategory(categoryCode, status);
+      console.log(`카테고리 유형 변환: ${categoryName} -> ${categoryCode}`);
+      
+      // 백엔드에 맞게 파라미터 전달
+      const data = await fetchChallengesByCategory(categoryCode);
+      
+      // 데이터 설정
       setChallenges(data.content || []);
       setLoading(false);
+      
+      // 로그 추가
+      console.log(`${categoryName} 챌린지 가져오기 성공: ${data.content?.length}개 찾음`);
     } catch (err) {
-      console.error('챌린지 목록 불러오기 오류:', err);
-      setError('챌린지 목록을 불러오는 중 오류가 발생했습니다.');
+      console.error(`${categoryName} 챌린지 목록 불러오기 오류:`, err);
+      setError('챌린지 목록을 불러올 수 없습니다.');
+      setChallenges([]);
       setLoading(false);
     }
   };
 
-  const renderFilterTabs = () => {
-    const filters = [
-      { id: 'ALL', label: '전체' },
-      { id: 'ONGOING', label: '진행중' },
-      { id: 'UPCOMING', label: '예정' },
-      { id: 'COMPLETED', label: '완료' }
-    ];
-
-    return (
-      <View className="flex-row bg-white rounded-lg shadow-sm mb-4 p-1">
-        {filters.map(filter => (
-          <TouchableOpacity
-            key={filter.id}
-            className={`flex-1 py-2 px-3 rounded-md ${activeFilter === filter.id ? 'bg-Fineed-green' : 'bg-transparent'}`}
-            onPress={() => setActiveFilter(filter.id)}
-          >
-            <Text 
-              className={`text-center text-sm ${activeFilter === filter.id ? 'text-white font-medium' : 'text-gray-700'}`}
-            >
-              {filter.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
-
   const renderChallengeItem = ({ item }) => {
-    // 카테고리별 기본 이미지 URL 맵핑
+    // 카테고리별 기본 이미지 URL/로컬 리소스
     const getChallengeImage = (category) => {
-      const imageMap = {
-        'FOOD': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/FOOD.png',
-        'TRAVEL': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/TRAVEL.png',
-        'TRANSPORTATION': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/TRANSPORTATION.png',
-        'PET': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/PET.png',
-        'SAVINGS': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/SAVINGS.png',
-        'CAFE_SNACK': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/CAFE_SNACK.png',
-        'MART_CONVENIENCE': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/MART_CONVENIENCE.png',
-        'ALCOHOL_ENTERTAINMENT': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/ALCOHOL_ENTERTAINMENT.png',
-        'SHOPPING': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/SHOPPING.png',
-        'BEAUTY': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/BEAUTY.png',
-        'GAME_OTT': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/GAME_OTT.png',
-        'HEALTH_EXERCISE': 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/HEALTH_EXERCISE.png'
-      };
-      
-      return imageMap[category] || 'https://myapp-logos.s3.amazonaws.com/ChallengeIcons/NEW_DISCOUNT.png';
+      switch (category) {
+        case 'PRIVATE':
+          return SecretChallengeImg;
+        case 'NEW_DISCOUNT':
+          return VectorImg;
+        default:
+          return `https://myapp-logos.s3.amazonaws.com/ChallengeIcons/${category}.png`;
+      }
     };
+
+    const imgSrc = item.imageUrl || getChallengeImage(item.category);
 
     return (
       <TouchableOpacity
-        className="bg-white rounded-[20px] p-4 shadow-md mb-4"
+        className="bg-white rounded-[20px] p-4 shadow-sm mb-3"
         onPress={() => navigation.navigate('ChallengeDetail', { challengeId: item.id })}
       >
-        <View className="flex-row items-center mb-3">
+        <View className="flex-row items-center">
           <Image
-            source={{ uri: item.imageUrl || getChallengeImage(item.category) }}
-            style={{ width: 60, height: 60 }}
+            source={typeof imgSrc === 'string' ? { uri: imgSrc } : imgSrc}
+            style={{ width: 56, height: 56 }}
             resizeMode="contain"
           />
           <View className="ml-3 flex-1">
-            <Text className="text-[16px] font-bold text-black mb-1">{item.title}</Text>
-            <Text className="text-[12px] text-[#6D6D6D]">
-              {item.startDate?.substring(0, 10)} ~ {item.endDate?.substring(0, 10)}
+            <Text className="text-[16px] font-bold text-black" numberOfLines={1}>{item.title}</Text>
+            <Text className="text-[12px] text-[#6D6D6D]" numberOfLines={1}>
+              좋아요 {item.likes || 0}개 · {item.participantCount || 0}명 참여 중
             </Text>
           </View>
-        </View>
-
-        <View className="flex-row justify-between">
-          <View className="flex-row items-center">
-            <Icon name="people-outline" size={14} color="#6D6D6D" />
-            <Text className="text-[12px] text-[#6D6D6D] ml-1">
-              {item.participantCount || 0}명 참여
-            </Text>
-          </View>
-          
-          <View className="flex-row items-center">
-            <Icon name="heart-outline" size={14} color="#6D6D6D" />
-            <Text className="text-[12px] text-[#6D6D6D] ml-1">
-              {item.likes || 0}
-            </Text>
-          </View>
-          
-          <View className="flex-row items-center">
-            <Icon name="alert-circle-outline" size={14} color="#6D6D6D" />
-            <Text className="text-[12px] text-[#6D6D6D] ml-1">
-              난이도: {item.difficulty || '중간'}
-            </Text>
-          </View>
+          <Icon name="heart-outline" size={24} color="#D1D5DB" />
         </View>
       </TouchableOpacity>
     );
@@ -153,10 +110,7 @@ export default function CategoryDetailScreen({ route }) {
     <View className="items-center justify-center py-10">
       <Icon name="search-outline" size={48} color="#D9D9D9" />
       <Text className="text-[16px] text-[#6D6D6D] text-center mt-4">
-        {activeFilter === 'ALL' 
-          ? `${categoryName} 카테고리에 챌린지가 없습니다.` 
-          : `${activeFilter === 'ONGOING' ? '진행중인' : activeFilter === 'UPCOMING' ? '예정된' : '완료된'} 챌린지가 없습니다.`
-        }
+        {`${categoryName} 카테고리에 챌린지가 없습니다.`}
       </Text>
     </View>
   );
@@ -165,15 +119,16 @@ export default function CategoryDetailScreen({ route }) {
     <View className="flex-1 bg-Fineed-background">
       <Header />
       <View className="px-4 py-2">
-        <View className="flex-row items-center mb-4">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
-          <Text className="text-xl font-bold ml-2">{categoryName} 챌린지</Text>
-        </View>
-        
-        {renderFilterTabs()}
-        
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="flex-row items-center justify-center bg-Fineed-green rounded-full py-3 mb-4"
+        >
+          <Icon name="arrow-back" size={20} color="#fff" />
+          <Text className="text-base font-bold text-white ml-1">{categoryName} 챌린지</Text>
+        </TouchableOpacity>
+
+        {/* 카테고리 필터 탭 제거 */}
+
         {loading ? (
           <View className="flex-1 justify-center items-center py-10">
             <ActivityIndicator size="large" color="#014029" />

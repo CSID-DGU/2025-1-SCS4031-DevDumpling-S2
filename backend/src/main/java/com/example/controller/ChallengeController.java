@@ -55,13 +55,13 @@ public class ChallengeController {
             Authentication authentication) {
         try {
             User user = userService.findByKakaoId(authentication.getName());
-            
+
             // request가 null인 경우 새로 생성 (공개 챌린지)
             if (request == null) {
                 request = new JoinChallengeRequest();
             }
             request.setChallengeId(challengeId);
-            
+
             ParticipationResponse response = challengeService.joinChallenge(request, user);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -89,15 +89,14 @@ public class ChallengeController {
             @PathVariable Long challengeId,
             Authentication authentication) {
         try {
-            User user = authentication != null ? 
-                userService.findByKakaoId(authentication.getName()) : null;
+            User user = authentication != null ? userService.findByKakaoId(authentication.getName()) : null;
             ChallengeDetailResponse response = challengeService.getChallengeDetail(challengeId, user);
-            
+
             if (response == null) {
                 log.error("[챌린지 상세 조회] 응답 생성 실패: {}", challengeId);
                 return ResponseEntity.internalServerError().build();
             }
-            
+
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             log.error("[챌린지 상세 조회] 챌린지를 찾을 수 없음: {}", e.getMessage());
@@ -213,13 +212,11 @@ public class ChallengeController {
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryInfoResponse>> getCategories() {
         String s3BaseUrl = "https://myapp-logos.s3.amazonaws.com/ChallengeIcons/";
-        List<CategoryInfoResponse> categories =
-            List.of(ChallengeCategory.values()).stream()
+        List<CategoryInfoResponse> categories = List.of(ChallengeCategory.values()).stream()
                 .map(cat -> new CategoryInfoResponse(
-                    cat.getDisplayName(),
-                    s3BaseUrl + cat.getDisplayName() + ".png"
-                ))
+                        cat.getDisplayName(),
+                        s3BaseUrl + cat.getDisplayName() + ".png"))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(categories);
     }
-} 
+}
