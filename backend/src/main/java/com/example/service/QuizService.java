@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class QuizService {
 
     private final QuizRepository quizRepository;
@@ -175,14 +176,17 @@ public class QuizService {
                field.equals("기사 처리에 실패했습니다.");
     }
 
+    @Transactional(readOnly = true)
     public List<Quiz> findByArticleId(Long articleId) {
         return quizRepository.findByArticleId(articleId);
     }
 
+    @Transactional(readOnly = true)
     public List<Quiz> findByUserType(UserType userType) {
         return quizRepository.findByUserType(userType);
     }
 
+    @Transactional(readOnly = true)
     public List<Quiz> findUnansweredQuizzesByUserType(UserType userType, User user) {
         // 해당 유형의 모든 퀴즈
         List<Quiz> allQuizzes = quizRepository.findByUserType(userType);
@@ -197,11 +201,13 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Quiz findByArticleIdAndUserType(Long articleId, UserType userType) {
         List<Quiz> quizzes = quizRepository.findByArticleIdAndUserType(articleId, userType);
         return quizzes.isEmpty() ? null : quizzes.get(0);
     }
 
+    @Transactional(readOnly = true)
     public Quiz findById(Long id) {
         return quizRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + id));

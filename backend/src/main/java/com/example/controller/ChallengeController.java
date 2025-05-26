@@ -81,7 +81,38 @@ public class ChallengeController {
             @PathVariable com.example.entity.Challenge.ChallengeCategory category,
             @RequestParam(required = false) String status,
             Pageable pageable) {
-        return ResponseEntity.ok(challengeService.getChallengesByCategory(category, status, pageable));
+        try {
+            // status 파라미터 유효성 검사
+            if (status != null && !status.isEmpty()) {
+                String upperStatus = status.toUpperCase();
+                if (!List.of("ACTIVE", "UPCOMING", "COMPLETED", "ALL").contains(upperStatus)) {
+                    log.error("[챌린지 목록 조회] 잘못된 상태값: {}", status);
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+
+            // 페이지네이션 파라미터 유효성 검사
+            if (pageable.getPageNumber() < 0) {
+                log.error("[챌린지 목록 조회] 잘못된 페이지 번호: {}", pageable.getPageNumber());
+                return ResponseEntity.badRequest().build();
+            }
+            if (pageable.getPageSize() <= 0 || pageable.getPageSize() > 100) {
+                log.error("[챌린지 목록 조회] 잘못된 페이지 크기: {}", pageable.getPageSize());
+                return ResponseEntity.badRequest().build();
+            }
+
+            Page<ChallengeSummaryResponse> response = challengeService.getChallengesByCategory(category, status, pageable);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            log.error("[챌린지 목록 조회] 잘못된 파라미터: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (NullPointerException e) {
+            log.error("[챌린지 목록 조회] 필수 파라미터 누락: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("[챌린지 목록 조회] 서버 오류 발생: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/{challengeId}")

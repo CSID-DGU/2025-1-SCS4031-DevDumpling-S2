@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -55,9 +57,13 @@ public class Article {
     @Enumerated(EnumType.STRING)
     private ProcessingStatus status;
 
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Quiz> quizzes;
+
     @ManyToMany(mappedBy = "scrappedArticles")
-    @JsonManagedReference
-    private Set<User> scrappedBy = new HashSet<>();
+    @JsonIgnore
+    private List<User> scrappedBy;
 
     public enum ProcessingStatus {
         PENDING,    // Gemini API 처리 전
