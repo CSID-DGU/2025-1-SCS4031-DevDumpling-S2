@@ -13,7 +13,7 @@ const YouthProduct = ({ navigation }) => {
     return (
         <>
             <Header />
-            <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
+            <View className="flex-1 bg-Fineed-background pt-2 px-4">
                 <ScrollView
                     contentContainerClassName="justify-center"
                     contentContainerStyle={{
