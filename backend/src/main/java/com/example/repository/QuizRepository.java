@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
     List<Quiz> findByArticleId(Long articleId);
+    
+    @Query("SELECT q FROM Quiz q LEFT JOIN FETCH q.article WHERE q.userType = :userType ORDER BY q.id DESC")
     List<Quiz> findByUserType(UserType userType);
     
     @Query("SELECT q FROM Quiz q WHERE q.article.id = :articleId AND q.userType = :userType ORDER BY q.id DESC")

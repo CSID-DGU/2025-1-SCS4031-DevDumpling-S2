@@ -29,12 +29,15 @@ public class Challenge {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private Integer maxParticipants;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer maxParticipants = 100; // 기본값 100명으로 설정
     
     @Enumerated(EnumType.STRING)
     private ChallengeType type;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ChallengeCategory category;
     
     private String inviteCode;
