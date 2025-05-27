@@ -64,4 +64,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
         @Param("currentDate") LocalDate currentDate,
         Pageable pageable
     );
+
+    @Query("SELECT c FROM Challenge c WHERE c.isCompleted = false AND c.isDeleted = false")
+    List<Challenge> findByIsCompletedFalseAndDeletedFalse();
 } 

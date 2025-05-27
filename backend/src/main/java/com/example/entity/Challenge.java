@@ -83,6 +83,9 @@ public class Challenge {
     @Builder.Default
     private Integer likeCount = 0; // 좋아요 수
 
+    @Column
+    private Float averageSuccessRate; // 평균 성공률
+
     public enum ChallengeType {
         PUBLIC, PRIVATE
     }

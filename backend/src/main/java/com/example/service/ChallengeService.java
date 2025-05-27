@@ -400,4 +400,34 @@ public class ChallengeService {
             throw new RuntimeException("참여 중인 챌린지 목록 조회 중 오류가 발생했습니다.", e);
         }
     }
+
+    @Scheduled(cron = "0 0 1 * * ?")  // 매일 새벽 1시에 실행
+    @Transactional
+    public void analyzeChallenges() {
+        LocalDate today = LocalDate.now();
+        List<Challenge> activeChallenges = challengeRepository.findByIsCompletedFalseAndDeletedFalse();
+        
+        for (Challenge challenge : activeChallenges) {
+            try {
+                List<Participation> participants = getParticipants(challenge);
+                calculateRanks(participants);
+                participationRepository.saveAll(participants);
+                
+                // 챌린지 통계 업데이트
+                float averageSuccessRate = (float) participants.stream()
+                    .mapToDouble(Participation::getSuccessRate)
+                    .average()
+                    .orElse(0.0);
+                challenge.setAverageSuccessRate(averageSuccessRate);
+                challengeRepository.save(challenge);
+                
+                log.info("[챌린지 분석 완료] 챌린지 ID: {}, 참여자 수: {}, 평균 성공률: {}%", 
+                    challenge.getChallengeID(), 
+                    participants.size(),
+                    String.format("%.1f", averageSuccessRate));
+            } catch (Exception e) {
+                log.error("[챌린지 분석 실패] 챌린지 ID: {}, 오류: {}", challenge.getChallengeID(), e.getMessage());
+            }
+        }
+    }
 } 
