@@ -233,7 +233,7 @@ const AddYouthInfo = ({ navigation }) => {
                         >
                             <Text className="text-white text-lg font-bold">입력 완료</Text>
                         </TouchableOpacity>
-                        </View>
+                    </View>
 
             </View>
         </>
