@@ -2,6 +2,7 @@ package com.example.service;
 
 import com.example.api.GeminiClient;
 import com.example.entity.Article;
+import com.example.entity.User;
 import com.example.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -70,6 +72,30 @@ public class RssArticleService {
             article.setExplanation("기사 처리에 실패했습니다.");
             articleRepository.save(article);
         }
+    }
+
+    @Transactional
+    public void scrapArticle(User user, Long articleId) {
+        Article article = findById(articleId);
+        user.getScrappedArticles().add(article);
+        article.getScrappedBy().add(user);
+        log.info("[스크랩] 기사 스크랩 성공 - 사용자: {}, 기사: {}", user.getNickname(), article.getTitle());
+    }
+
+    @Transactional
+    public void unscrapArticle(User user, Long articleId) {
+        Article article = findById(articleId);
+        user.getScrappedArticles().remove(article);
+        article.getScrappedBy().remove(user);
+        log.info("[스크랩] 기사 스크랩 취소 성공 - 사용자: {}, 기사: {}", user.getNickname(), article.getTitle());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Article> getScrappedArticles(User user) {
+        List<Article> articles = new ArrayList<>(user.getScrappedArticles());
+        // 각 Article의 scrappedBy 컬렉션을 명시적으로 초기화
+        articles.forEach(article -> article.getScrappedBy().size());
+        return articles;
     }
 
     private boolean isInvalidField(String field) {

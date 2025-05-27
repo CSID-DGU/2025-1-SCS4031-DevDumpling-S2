@@ -121,31 +121,50 @@ public class ChallengeService {
             Challenge.ChallengeCategory category,
             String status,
             Pageable pageable) {
-        
-        LocalDate currentDate = LocalDate.now();
-        Page<Challenge> challenges;
+        try {
+            LocalDate currentDate = LocalDate.now();
+            Page<Challenge> challenges;
 
-        switch (status != null ? status.toUpperCase() : "ALL") {
-            case "ACTIVE":
-                challenges = challengeRepository.findActiveChallengesByCategory(
-                    category, currentDate, pageable);
-                break;
-            case "UPCOMING":
-                challenges = challengeRepository.findUpcomingChallengesByCategory(
-                    category, currentDate, pageable);
-                break;
-            case "COMPLETED":
-                challenges = challengeRepository.findCompletedChallengesByCategory(
-                    category, currentDate, pageable);
-                break;
-            default:
-                challenges = challengeRepository.findByCategory(category, pageable);
+            switch (status != null ? status.toUpperCase() : "ALL") {
+                case "ACTIVE":
+                    challenges = challengeRepository.findActiveChallengesByCategory(
+                        category, currentDate, pageable);
+                    break;
+                case "UPCOMING":
+                    challenges = challengeRepository.findUpcomingChallengesByCategory(
+                        category, currentDate, pageable);
+                    break;
+                case "COMPLETED":
+                    challenges = challengeRepository.findCompletedChallengesByCategory(
+                        category, currentDate, pageable);
+                    break;
+                default:
+                    challenges = challengeRepository.findByCategory(category, pageable);
+            }
+
+            if (challenges == null) {
+                log.error("[챌린지 목록 조회] 데이터베이스 조회 실패 - 카테고리: {}, 상태: {}", category, status);
+                throw new IllegalStateException("데이터베이스 조회 실패");
+            }
+
+            return challenges.map(challenge -> {
+                try {
+                    Integer currentParticipants = participationRepository.countByChallenge(challenge).intValue();
+                    Integer maxParticipants = challenge.getMaxParticipants();
+                    if (maxParticipants == null) {
+                        maxParticipants = 100; // 기본값 설정
+                    }
+                    return ChallengeSummaryResponse.from(challenge, currentParticipants);
+                } catch (Exception e) {
+                    log.error("[챌린지 목록 조회] 응답 변환 실패 - 챌린지 ID: {}, 오류: {}", 
+                        challenge.getChallengeID(), e.getMessage());
+                    throw new IllegalStateException("응답 변환 실패");
+                }
+            });
+        } catch (Exception e) {
+            log.error("[챌린지 목록 조회] 서비스 레이어 오류: {}", e.getMessage(), e);
+            throw e;
         }
-
-        return challenges.map(challenge -> {
-            Integer currentParticipants = participationRepository.countByChallenge(challenge).intValue();
-            return ChallengeSummaryResponse.from(challenge, currentParticipants);
-        });
     }
 
     public ChallengeDetailResponse getChallengeDetail(Long challengeId, User user) {
@@ -339,5 +358,25 @@ public class ChallengeService {
 
     public List<Participation> getParticipants(Challenge challenge) {
         return participationRepository.findByChallenge(challenge);
+    }
+
+    @Transactional
+    public ChallengeResponse likeChallenge(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+        challenge.setLikeCount(challenge.getLikeCount() + 1);
+        Challenge saved = challengeRepository.save(challenge);
+        return ChallengeResponse.from(saved);
+    }
+
+    @Transactional
+    public ChallengeResponse unlikeChallenge(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+        if (challenge.getLikeCount() > 0) {
+            challenge.setLikeCount(challenge.getLikeCount() - 1);
+        }
+        Challenge saved = challengeRepository.save(challenge);
+        return ChallengeResponse.from(saved);
     }
 } 

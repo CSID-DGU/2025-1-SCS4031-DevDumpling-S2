@@ -17,6 +17,7 @@ public class ChallengeResponse {
     private ChallengeType type;
     private ChallengeCategory category;
     private String inviteCode;
+    private Integer likeCount;
     
     public static ChallengeResponse from(Challenge challenge) {
         ChallengeResponse response = new ChallengeResponse();
@@ -29,6 +30,7 @@ public class ChallengeResponse {
         response.setType(challenge.getType());
         response.setCategory(challenge.getCategory());
         response.setInviteCode(challenge.getInviteCode());
+        response.setLikeCount(challenge.getLikeCount());
         return response;
     }
 } 

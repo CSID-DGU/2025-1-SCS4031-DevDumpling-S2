@@ -29,12 +29,15 @@ public class Challenge {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private Integer maxParticipants;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer maxParticipants = 100; // 기본값 100명으로 설정
     
     @Enumerated(EnumType.STRING)
     private ChallengeType type;
     
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ChallengeCategory category;
     
     private String inviteCode;
@@ -75,6 +78,10 @@ public class Challenge {
     private Long cafeSnackTargetDailyAmount; // 하루 카페/간식 목표 금액
 
     private Integer cafeSnackTargetWeeklyCount; // 일주일 카페/간식 목표 횟수
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer likeCount = 0; // 좋아요 수
 
     public enum ChallengeType {
         PUBLIC, PRIVATE
