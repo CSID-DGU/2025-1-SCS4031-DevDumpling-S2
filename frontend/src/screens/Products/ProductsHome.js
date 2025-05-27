@@ -13,24 +13,9 @@ export default function ProductsHomeScreen({ navigation }) {
     const navigateToYouthProduct = () => {
         navigation.navigate('YouthProductList');
     };
-    const navigateToDepositProduct = () => {
-        navigation.navigate('DepositProduct');
-    };
-    const navigateToCardProduct = () => {
-        navigation.navigate('CardProduct');
-    };
-    const navigateToLoanProduct = () => {
-        navigation.navigate('LoanProduct');
-    };
-    const navigateToInsuranceProduct = () => {
-        navigation.navigate('InsuranceProduct');
-    };
-    const navigateToETFProduct = () => {
-        navigation.navigate('ETFProduct');
-    };
-    const navigateToInvestProduct = () => {
-        navigation.navigate('InvestProduct');
-    };
+    const handleCategorySelect = (category) => {
+        navigation.navigate('FinancialHome', { category });
+    }
 
     return (
         <>
@@ -63,13 +48,13 @@ export default function ProductsHomeScreen({ navigation }) {
                         <TouchableOpacity
                             style={{ width: cardWidth, height: bigCardWidth / 5 }}
                             className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
-                            onPress={navigateToDepositProduct}>
+                            onPress={() => handleCategorySelect('예·적금')}>
                             <Text className="text-black text-center text-m font-semibold">예·적금</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{ width: cardWidth, height: bigCardWidth / 5 }}
                             className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
-                            onPress={navigateToCardProduct}>
+                            onPress={() => handleCategorySelect('카드')}>
                             <Text className="text-black text-center text-m font-semibold">카드</Text>
                         </TouchableOpacity>
                     </View>
@@ -77,13 +62,13 @@ export default function ProductsHomeScreen({ navigation }) {
                         <TouchableOpacity
                             style={{ width: cardWidth, height: bigCardWidth / 5 }}
                             className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
-                            onPress={navigateToLoanProduct}>
+                            onPress={() => handleCategorySelect('대출')}>
                             <Text className="text-black text-center text-m font-semibold">대출</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{ width: cardWidth, height: bigCardWidth / 5 }}
                             className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
-                            onPress={navigateToInsuranceProduct}>
+                            onPress={() => handleCategorySelect('보험')}>
                             <Text className="text-black text-center text-m font-semibold">보험</Text>
                         </TouchableOpacity>
                     </View>
@@ -91,13 +76,13 @@ export default function ProductsHomeScreen({ navigation }) {
                         <TouchableOpacity
                             style={{ width: cardWidth, height: bigCardWidth / 5 }}
                             className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
-                            onPress={navigateToETFProduct}>
+                            onPress={() => handleCategorySelect('ETF')}>
                             <Text className="text-black text-center text-m font-semibold">ETF</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={{ width: cardWidth, height: bigCardWidth / 5 }}
                             className="bg-white rounded-[20px] shadow-md p-5 items-center justify-center"
-                            onPress={navigateToInvestProduct}>
+                            onPress={() => handleCategorySelect('투자')}>
                             <Text className="text-black text-center text-m font-semibold">투자</Text>
                         </TouchableOpacity>
                     </View>
