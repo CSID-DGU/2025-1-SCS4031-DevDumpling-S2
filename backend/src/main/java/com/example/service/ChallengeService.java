@@ -379,4 +379,25 @@ public class ChallengeService {
         Challenge saved = challengeRepository.save(challenge);
         return ChallengeResponse.from(saved);
     }
+
+    @Transactional
+    public Page<ChallengeSummaryResponse> getUserParticipatingChallenges(User user, Pageable pageable) {
+        try {
+            LocalDate currentDate = LocalDate.now();
+            Page<Challenge> challenges = challengeRepository.findUserParticipatingChallenges(user, currentDate, pageable);
+            
+            if (challenges == null) {
+                log.error("[참여 중인 챌린지 목록 조회] 데이터베이스 조회 실패 - 사용자: {}", user.getId());
+                throw new IllegalStateException("데이터베이스 조회 실패");
+            }
+            
+            return challenges.map(challenge -> {
+                List<Participation> participants = getParticipants(challenge);
+                return ChallengeSummaryResponse.from(challenge, participants.size());
+            });
+        } catch (Exception e) {
+            log.error("[참여 중인 챌린지 목록 조회] 오류 발생 - 사용자: {}, 오류: {}", user.getId(), e.getMessage());
+            throw new RuntimeException("참여 중인 챌린지 목록 조회 중 오류가 발생했습니다.", e);
+        }
+    }
 } 

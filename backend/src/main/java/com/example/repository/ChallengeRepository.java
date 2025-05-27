@@ -51,4 +51,17 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     @Query("SELECT c FROM Challenge c WHERE c.endDate < :today AND c.isCompleted = false")
     List<Challenge> findByEndDateBeforeAndIsCompletedFalse(@Param("today") LocalDate today);
+
+    @Query("SELECT c FROM Challenge c " +
+           "JOIN Participation p ON c = p.challenge " +
+           "WHERE p.user = :user " +
+           "AND c.startDate <= :currentDate " +
+           "AND c.endDate >= :currentDate " +
+           "AND c.isDeleted = false " +
+           "AND c.isCompleted = false")
+    Page<Challenge> findUserParticipatingChallenges(
+        @Param("user") User user,
+        @Param("currentDate") LocalDate currentDate,
+        Pageable pageable
+    );
 } 
