@@ -16,6 +16,7 @@ public class ChallengeSummaryResponse {
     private Boolean isPrivate;
     private String category;
     private Double participationRate;  // 참여율 (현재 참여자 / 최대 참여자 * 100)
+    private Integer likeCount;
 
     public static ChallengeSummaryResponse from(Challenge challenge, Integer currentParticipants) {
         ChallengeSummaryResponse response = new ChallengeSummaryResponse();
@@ -31,6 +32,7 @@ public class ChallengeSummaryResponse {
         response.setParticipationRate(
             (double) currentParticipants / challenge.getMaxParticipants() * 100
         );
+        response.setLikeCount(challenge.getLikeCount());
         return response;
     }
 } 

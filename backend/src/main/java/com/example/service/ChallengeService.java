@@ -359,4 +359,24 @@ public class ChallengeService {
     public List<Participation> getParticipants(Challenge challenge) {
         return participationRepository.findByChallenge(challenge);
     }
+
+    @Transactional
+    public ChallengeResponse likeChallenge(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+        challenge.setLikeCount(challenge.getLikeCount() + 1);
+        Challenge saved = challengeRepository.save(challenge);
+        return ChallengeResponse.from(saved);
+    }
+
+    @Transactional
+    public ChallengeResponse unlikeChallenge(Long challengeId, User user) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+            .orElseThrow(() -> new IllegalArgumentException("챌린지를 찾을 수 없습니다."));
+        if (challenge.getLikeCount() > 0) {
+            challenge.setLikeCount(challenge.getLikeCount() - 1);
+        }
+        Challenge saved = challengeRepository.save(challenge);
+        return ChallengeResponse.from(saved);
+    }
 } 

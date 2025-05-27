@@ -79,6 +79,10 @@ public class Challenge {
 
     private Integer cafeSnackTargetWeeklyCount; // 일주일 카페/간식 목표 횟수
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer likeCount = 0; // 좋아요 수
+
     public enum ChallengeType {
         PUBLIC, PRIVATE
     }
