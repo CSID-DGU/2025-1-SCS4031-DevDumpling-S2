@@ -26,18 +26,14 @@ import BankSelection from './src/screens/BankSelection';
 import MyDataComplete from './src/screens/MyDataComplete';
 import ProductsHome from './src/screens/Products/ProductsHome';
 import YouthProductList from './src/screens/Products/Youth/YouthProductList';
-import DepositProduct from './src/screens/Products/Others/DepositProduct';
-import CardProduct from './src/screens/Products/Others/CardProduct';
-import LoanProduct from './src/screens/Products/Others/LoanProduct';
-import InsuranceProduct from './src/screens/Products/Others/InsuranceProduct';
-import ETFProduct from './src/screens/Products/Others/ETFProduct';
-import InvestProduct from './src/screens/Products/Others/InvestProduct';
 import AddYouthInfo from './src/screens/Products/Youth/AddYouthInfo';
 import ChallengeHomeScreen from './src/screens/Challenge/ChallengeHomeScreen';
 import CategoryDetailScreen from './src/screens/Challenge/CategoryDetailScreen';
 import ChallengeDetailScreen from './src/screens/Challenge/ChallengeDetailScreen';
 import CreateChallengeScreen from './src/screens/Challenge/CreateChallengeScreen';
 import YouthProduct from './src/screens/Products/Youth/YouthProduct';
+import FinancialHome from './src/screens/Products/Others/FinancialHome';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -158,37 +154,6 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="DepositProduct"
-            component={DepositProduct}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="CardProduct"
-            component={CardProduct}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="LoanProduct"
-            component={LoanProduct}
-            options={{ headerShown: false }}
-          />
-
-          <Stack.Screen
-            name="InsuranceProduct"
-            component={InsuranceProduct}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="ETFProduct"
-            component={ETFProduct}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="InvestProduct"
-            component={InvestProduct}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
             name="AddYouthInfo"
             component={AddYouthInfo}
             options={{ headerShown: false }}
@@ -216,6 +181,11 @@ export default function App() {
           <Stack.Screen
             name="YouthProduct"
             component={YouthProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="FinancialHome"
+            component={FinancialHome}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
