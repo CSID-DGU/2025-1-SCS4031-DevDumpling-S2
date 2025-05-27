@@ -10,6 +10,10 @@ const YouthProduct = ({ navigation }) => {
         navigation.navigate('AddYouthInfo');
     };
 
+    const navigateToYouthProduct = () => {
+        navigation.navigate('YouthProduct');
+    };
+
     return (
         <>
             <Header />
@@ -48,11 +52,14 @@ const YouthProduct = ({ navigation }) => {
 
                     {/* 신청 가능 상품 리스트 */}
                     <View className="flex-col justify-center gap-3 mb-5">
-                        <TouchableOpacity className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md">
-                            <Text className="text-xs text-[#6D6D6D] mb-2">자유적금·자산형성·세제혜택</Text>
-                            <Text className="text-2xl font-bold text-[#014029] mb-2">청년내일저축계좌</Text>
-                            <Text className="text-sm">신청기간: 5월 2일~5월 21일</Text>
-                            <Text className="text-sm">저소득 근로 청년에게 장려금을 얹어주는 고금리 적금</Text>
+                        <TouchableOpacity
+                            onPress={navigateToYouthProduct}
+                            className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md">
+                            <Text className="text-xs text-[#6D6D6D] mb-2">적금 / 정부지원상품</Text>
+                            <Text className="text-2xl font-bold text-[#014029] mb-2">청년도약계좌</Text>
+                            <Text className="text-sm">신청기간: 5월 22일~6월 13일</Text>
+                            <Text className="text-sm">청년의 중장기 자산 형성을 지원하는 정부 지원 적금 상품</Text>
+                            <Text className="text-xs text-[#6D6D6D] mt-2">#청년 #적금 #정부지원 #우대금리 #비과세 #자산형성</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -64,10 +71,11 @@ const YouthProduct = ({ navigation }) => {
                         <Text className="text-lg font-bold">❌ 현재 가입 기간이 아니에요</Text>
 
                         <TouchableOpacity className="bg-[#D9D9D9] p-4 rounded-2xl shadow-md">
-                            <Text className="text-xs text-[#6D6D6D] mb-2">자유적금·자산형성·세제혜택</Text>
+                            <Text className="text-xs text-[#6D6D6D] mb-2">복지 / 문화</Text>
                             <Text className="text-2xl font-bold text-[#014029] mb-2">청년내일저축계좌</Text>
                             <Text className="text-sm">신청기간: 5월 2일~5월 21일</Text>
-                            <Text className="text-sm">저소득 근로 청년에게 장려금을 얹어주는 고금리 적금</Text>
+                            <Text className="text-sm">일하는 저소득층 청년의 자산 형성을 지원하는 정부 매칭형 적금 사업</Text>
+                            <Text className="text-xs text-[#6D6D6D] mt-2">#청년 #자산형성 #정부지원 #저소득층 #적금형 #비과세</Text>
                         </TouchableOpacity>
                     </View>
 

@@ -37,6 +37,7 @@ import ChallengeHomeScreen from './src/screens/Challenge/ChallengeHomeScreen';
 import CategoryDetailScreen from './src/screens/Challenge/CategoryDetailScreen';
 import ChallengeDetailScreen from './src/screens/Challenge/ChallengeDetailScreen';
 import CreateChallengeScreen from './src/screens/Challenge/CreateChallengeScreen';
+import YouthProduct from './src/screens/Products/Youth/YouthProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -210,6 +211,11 @@ export default function App() {
           <Stack.Screen
             name="CreateChallengeScreen"
             component={CreateChallengeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="YouthProduct"
+            component={YouthProduct}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
