@@ -271,15 +271,19 @@ export default function ChallengeHomeScreen() {
                   onPress={() => handleChallengePress(item.id)}
                 >
                   <Image
-                    source={{ uri: safeUri(item.imageUrl) }}
+                    source={item.imageUrl ? { uri: safeUri(item.imageUrl) } : getCategoryIcon(item.category)}
                     style={{ width: 56, height: 56 }}
                     resizeMode="contain"
                   />
                   <View className="flex-1 ml-3">
                     <Text className="text-[16px] font-bold text-black mb-1">{item.title}</Text>
-                    <Text className="text-[12px] text-[#6D6D6D]">현재 {item.progress}% · 달성률 {item.progress}%</Text>
+                    <Text className="text-[12px] text-[#6D6D6D]">
+                      현재 {item.progress || 0}% · 달성률 {item.progress || 0}%
+                    </Text>
                   </View>
-                  <Icon name="chatbubble-ellipses-outline" size={24} color="#6D6D6D" />
+                  <View className="ml-2">
+                    <Icon name="chatbubble-ellipses-outline" size={24} color="#6D6D6D" />
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>

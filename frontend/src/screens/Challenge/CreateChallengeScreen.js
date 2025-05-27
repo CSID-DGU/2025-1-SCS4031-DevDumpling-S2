@@ -30,6 +30,7 @@ export default function CreateChallengeScreen() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCatModal, setShowCatModal] = useState(false);
   const [selectedGoalLabel, setSelectedGoalLabel] = useState('총 식비 줄이기');
+  const [maxParticipants, setMaxParticipants] = useState('50');
 
   function formatDate(d) {
     const y = d.getFullYear();
@@ -48,24 +49,43 @@ export default function CreateChallengeScreen() {
   const getUnit = () => goalOptions.find(o => o.value === goalType)?.unit;
 
   const handleSubmit = async () => {
-    if (!title || !description || !goalValue) {
-      return Alert.alert('오류', '모든 필수 항목을 입력해주세요.');
+    if (!title || !description) {
+      return Alert.alert('오류', '챌린지 제목과 설명을 입력해주세요.');
     }
+
     try {
-      await createChallenge({
+      console.log('챌린지 생성 요청 데이터:', {
         title,
         description,
         startDate,
         endDate,
-        category,
-        goalType,
-        goalValue: parseInt(goalValue, 10),
-        type: isPublic ? 'PUBLIC' : 'PRIVATE'
+        maxParticipants: parseInt(maxParticipants, 10),
+        type: isPublic ? 'PUBLIC' : 'PRIVATE',
+        category
       });
-      Alert.alert('성공', '챌린지가 생성되었습니다.');
+      
+      const response = await createChallenge({
+        title,
+        description,
+        startDate,
+        endDate,
+        maxParticipants: parseInt(maxParticipants, 10),
+        type: isPublic ? 'PUBLIC' : 'PRIVATE',
+        category
+      });
+      
+      console.log('챌린지 생성 성공 응답:', response);
+      
+      if (response.inviteCode) {
+        Alert.alert('성공', `비공개 챌린지가 생성되었습니다.\n초대 코드: ${response.inviteCode}`);
+      } else {
+        Alert.alert('성공', '챌린지가 생성되었습니다.');
+      }
+      
       navigation.replace('ChallengeHomeScreen');
-    } catch {
-      Alert.alert('실패', '생성에 실패했습니다.');
+    } catch (error) {
+      console.error('챌린지 생성 실패:', error.response?.data || error);
+      Alert.alert('실패', '챌린지 생성에 실패했습니다. 입력 정보를 확인해주세요.');
     }
   };
 
@@ -143,10 +163,26 @@ export default function CreateChallengeScreen() {
 
         <Text className="text-base font-bold mb-2">종료일</Text>
         <TextInput
-          className="bg-white h-12 rounded-full px-6 mb-8 shadow-[0px_4px_10px_rgba(0,0,0,0.05)]"
+          className="bg-white h-12 rounded-full px-6 mb-6 shadow-[0px_4px_10px_rgba(0,0,0,0.05)]"
           value={endDate}
           onChangeText={setEndDate}
         />
+        
+        {/* 최대 참가자 수 */}
+        <Text className="text-base font-bold mb-2">최대 참가자 수</Text>
+        <View className="flex-row items-center mb-8">
+          <TextInput
+            className="bg-white h-12 rounded-full px-6 flex-1 shadow-[0px_4px_10px_rgba(0,0,0,0.05)]"
+            placeholder="50"
+            placeholderTextColor="#C4C4C4"
+            keyboardType="numeric"
+            value={maxParticipants}
+            onChangeText={setMaxParticipants}
+          />
+          <View className="bg-white h-12 rounded-full px-6 ml-2 flex-row items-center justify-center shadow-[0px_4px_10px_rgba(0,0,0,0.05)]">
+            <Text className="text-gray-700">명</Text>
+          </View>
+        </View>
 
         {/* 공개 여부 */}
         <View className="flex-row items-center mb-8">
