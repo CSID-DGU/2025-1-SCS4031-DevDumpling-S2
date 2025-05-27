@@ -240,6 +240,34 @@ public class ChallengeController {
         }
     }
 
+    @PostMapping("/{challengeId}/like")
+    public ResponseEntity<ChallengeResponse> likeChallenge(
+            @PathVariable Long challengeId,
+            Authentication authentication) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            ChallengeResponse response = challengeService.likeChallenge(challengeId, user);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("[챌린지 좋아요] 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{challengeId}/like")
+    public ResponseEntity<ChallengeResponse> unlikeChallenge(
+            @PathVariable Long challengeId,
+            Authentication authentication) {
+        try {
+            User user = userService.findByKakaoId(authentication.getName());
+            ChallengeResponse response = challengeService.unlikeChallenge(challengeId, user);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("[챌린지 좋아요 취소] 오류 발생: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryInfoResponse>> getCategories() {
         String s3BaseUrl = "https://myapp-logos.s3.amazonaws.com/ChallengeIcons/";
