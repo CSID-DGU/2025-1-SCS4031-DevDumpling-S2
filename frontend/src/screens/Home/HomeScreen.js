@@ -36,7 +36,41 @@ export default function HomeScreen() {
       console.log('유저 토큰:', token ? '토큰 있음' : '토큰 없음');
 
       if (!token) return;
+      
+      // 로컬에 저장된 userData에서 마이데이터 동의 상태 확인
+      const userDataStr = await AsyncStorage.getItem('userData');
+      if (userDataStr) {
+        const userData = JSON.parse(userDataStr);
+        console.log('로컬 userData:', userData);
+        
+        // userData에서 마이데이터 동의 상태 확인
+        console.log('마이데이터 동의 값:', userData.myDataConsent, typeof userData.myDataConsent);
+        console.log('유저 타입:', userData.userType);
+        
+        // userType이 있으면 이미 마이데이터 동의한 것으로 간주
+        if (userData.userType) {
+          console.log('유저 타입이 있으므로 마이데이터 동의된 것으로 간주');
+          
+          // 로컬 userData를 업데이트하여 myDataConsent를 true로 설정
+          userData.myDataConsent = true;
+          await AsyncStorage.setItem('userData', JSON.stringify(userData));
+          console.log('로컬 userData 업데이트 완료');
+          return;
+        }
+        
+        // myDataConsent가 true 또는 1이 아닌 경우에만 동의 창 표시
+        if (userData.myDataConsent !== true && 
+            userData.myDataConsent !== 1 && 
+            userData.myDataConsent !== '1') {
+          console.log('로컬 userData에서 마이데이터 동의 안됨: 팝업 표시');
+          setShowMydataModal(true);
+          return;
+        }
+        
+        console.log('로컬 userData에서 마이데이터 동의 확인됨');
+      }
 
+      // 백엔드 API로 마이데이터 동의 상태 확인 (추가 검증)
       try {
         const response = await axios.get(`${API_BASE_URL}/users/mydata-consent`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -52,8 +86,15 @@ export default function HomeScreen() {
         }
       } catch (apiError) {
         console.error('마이데이터 API 호출 오류:', apiError);
-
-
+        // API 오류 시에도 로컬 userData 기반으로 동의 상태 확인
+        const userDataStr = await AsyncStorage.getItem('userData');
+        if (userDataStr) {
+          const userData = JSON.parse(userDataStr);
+          if (!userData.myDataConsent) {
+            console.log('API 오류, 로컬 userData 확인 결과 동의 안됨: 팝업 표시');
+            setShowMydataModal(true);
+          }
+        }
       }
     } catch (error) {
       console.error('마이데이터 동의 확인 중 오류:', error);
