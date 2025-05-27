@@ -190,7 +190,7 @@ export default function Quiz() {
         <>
             {/* 문제 부분 */}
             <View className="bg-white rounded-[20px] p-6 mb-4 mx-6">
-                <Text className="text-Fineed-green font-bold text-xl text-center">분야명 퀴즈</Text>
+                <Text className="text-Fineed-green font-bold text-xl text-center">금융 기사 퀴즈</Text>
                 <Text className="text-gray-500 text-center mb-6">4가지 답 중 정답을 골라주세요</Text>
 
                 <Text className="text-base font-medium text-center mb-2">
