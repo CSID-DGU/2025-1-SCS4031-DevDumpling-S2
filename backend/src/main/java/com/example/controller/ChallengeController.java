@@ -23,6 +23,10 @@ import com.example.entity.challenge.ChallengeCategory;
 import com.example.dto.challenge.CategoryInfoResponse;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Slf4j
 @RestController
@@ -277,5 +281,18 @@ public class ChallengeController {
                         s3BaseUrl + cat.getDisplayName() + ".png"))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/participating")
+    public ResponseEntity<Page<ChallengeSummaryResponse>> getUserParticipatingChallenges(
+            @AuthenticationPrincipal User user,
+            @PageableDefault(size = 10) Pageable pageable) {
+        try {
+            Page<ChallengeSummaryResponse> challenges = challengeService.getUserParticipatingChallenges(user, pageable);
+            return ResponseEntity.ok(challenges);
+        } catch (Exception e) {
+            log.error("[참여 중인 챌린지 목록 조회] 오류 발생 - 사용자: {}, 오류: {}", user.getId(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
