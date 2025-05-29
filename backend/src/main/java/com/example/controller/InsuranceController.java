@@ -69,4 +69,17 @@ public class InsuranceController {
             return ResponseEntity.internalServerError().body("데이터 조회 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Insurance>> getInsuranceList() {
+        try {
+            log.info("보험 데이터 조회 시작");
+            List<Insurance> insuranceList = insuranceRepository.findAll();
+            log.info("보험 데이터 조회 완료 - {}건", insuranceList.size());
+            return ResponseEntity.ok(insuranceList);
+        } catch (Exception e) {
+            log.error("보험 데이터 조회 중 오류 발생: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
