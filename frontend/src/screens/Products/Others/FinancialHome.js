@@ -24,6 +24,14 @@ const FinancialHome = ({ route }) => {
                         paddingBottom: 24,
                         justifyContent: 'center'
                     }}>
+                    <View className="flex-row justify-between items-center">
+                        <TouchableOpacity>
+                            <Text>예적금</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View className="flex-row justify-between items-center">
+                        <Text className="text-2xl font-bold">User님이 가입한 상품</Text>
+                    </View>
                     <Text className="text-3xl font-bold">{selectedCategory}</Text>
                 </ScrollView>
             </View>

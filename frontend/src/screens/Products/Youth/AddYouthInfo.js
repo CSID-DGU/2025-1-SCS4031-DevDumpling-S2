@@ -45,9 +45,7 @@ const AddYouthInfo = ({ navigation }) => {
                     </View>
 
                     {/* 기본 정보 */}
-                    <View className="items-left pb-5 gap-5">
-                        <Text className="text-xl font-medium text-[#014029]">기본 정보</Text>
-
+                    <View className="items-left pb-5 gap-10">
                         {/* 성별 */}
                         <View className="flex-row gap-3 items-center justify-start">
                             <Text className="text-xl font-bold pr-5">성별</Text>
@@ -98,13 +96,6 @@ const AddYouthInfo = ({ navigation }) => {
                                 <Text className="text-lg">만원</Text>
                             </View>
                         </View>
-                    </View>
-
-                    <View className="border-t border-gray-200 w-full mt-5 mb-5" />
-
-                    {/* 추가 정보 */}
-                    <View className="items-left pb-5 gap-5">
-                        <Text className="text-xl font-medium text-[#014029]">추가 정보</Text>
 
                         {/* 거주지역 */}
                         <View className="flex-row gap-3 items-center justify-start">
@@ -196,7 +187,7 @@ const AddYouthInfo = ({ navigation }) => {
                             elevation: 5,
                         }}
                         >
-                        {['서울', '경기', '인천'].map((city) => (
+                        {['서울', '경기', '인천', '강원', '충청', '전라', '경상', '제주'].map((city) => (
                             <TouchableOpacity
                             key={city}
                             onPress={() => {
