@@ -1,0 +1,411 @@
+[
+{
+    "productId": "p022",
+    "productName": "청년전용 보증부 월세대출",
+    "eligibility": {
+      "ageRange": "만 19세~34세",
+      "annualHouseholdIncomeCeiling": "부부합산 연 소득 5천만원 이하",
+      "combinedNetAssetCeiling": "순자산가액 3억 2천5백만원 이하",
+      "householdStatus": "무주택 세대주(예정자 포함)"
+    },
+    "category": "월세지원금 / 대출",
+    "tags": [
+      "청년",
+      "월세지원금",
+      "보증금지원금",
+      "대출"
+    ],
+
+    "propertyCriteria": {
+      "maxAreaSqm": 60,
+      "maxSecurityDeposit": "보증금 5천만원 이하",
+      "maxMonthlyRent": "월세 70만원 이하"
+    },
+    "loanTerms": {
+      "interestRate": {
+        "securityDepositLoan": "연 1.3%",
+        "monthlyRentLoan": [
+          { "upTo₩200,000": "0%" },
+          { "above₩200,000": "연 1.0%" }
+        ]
+      },
+      "loanLimits": {
+        "securityDepositLoan": "보증금 대출 최대 3천5백만원",
+        "monthlyRentLoanTotal": "월세 대출 총액 최대 1천2백만원",
+        "monthlyInstallmentLimit": "월 최대 50만원"
+      },
+      "term": {
+        "initial": "2년",
+        "renewals": "최대 4회 연장(최장 10년)",
+        "HUGSpecific": "HUG 기준 2년 + 회차당 1개월 연장(최장 10년 5개월)",
+        "extensionPerChild": "10년 경과 후 미성년 자녀 1인당 2년 추가 연장"
+      },
+      "prepaymentPenalty": "중도상환수수료 없음",
+      "repaymentMethod": ["만기일시상환"]
+    },
+    "application": {
+      "period": "상시 신청 가능",
+      "deadlineAfterContract": "계약금 또는 입금일로부터 3개월 이내(연장·전환 시에도 동일)",
+      "methods": {
+        "online": "https://enhuf.molit.go.kr",
+        "inPersonBranches": [
+          "우리은행",
+          "신한은행",
+          "KB국민은행",
+          "NH농협은행",
+          "IBK기업은행"
+        ]
+      }
+    },
+    "requiredDocuments": [
+      "신분증",
+      "주민등록등본",
+      "건강보험 자격득실확인서",
+      "소득증빙서류(원천징수영수증 또는 급여명세서)",
+      "확정일자 부여 임대차계약서",
+      "건축물대장",
+      "보증인 자격 증빙서류",
+      "담보제공 관련 서류"
+    ],
+    "contacts": {
+      "HUGCallCenter": "1566-9009",
+      "participatingBanks": {
+        "Woori Bank": "1599-0800",
+        "KB Kookmin Bank": "1599-1771",
+        "IBK": "1566-2566",
+        "NH Nonghyup Bank": "1588-2100",
+        "Shinhan Bank": "1599-8000"
+      }
+    }
+  },
+  {
+    "productId": "p023",
+    "productName": "청년전용 보증부 월세대출",
+    "Summary": "무주택 세대주 청년을 대상으로 보증금 및 월세를 저금리로 지원하는 대출",
+    "tags": [
+      "월세대출", 
+      "보증부", 
+      "저금리", 
+      "청년지원"  
+    ],
+    "eligibility": {
+      "ageRange": "만 19세~34세",
+      "householdStatus": "무주택 세대주(예정자 포함)",
+      "incomeCeiling": "부부합산 연 5천만원 이하",
+      "netAssetCeiling": "순자산가액 3.25억원 이하"
+    },
+    "propertyCriteria": {
+      "maxAreaSqm": 60,
+      "maxSecurityDeposit": "보증금 5천만원 이하",
+      "maxMonthlyRent": "월세 70만원 이하"
+    },
+    "accountRequirement": "",
+    "depositLimitMetro": "5천만원",
+    "depositLimitOther": "",
+    "propertyMaxAreaSqm": "60",
+    "propertyMaxAppraisedValue": "",
+    "LTV": "",
+    "DTI": "",
+    "interestRate": "보증금대출 연 1.3%, 월세대출 0%~1.0%",
+    "loanLimit": "보증금대출 최대 3,500만원, 월세대출 총액 최대 1,200만원",
+    "termDetails": "초기 2년, 최대 10년(4회 연장)",
+    "repaymentMethod": "만기일시상환",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "상시 신청",
+    "applicationMethods": [
+      "온라인 https://enhuf.molit.go.kr", 
+      "은행 지점"
+    ],
+    "requiredDocuments": [
+      "신분증", 
+      "주민등록등본", 
+      "건강보험 자격", 
+      "소득증빙", 
+      "확정일자 임대차계약서", 
+      "건축물대장", 
+      "보증인 자격", 
+      "담보제공 관련 서류"
+    ],
+    "serviceBanks": [
+      "우리은행", 
+      "신한은행", 
+      "KB국민은행", 
+      "NH농협은행", 
+      "IBK기업은행"
+    ],
+    "contacts": "1566-9009 등",
+    "borrowerCosts": ""
+},
+{
+    "productId": "p024",
+    "productName": "청년전용 버팀목 전세자금 대출",
+    "Summary": "만 19~34세 청년 무주택 세대주에게 전세자금 최대 2억원까지 지원",
+    "tags": [
+      "전세자금", 
+      "저금리", 
+      "연장가능", 
+      "청년지원"
+    ],
+    "eligibility": {
+      "ageRange": "만 19세~34세",
+      "householdStatus": "무주택 세대주",
+      "incomeCeiling": "부부합산 연 5천만원 이하",
+      "netAssetCeiling": "순자산가액 3.37억원 이하"
+    },
+    "accountRequirement": "",
+    "depositLimitMetro": "",
+    "depositLimitOther": "",
+    "propertyMaxAreaSqm": "85",
+    "propertyMaxAppraisedValue": "",
+    "LTV": "80%",
+    "DTI": "",
+    "interestRate": "연 2.2%~3.3%",
+    "loanLimit": "최대 2억원",
+    "termDetails": "초기 2년, 최대 10년(4회 연장)",
+    "repaymentMethod": "만기일시상환",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "계약금/입금일 또는 전입일 중 빠른 날부터 3개월 이내",
+    "applicationMethods": [
+      "온라인 https://enhuf.molit.go.kr", 
+      "은행 지점"
+    ],
+    "requiredDocuments": [
+      "신분증", 
+      "주민등록등본", 
+      "건강보험 자격", 
+      "소득증빙", 
+      "주택보유 서류", 
+      "보증인 자격", 
+      "담보서류"
+    ],
+    "serviceBanks": [
+      "우리은행", 
+      "신한은행", 
+      "KB국민은행", 
+      "NH농협은행", 
+      "IBK기업은행"
+    ],
+    "contacts": "1566-9009",
+    "borrowerCosts": ""
+},
+{
+    "productId": "p025",
+    "productName": "청년주택드림 디딤돌 대출",
+    "Summary": "청년 대상 주택구입용 정책모기지 대출",
+    "tags": [
+      "디딤돌", 
+      "주택구입", 
+      "정책모기지", 
+      "저금리"
+    ],
+    "eligibility": {
+      "ageRange": "만 20세~39세",
+      "householdStatus": "무주택 세대주",
+      "incomeCeiling": "미혼 연 7천만원 이하, 신혼 부부합산 연 1억원 이하",
+      "netAssetCeiling": "순자산가액 4.88억원 이하"
+    },
+    "accountRequirement": "주택드림청약통장 가입·당첨(1년 이상, 1천만원 이상)",
+    "depositLimitMetro": "",
+    "depositLimitOther": "",
+    "propertyMaxAreaSqm": "85 (수도권), 100 (비수도권 읍·면)",
+    "propertyMaxAppraisedValue": "6억원 이하",
+    "LTV": "70% (생애최초 80%)",
+    "DTI": "60%",
+    "interestRate": "연 2.4%~4.15%",
+    "loanLimit": "최대 3억원(미혼), 4억원(신혼)",
+    "termDetails": "10·15·20·30년, 소득 4천만원 이하 최대 40년",
+    "repaymentMethod": "비거치/1년 거치 원리금균등, 원금균등, 체증식",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "이전등기 전 또는 접수일로부터 3개월 이내",
+    "applicationMethods": "은행 지점",
+    "requiredDocuments": "",
+    "serviceBanks": [
+      "우리은행", 
+      "신한은행", 
+      "KB국민은행", 
+      "NH농협은행", 
+      "하나은행"
+    ],
+    "contacts": "1566-9009, 1551-3119",
+    "borrowerCosts": "인지세 50%/50%, 근저당 설정 은행 부담, 채권매입 고객 부담, 감정비용 기금 부담"
+},
+{
+    "productId": "p026",
+    "productName": "KB 청년 맞춤형 전세자금대출",
+    "Summary": "청년 무주택자 대상 전세 보증금 최대 2억원 대출",
+    "tags": [
+      "전세자금", 
+      "맞춤형대출", 
+      "자격확인", 
+      "금리우대"
+    ],
+    "eligibility": {
+      "ageRange": "만 19세~34세",
+      "householdStatus": "무주택 세대주 또는 예비세대주",
+      "incomeCeiling": "부부합산 연 7천만원 이하",
+      "netAssetCeiling": ""
+    },
+    "accountRequirement": "",
+    "depositLimitMetro": "7억원 이하",
+    "depositLimitOther": "5억원 이하",
+    "propertyMaxAreaSqm": "",
+    "propertyMaxAppraisedValue": "",
+    "LTV": "90%",
+    "DTI": "",
+    "interestRate": "COFIX 6개월 변동 2.70%+0.11%=2.81% (2025.05.20 기준)",
+    "loanLimit": "최대 2억원(보증금의 90% 이내)",
+    "termDetails": "신규 1~2년, 대환/재계약 6개월~2년",
+    "repaymentMethod": "만기일시상환",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "잔금/전입일 중 빠른 날부터 3개월, 갱신계약 시작일로부터 3개월, 대출실행 후 6개월 경과 시",
+    "applicationMethods": [
+      "KB스타뱅킹"
+    ],
+    "requiredDocuments": [
+      "신분증", 
+      "재직·소득확인", 
+      "임대차계약서", 
+      "등기사항전부증명서", 
+      "계약금 영수증", 
+      "주민등록등본", 
+      "금융거래확인서", 
+      "가족관계증명서"
+    ],
+    "serviceBanks": [
+      "KB국민은행"
+    ],
+    "contacts": "1800-9500, 1588-9999, 1599-9999, 1644-9999",
+    "borrowerCosts": "인지세 50%, 보증료 0.02~0.4%, 근저당 설정 은행 부담, 채권매입 고객 부담, 감정비용 기금 부담, 연체가산금리 최고 연15%"
+},
+{
+    "productId": "p027",
+    "productName": "중소기업취업청년 전월세보증금대출",
+    "Summary": "중소·중견기업 재직 청년에게 임차보증금을 저금리로 지원",
+    "tags": [
+      "중소기업취업청년", 
+      "전월세보증금", 
+      "저금리", 
+      "보증금"
+    ],
+    "eligibility": {
+      "ageRange": "만 19세~34세 (최대 39세 병역연장)",
+      "householdStatus": "무주택 세대주 및 예정자",
+      "incomeCeiling": "부부합산 연 5천만원 이하 (외벌이 3,500만원 이하)",
+      "netAssetCeiling": "순자산가액 3.25억원 이하"
+    },
+    "accountRequirement": "임차보증금의 5% 이상 지불",
+    "depositLimitMetro": "2억원 이하",
+    "depositLimitOther": "",
+    "propertyMaxAreaSqm": "85",
+    "propertyMaxAppraisedValue": "",
+    "LTV": "",
+    "DTI": "",
+    "interestRate": "연 1.2%",
+    "loanLimit": "최대 1억원",
+    "termDetails": "2년(최대 10년 연장)",
+    "repaymentMethod": "만기일시상환",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "예산 소진 시까지",
+    "applicationMethods": "온라인 기금e든든, 은행방문 (우리, 신한, KB, NH, IBK)",
+    "requiredDocuments": [
+      "확정일자 임대차계약서", 
+      "건물등기부등본", 
+      "주민등록등본", 
+      "소득·자산 증빙"
+    ],
+    "serviceBanks": [
+      "우리은행", 
+      "신한은행", 
+      "KB국민은행", 
+      "NH농협은행", 
+      "IBK기업은행"
+    ],
+    "contacts": "1566-9009, 은행별 콜센터",
+    "borrowerCosts": ""
+},
+{
+    "productId": "p028",
+    "productName": "하나 청년전세론",
+    "Summary": "만 19~34세 무주택 청년 세대주 대상 임차보증금 최대 2억원 지원",
+    "tags": [
+      "전세론", 
+      "하나은행", 
+      "무주택청년", 
+      "보증금90%"
+    ],
+    "eligibility": {
+      "ageRange": "만 19세~34세",
+      "householdStatus": "무주택 세대주",
+      "incomeCeiling": "부부합산 연 7천만원 이하",
+      "netAssetCeiling": ""
+    },
+    "accountRequirement": "임차보증금의 5% 이상 지급",
+    "depositLimitMetro": "7억원 이하",
+    "depositLimitOther": "5억원 이하",
+    "propertyMaxAreaSqm": "",
+    "propertyMaxAppraisedValue": "",
+    "LTV": "90%",
+    "DTI": "",
+    "interestRate": "",
+    "loanLimit": "최대 2억원",
+    "termDetails": "",
+    "repaymentMethod": "만기일시상환",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "계약금일/전입일로부터 3개월 이내",
+    "applicationMethods": "모바일앱·영업점",
+    "requiredDocuments": [
+      "신분증", 
+      "소득증빙", 
+      "임대차계약서", 
+      "등기사항전부증명서", 
+      "주민등록등본"
+    ],
+    "serviceBanks": [
+      "하나은행"
+    ],
+    "contacts": "1599-1111",
+    "borrowerCosts": ""
+},
+{
+    "productId": "p029",
+    "productName": "신한 청년전세대출",
+    "Summary": "만 19~34세 청년 무주택 세대주 대상 전세자금 대출",
+    "tags": [
+      "전세대출", 
+      "신한은행", 
+      "무주택청년", 
+      "보증금90%"
+    ],
+    "eligibility": {
+      "ageRange": "만 19세~34세",
+      "householdStatus": "무주택 세대주",
+      "incomeCeiling": "부부합산 연 7천만원 이하",
+      "netAssetCeiling": ""
+    },
+    "accountRequirement": "",
+    "depositLimitMetro": "",
+    "depositLimitOther": "",
+    "propertyMaxAreaSqm": "",
+    "propertyMaxAppraisedValue": "",
+    "LTV": "90%",
+    "DTI": "",
+    "interestRate": "",
+    "loanLimit": "최대 2억원",
+    "termDetails": "",
+    "repaymentMethod": "만기일시상환",
+    "lifecyclePreferentialRate": "",
+    "applicationPeriodDeadline": "계약금지급일/전입일로부터 3개월 이내",
+    "applicationMethods": "신한은행 영업점·모바일",
+    "requiredDocuments": [
+      "신분증", 
+      "임대차계약서", 
+      "소득증빙", 
+      "주민등록등본"
+    ],
+    "serviceBanks": [
+      "신한은행"
+    ],
+    "contacts": "1599-8000",
+    "borrowerCosts": ""
+  }
+]  

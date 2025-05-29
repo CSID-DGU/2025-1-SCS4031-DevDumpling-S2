@@ -1,14 +1,25 @@
-FROM gradle:8.5-jdk17 AS build
+FROM openjdk:17-jdk-slim AS build
+
 WORKDIR /app
 COPY . .
-RUN gradle build --no-daemon -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStorePassword=changeit
+
+# Install Gradle
+RUN apt-get update && apt-get install -y wget unzip && \
+    wget https://services.gradle.org/distributions/gradle-8.5-bin.zip && \
+    unzip gradle-8.5-bin.zip && \
+    rm gradle-8.5-bin.zip && \
+    mv gradle-8.5 /opt/gradle && \
+    ln -s /opt/gradle/bin/gradle /usr/local/bin/gradle
+
+# Build the application
+RUN gradle build -x test
 
 FROM openjdk:17-jdk-slim
+
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 
 # 시간대 설정
-RUN apt-get update && apt-get install -y tzdata
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
