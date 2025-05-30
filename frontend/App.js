@@ -33,6 +33,7 @@ import ChallengeDetailScreen from './src/screens/Challenge/ChallengeDetailScreen
 import CreateChallengeScreen from './src/screens/Challenge/CreateChallengeScreen';
 import YouthProduct from './src/screens/Products/Youth/YouthProduct';
 import FinancialHome from './src/screens/Products/Others/FinancialHome';
+import DepositProduct from './src/screens/Products/Others/DepositProduct';
 
 
 const Stack = createNativeStackNavigator();
@@ -186,6 +187,11 @@ export default function App() {
           <Stack.Screen
             name="FinancialHome"
             component={FinancialHome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="DepositProduct"
+            component={DepositProduct}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
