@@ -34,6 +34,10 @@ import CreateChallengeScreen from './src/screens/Challenge/CreateChallengeScreen
 import YouthProduct from './src/screens/Products/Youth/YouthProduct';
 import FinancialHome from './src/screens/Products/Others/FinancialHome';
 import DepositProduct from './src/screens/Products/Others/DepositProduct';
+import UserTypeNone from './src/screens/UserType/UserTypeNone';
+import UserTypeResult from './src/screens/UserType/UserTypeResult';
+import UserTypeLoading from './src/screens/UserType/UserTypeLoading';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -192,6 +196,21 @@ export default function App() {
           <Stack.Screen
             name="DepositProduct"
             component={DepositProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserTypeNone"
+            component={UserTypeNone}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserTypeResult"
+            component={UserTypeResult}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserTypeLoading"
+            component={UserTypeLoading}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
