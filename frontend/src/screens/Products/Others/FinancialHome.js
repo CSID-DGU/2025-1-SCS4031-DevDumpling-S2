@@ -74,7 +74,9 @@ const FinancialHome = ({ route, navigation }) => {
                     {/* 가입 중인 상품 리스트 */}
                     <Text className="text-xl font-bold text-black mb-5">User님이 가입한 {selectedCategory} 상품</Text>
                     <View className="flex-col justify-center gap-4 mb-8">
-                        <TouchableOpacity className="bg-[#F9F9F9] px-6 py-4 rounded-2xl shadow-md">
+                        <TouchableOpacity
+                            className="bg-[#F9F9F9] px-6 py-4 rounded-2xl shadow-md"
+                            onPress={() => navigation.navigate('UserTypeNone')}>
                             <View className="flex-row items-center">
                                 <View className="w-16 h-16 bg-gray-400 rounded-full mr-5" />
                                 <View className="flex-col">
@@ -83,7 +85,9 @@ const FinancialHome = ({ route, navigation }) => {
                                 </View>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity className="bg-[#F9F9F9] px-6 py-4 rounded-2xl shadow-md">
+                        <TouchableOpacity
+                            className="bg-[#F9F9F9] px-6 py-4 rounded-2xl shadow-md"
+                            onPress={() => navigation.navigate('UserTypeResult')}>
                             <View className="flex-row items-center">
                                 <View className="w-16 h-16 bg-gray-400 rounded-full mr-5" />
                                 <View className="flex-col">
