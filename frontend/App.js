@@ -11,7 +11,7 @@ import CommunitySearch from './src/screens/Community/CommunitySearch';
 import CommunityWrite from './src/screens/Community/CommunityWrite';
 import CommunityPosts from './src/screens/Community/CommunityPosts';
 import Login from './src/screens/Login';
-import Mypage from './src/screens/Mypage';
+import Mypage from './src/screens/MyPage/Mypage';
 import "./global.css";
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
@@ -37,7 +37,10 @@ import DepositProduct from './src/screens/Products/Others/DepositProduct';
 import UserTypeNone from './src/screens/UserType/UserTypeNone';
 import UserTypeResult from './src/screens/UserType/UserTypeResult';
 import UserTypeLoading from './src/screens/UserType/UserTypeLoading';
-
+import MyType from './src/screens/MyPage/MyType';
+import QuizHistory from './src/screens/MyPage/QuizHistory';
+import MyPosts from './src/screens/MyPage/MyPosts';
+import Scraps from './src/screens/MyPage/Scraps';
 
 
 const Stack = createNativeStackNavigator();
@@ -211,6 +214,26 @@ export default function App() {
           <Stack.Screen
             name="UserTypeLoading"
             component={UserTypeLoading}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MyType"
+            component={MyType}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="QuizHistory"
+            component={QuizHistory}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MyPosts"
+            component={MyPosts}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Scraps"
+            component={Scraps}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

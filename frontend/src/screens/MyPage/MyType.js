@@ -2,7 +2,7 @@ import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'r
 import Header from '../../components/layout/Header';
 import { useNavigation } from '@react-navigation/native';
 
-const UserTypeResult = () => {
+const MyType = () => {
   const { width } = useWindowDimensions();
   const horizontalPadding = width > 380 ? 16 : 12;
   const navigation = useNavigation();
@@ -63,9 +63,9 @@ const UserTypeResult = () => {
 
             <TouchableOpacity
               className="bg-Fineed-green text-white px-20 py-4 rounded-2xl mt-5"
-              onPress={() => navigation.navigate('Quiz')}
+              onPress={() => navigation.navigate('UserTypeLoading')}
             >
-              <Text className="text-lg font-bold text-center text-white">퀴즈 풀러 가기</Text>
+              <Text className="text-lg font-bold text-center text-white">다시 분석하기</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -74,4 +74,4 @@ const UserTypeResult = () => {
   );
 };
 
-export default UserTypeResult;
+export default MyType;
