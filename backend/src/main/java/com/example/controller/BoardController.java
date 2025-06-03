@@ -142,4 +142,31 @@ public class BoardController {
             return ResponseEntity.internalServerError().body("게시글 삭제 중 오류가 발생했습니다.");
         }
     }
+
+    // 사용자가 작성한 게시글 목록 조회 (로그인 필요)
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyBoards(
+            Pageable pageable,
+            Authentication authentication) {
+        try {
+            log.info("[게시판 컨트롤러] 내 게시글 조회 요청");
+            User user = userService.findByKakaoId(authentication.getName());
+            Page<Board> boards = boardService.getBoardsByUser(user, pageable);
+            
+            List<BoardResponse> boardResponses = boards.getContent().stream()
+                    .map(BoardResponse::new)
+                    .collect(Collectors.toList());
+            
+            Page<BoardResponse> responsePage = new PageImpl<>(
+                    boardResponses,
+                    pageable,
+                    boards.getTotalElements()
+            );
+            
+            return ResponseEntity.ok(responsePage);
+        } catch (Exception e) {
+            log.error("[게시판 컨트롤러] 내 게시글 조회 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("내 게시글 조회 중 오류가 발생했습니다.");
+        }
+    }
 } 

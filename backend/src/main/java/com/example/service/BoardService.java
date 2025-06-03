@@ -33,6 +33,21 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Board> getBoardsByUser(User user, Pageable pageable) {
+        try {
+            log.info("[게시판 서비스] 사용자 게시글 조회: {}", user.getId());
+            Page<Board> boards = boardRepository.findByUserId(user.getId(), pageable);
+            if (boards.isEmpty()) {
+                log.info("[게시판 서비스] 해당 사용자의 게시글이 없습니다: {}", user.getId());
+            }
+            return boards;
+        } catch (Exception e) {
+            log.error("[게시판 서비스] 사용자 게시글 조회 중 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("사용자 게시글 조회 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Board getBoardById(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
