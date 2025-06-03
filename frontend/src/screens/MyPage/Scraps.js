@@ -14,26 +14,28 @@ const Scraps = () => {
     const navigation = useNavigation();
     const [scrappedArticles, setScrappedArticles] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [userName, setUserName] = useState('');
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         fetchScrappedArticles();
-        fetchUserName();
     }, []);
 
-    const fetchUserName = async () => {
-        try {
-            const token = await AsyncStorage.getItem('userToken');
-            if (!token) return;
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const storedUserData = await AsyncStorage.getItem('userData');
+                if (storedUserData) {
+                    setUserData(JSON.parse(storedUserData));
+                }
+            } catch (error) {
+                console.error('사용자 데이터 불러오기 실패:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            const response = await axios.get(`${API_BASE_URL}/user/info`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setUserName(response.data.name);
-        } catch (error) {
-            console.error('사용자 정보 조회 실패:', error);
-        }
-    };
+        fetchUserData();
+    }, []);
 
     const fetchScrappedArticles = async () => {
         try {
@@ -109,7 +111,7 @@ const Scraps = () => {
                         paddingTop: 16,
                         paddingBottom: 24
                 }}>
-                    <Text className="text-2xl text-[#014029] font-bold mb-8">{userName}님이 스크랩한 기사</Text>
+                    <Text className="text-2xl text-[#014029] font-bold mb-8">{userData ? `${userData.nickname}` : '닉네임 정보 없음'}님이 스크랩한 기사</Text>
                     {loading ? (
                         <Text className="text-center text-gray-500">로딩 중...</Text>
                     ) : scrappedArticles.length > 0 ? (

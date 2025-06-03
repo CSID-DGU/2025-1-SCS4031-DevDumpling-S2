@@ -1,11 +1,81 @@
 import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
 import { useNavigation } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format } from 'date-fns';
 
-const MyType = () => {
+const API_BASE_URL = 'http://52.78.59.11:8080';
+
+const MyPosts = () => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
     const navigation = useNavigation();
+    const [myPosts, setMyPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        fetchMyPosts();
+    }, []);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const storedUserData = await AsyncStorage.getItem('userData');
+                if (storedUserData) {
+                    setUserData(JSON.parse(storedUserData));
+                }
+            } catch (error) {
+                console.error('사용자 데이터 불러오기 실패:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    const fetchMyPosts = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                console.error('토큰이 없습니다.');
+                return;
+            }
+
+            console.log('요청 URL:', `${API_BASE_URL}/api/boards/my`);
+            console.log('토큰:', token);
+
+            const response = await axios.get(`${API_BASE_URL}/api/boards/my`, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+
+            console.log('내 게시글 목록:', response.data);
+
+            if (!response.data || !response.data.content || response.data.content.length === 0) {
+                setMyPosts([]);
+                setLoading(false);
+                return;
+            }
+
+            setMyPosts(response.data.content);
+        } catch (error) {
+            console.error('내 게시글 목록 조회 중 오류 발생:', error);
+            if (error.response) {
+                console.error('에러 상태:', error.response.status);
+                console.error('에러 데이터:', error.response.data);
+                console.error('에러 헤더:', error.response.headers);
+            }
+            setMyPosts([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
@@ -18,17 +88,28 @@ const MyType = () => {
                         paddingTop: 16,
                         paddingBottom: 24
                 }}>
-                    <Text className="text-2xl text-[#014029] font-bold mb-8">User님이 작성한 게시글</Text>
-                    <TouchableOpacity className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md">
-                        <Text className="text-xs text-gray-500 mb-1">자유게시판</Text>
-                        <Text className="text-base font-bold mb-1" numberOfLines={2}>아무도 안 물어봤지만 내 최애 재테크 방법</Text>
-                        <Text className="text-sm mb-2" numberOfLines={1}>난 솔직히 월세 받는 게 최고라고 생각함</Text>
-                        <Text className="text-xs text-gray-500">2025-04-18</Text>
-                    </TouchableOpacity>
+                    <Text className="text-2xl text-[#014029] font-bold mb-8">{userData ? `${userData.nickname}` : '닉네임 정보 없음'}님이 작성한 게시글</Text>
+                    {loading ? (
+                        <Text className="text-center text-gray-500">로딩 중...</Text>
+                    ) : myPosts.length > 0 ? (
+                        myPosts.map((post, index) => (
+                            <TouchableOpacity 
+                                key={index}
+                                onPress={() => navigation.navigate('BoardDetail', { postId: post.id })}
+                                className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-4"
+                            >
+                                <Text className="text-xs text-gray-500 mb-1">{post.category || '일반'}</Text>
+                                <Text className="text-base font-bold mb-2" numberOfLines={2}>{post.title}</Text>
+                                <Text className="text-xs text-gray-500">{format(new Date(post.createdAt), 'yyyy-MM-dd HH:mm')}</Text>
+                            </TouchableOpacity>
+                        ))
+                    ) : (
+                        <Text className="text-center text-gray-500">작성한 게시글이 없습니다.</Text>
+                    )}
                 </ScrollView>
             </View>
         </>
     );
 };
 
-export default MyType;
+export default MyPosts;

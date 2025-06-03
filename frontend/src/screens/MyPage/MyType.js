@@ -1,21 +1,40 @@
 import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
 import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const types = [
+  { code: 'A', name: '도전러', emoji: '🐯', desc1: '신용·투자에 적극적,', desc2: '소비도 즐겨요' },
+  { code: 'B', name: '계획러', emoji: '🦊', desc1: '절약하면서도 투자에', desc2: '관심 많은 합리파' },
+  { code: 'C', name: '편안러', emoji: '🐻', desc1: '소비는 즐기지만', desc2: '리스크는 싫어해요' },
+  { code: 'D', name: '안심러', emoji: '🐢', desc1: '절약과 안정을', desc2: '추구하는 보수파' },
+];
 
 const MyType = () => {
   const { width } = useWindowDimensions();
   const horizontalPadding = width > 380 ? 16 : 12;
   const navigation = useNavigation();
 
-  // 나중에 백엔드에서 받아올 사용자 유형
-  const selectedType = '도전러';
+  const [selectedType, setSelectedType] = useState(null);
 
-  const types = [
-    { name: '도전러', emoji: '🐯', desc1: '신용·투자에 적극적,', desc2: '소비도 즐겨요' },
-    { name: '계획러', emoji: '🦊', desc1: '절약하면서도 투자에', desc2: '관심 많은 합리파' },
-    { name: '편안러', emoji: '🐻', desc1: '소비는 즐기지만', desc2: '리스크는 싫어해요' },
-    { name: '안심러', emoji: '🐢', desc1: '절약과 안정을', desc2: '추구하는 보수파' },
-  ];
+  useEffect(() => {
+    const fetchUserType = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('userData');
+        if (storedUserData) {
+          const userData = JSON.parse(storedUserData);
+          setSelectedType(userData.userType); // A/B/C/D
+        }
+      } catch (error) {
+        console.error('유저 타입 불러오기 실패:', error);
+        setSelectedType(null);
+      }
+    };
+    fetchUserType();
+  }, []);
+
+  const selectedTypeObj = types.find(type => type.code === selectedType);
 
   return (
     <>
@@ -31,12 +50,12 @@ const MyType = () => {
         >
           <View className="flex-col items-center justify-center">
             <Text className="text-2xl text-black font-bold mb-8">
-              User님의 유형은 {selectedType}예요!
+              User님의 유형은 {selectedTypeObj ? selectedTypeObj.name : '...'}예요!
             </Text>
 
             <View className="flex-row flex-wrap items-center justify-center gap-3 mb-5">
               {types.map((type, index) => {
-                const isSelected = type.name === selectedType;
+                const isSelected = type.code === selectedType;
                 return (
                   <View
                     key={index}
