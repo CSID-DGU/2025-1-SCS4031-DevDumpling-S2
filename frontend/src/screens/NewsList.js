@@ -21,15 +21,21 @@ export default function NewsListScreen({ navigation }) {
         try {
             showLoading();
             const response = await axios.get(`${API_BASE_URL}/rss/list`);
+            console.log('기사 목록 응답:', response.data);
             if (response.data && response.data.length > 0) {
                 // 상태가 COMPLETED인 기사들만 필터링하고 날짜순 정렬
                 const completedArticles = response.data
                     .filter(article => article.status === 'COMPLETED')
                     .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+                console.log('필터링된 기사 목록:', completedArticles);
                 setArticles(completedArticles);
             }
         } catch (error) {
             console.error('기사를 불러오는데 실패했습니다:', error);
+            if (error.response) {
+                console.error('에러 상태:', error.response.status);
+                console.error('에러 데이터:', error.response.data);
+            }
         } finally {
             hideLoading();
         }

@@ -8,13 +8,15 @@ import { format } from 'date-fns'
 import { useLoading } from '../hooks/useLoading'
 import { BookmarkIcon } from 'react-native-heroicons/outline'
 import { BookmarkIcon as BookmarkSolidIcon } from 'react-native-heroicons/solid'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import Header from '../components/layout/Header';
 
 const API_BASE_URL = 'http://52.78.59.11:8080'
 
 export default function NewsDetailScreen() {
     const { params } = useRoute()
     const navigation = useNavigation()
-    const { articleId } = params
+    const { articleId } = params || {}
     const [article, setArticle] = useState(null)
     const [tab, setTab] = useState('summary')
     const [isBookmarked, setIsBookmarked] = useState(false)
@@ -22,24 +24,99 @@ export default function NewsDetailScreen() {
     const { width } = useWindowDimensions()
 
     useEffect(() => {
+        console.log('NewsDetail params:', params)
+        console.log('articleId:', articleId)
+        if (!articleId) {
+            console.error('articleId가 없습니다.')
+            navigation.goBack()
+            return
+        }
         fetchDetail()
-    }, [])
+        checkBookmarkStatus()
+    }, [articleId])
 
     const fetchDetail = async () => {
         try {
             showLoading()
-            const res = await axios.get(`${API_BASE_URL}/rss/${articleId}`)
+            const url = `${API_BASE_URL}/rss/${articleId}`
+            console.log('기사 상세 조회 요청:', url)
+            const res = await axios.get(url)
+            console.log('기사 상세 응답:', res.data)
+            
+            if (!res.data) {
+                console.error('기사 데이터가 없습니다.')
+                navigation.goBack()
+                return
+            }
+            
             setArticle(res.data)
         } catch (e) {
             console.error('상세조회 실패:', e)
+            if (e.response) {
+                console.error('에러 상태:', e.response.status)
+                console.error('에러 데이터:', e.response.data)
+            }
+            navigation.goBack()
         } finally {
             hideLoading()
         }
     }
 
-    const toggleBookmark = () => {
-        setIsBookmarked(!isBookmarked)
-        // 여기에 나중에 백엔드 연결 코드 추가
+    const checkBookmarkStatus = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken')
+            if (!token) return
+
+            const url = `${API_BASE_URL}/rss/scrapped`
+            console.log('스크랩 상태 확인 요청:', url)
+            const response = await axios.get(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            console.log('스크랩 목록 응답:', response.data)
+
+            // 현재 기사가 스크랩 목록에 있는지 확인 (id 또는 articleId로 비교)
+            const isScrapped = response.data.some(scrap => {
+                console.log('스크랩 항목:', scrap)
+                return scrap.article_id === articleId || scrap.id === articleId
+            })
+            console.log('스크랩 상태:', isScrapped)
+            setIsBookmarked(isScrapped)
+        } catch (error) {
+            console.error('스크랩 상태 확인 실패:', error)
+            if (error.response) {
+                console.error('에러 상태:', error.response.status)
+                console.error('에러 데이터:', error.response.data)
+            }
+        }
+    }
+
+    const toggleBookmark = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken')
+            if (!token) {
+                // TODO: 로그인 필요 알림
+                return
+            }
+
+            const headers = { Authorization: `Bearer ${token}` }
+
+            if (isBookmarked) {
+                // 스크랩 취소
+                await axios.delete(`${API_BASE_URL}/rss/${articleId}/scrap`, { headers })
+            } else {
+                // 스크랩 추가
+                await axios.post(`${API_BASE_URL}/rss/${articleId}/scrap`, {}, { headers })
+            }
+
+            setIsBookmarked(!isBookmarked)
+        } catch (error) {
+            console.error('스크랩 토글 실패:', error)
+            if (error.response) {
+                console.error('에러 상태:', error.response.status)
+                console.error('에러 데이터:', error.response.data)
+            }
+            // TODO: 에러 처리 (예: 토스트 메시지)
+        }
     }
 
     if (!article) return null
@@ -48,11 +125,7 @@ export default function NewsDetailScreen() {
         <View className="flex-1 bg-[#EFEFEF]">
             <StatusBar barStyle="dark-content" />
             <SafeAreaView className="flex-1">
-                {/* 헤더 */}
-                <View className="flex-row justify-between px-6 mt-2">
-                    <Text className="text-[28px] font-extrabold text-[#014029]">FINEED</Text>
-                    <Text className="text-[14px] text-black self-center">마이페이지</Text>
-                </View>
+                <Header />
 
                 <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
                     {/* 신문사 */}
