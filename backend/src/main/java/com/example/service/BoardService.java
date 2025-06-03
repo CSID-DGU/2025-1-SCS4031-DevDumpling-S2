@@ -35,11 +35,14 @@ public class BoardService {
     @Transactional(readOnly = true)
     public Page<Board> getBoardsByUser(User user, Pageable pageable) {
         try {
-            log.info("[게시판 서비스] 사용자 게시글 조회: {}", user.getId());
-            Page<Board> boards = boardRepository.findByUserId(user.getId(), pageable);
+            log.info("[게시판 서비스] 사용자 게시글 조회: {}", user.getKakaoId());
+            Page<Board> boards = boardRepository.findByKakaoId(user.getKakaoId(), pageable);
             if (boards.isEmpty()) {
-                log.info("[게시판 서비스] 해당 사용자의 게시글이 없습니다: {}", user.getId());
+                log.info("[게시판 서비스] 해당 사용자의 게시글이 없습니다: {}", user.getKakaoId());
             }
+            boards.getContent().forEach(board -> {
+                board.getUser().getNickname();
+            });
             return boards;
         } catch (Exception e) {
             log.error("[게시판 서비스] 사용자 게시글 조회 중 오류 발생: {}", e.getMessage());
