@@ -25,6 +25,10 @@ export default function HomeScreen() {
     dataCollection: false,
     sensitiveInfo: false
   });
+  const [userData, setUserData] = useState(null);
+  const [challenges, setChallenges] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [challengeLoading, setChallengeLoading] = useState(true);
 
   useEffect(() => {
     checkMydataConsent();
@@ -164,6 +168,39 @@ export default function HomeScreen() {
       console.error('약관 동의 제출 중 오류:', error);
     }
   };
+
+  useEffect(() => {
+    fetchUserData();
+    fetchChallenges();
+  }, [navigation]);
+
+  const fetchUserData = async () => {
+    try {
+      const storedUserData = await AsyncStorage.getItem('userData');
+      if (storedUserData) {
+        setUserData(JSON.parse(storedUserData));
+        console.log('HomeScreen userData:', JSON.parse(storedUserData));
+      }
+    } catch (error) {
+      console.error('사용자 데이터 불러오기 실패:', error);
+    }
+  };
+
+  const fetchChallenges = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.get(`${API_BASE_URL}/challenges`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setChallenges(response.data);
+      setCategories(Array.from(new Set(response.data.map(challenge => challenge.category))));
+    } catch (error) {
+      console.error('챌린지 로드 중 오류:', error);
+    } finally {
+      setChallengeLoading(false);
+    }
+  };
+
   return (
     <View className="flex-1 bg-[#EFEFEF]">
       <Header />
@@ -180,7 +217,13 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('ChallengeHomeScreen')}>
             <Text className="text-[20px] font-bold text-black mb-2">지금 뜨고 있는 챌린지</Text>
           </TouchableOpacity>
-          <ChallengeSection />
+          <ChallengeSection
+            userData={userData}
+            challenges={challenges}
+            categories={categories}
+            challengeLoading={challengeLoading}
+            navigation={navigation}
+          />
         </View>
 
         {/* 금융 상품 보러가기 */}
@@ -188,7 +231,7 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('ProductsHome')}>
             <Text className="text-[20px] font-bold text-black mb-2">신청 가능한 청년 우대 상품</Text>
           </TouchableOpacity>
-          <RatingSection />
+          <RatingSection userData={userData} />
         </View>
 
         {/* 맞춤 퀴즈 & 추천 기사 */}
