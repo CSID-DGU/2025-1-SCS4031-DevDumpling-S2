@@ -23,6 +23,29 @@ export default function Quiz() {
     const navigation = useNavigation();
     const { showLoading, hideLoading } = useLoading();
 
+    useEffect(() => {
+        const checkUserType = async () => {
+            const userDataStr = await AsyncStorage.getItem('userData');
+            if (userDataStr) {
+                const userData = JSON.parse(userDataStr);
+                if (!userData.userType) {
+                    // userType이 없으면 UserTypeNone으로 이동
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'UserTypeNone' }]
+                    });
+                }
+            } else {
+                // userData 자체가 없으면 UserTypeNone으로 이동
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'UserTypeNone' }]
+                });
+            }
+        };
+        checkUserType();
+    }, []);
+
     // 컴포넌트 마운트 시 퀴즈 로드
     useEffect(() => {
         fetchRandomQuiz();
