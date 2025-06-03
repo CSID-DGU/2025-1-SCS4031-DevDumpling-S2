@@ -64,10 +64,10 @@ export default function MypageScreen() {
                                 />
                             </View>
                             <View className="w-[60%] bg-white py-4 px-5 rounded-3xl shadow-sm">
-                                <Text className="text-center text-base font-bold mb-1 text-Fineed-green mt-2">
+                                <Text className="text-center text-lg font-bold mb-1 text-Fineed-green mt-2">
                                     {userData ? `${userData.nickname}님,` : '닉네임 정보 없음'}
                                 </Text>
-                                <Text className="text-center text-base font-bold mb-2 text-Fineed-green">
+                                <Text className="text-center text-lg font-bold mb-2 text-Fineed-green">
                                     반가워요!
                                 </Text>
                                 <TouchableOpacity

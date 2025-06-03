@@ -99,7 +99,7 @@ export default function QuizAndNews() {
                                     {formatTodayDate()}
                                 </Text>
                             </View>
-                            <TouchableOpacity onPress={() => openArticleUrl(article.sourceUrl)}>
+                            <TouchableOpacity onPress={() => navigation.navigate('NewsDetail', { articleId: article.id })}>
                                 <Text className="text-[16px] font-bold text-black" numberOfLines={3}>
                                     {article.title}
                                 </Text>
