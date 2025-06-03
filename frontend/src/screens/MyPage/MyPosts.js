@@ -8,6 +8,14 @@ import { format } from 'date-fns';
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
+const boardTypeMap = {
+  HOT: 'HOT게시판',
+  INVEST: '투자게시판',
+  CHALLENGE: '챌린지게시판',
+  QUIZ: '퀴즈게시판',
+  FREE: '자유게시판',
+};
+
 const MyPosts = () => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
@@ -95,10 +103,12 @@ const MyPosts = () => {
                         myPosts.map((post, index) => (
                             <TouchableOpacity 
                                 key={index}
-                                onPress={() => navigation.navigate('BoardDetail', { postId: post.id })}
+                                onPress={() => navigation.navigate('CommunityPosts', { boardType: post.board_type, postId: post.id })}
                                 className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-4"
                             >
-                                <Text className="text-xs text-gray-500 mb-1">{post.category || '일반'}</Text>
+                                {/* <Text className="text-xs text-gray-500 mb-1">
+                                    {boardTypeMap[post.board_type] || '일반'}
+                                </Text> */}
                                 <Text className="text-base font-bold mb-2" numberOfLines={2}>{post.title}</Text>
                                 <Text className="text-xs text-gray-500">{format(new Date(post.createdAt), 'yyyy-MM-dd HH:mm')}</Text>
                             </TouchableOpacity>
