@@ -41,6 +41,7 @@ import MyType from './src/screens/MyPage/MyType';
 import QuizHistory from './src/screens/MyPage/QuizHistory';
 import MyPosts from './src/screens/MyPage/MyPosts';
 import Scraps from './src/screens/MyPage/Scraps';
+import MyChallenges from './src/screens/MyPage/MyChallenges';
 
 
 const Stack = createNativeStackNavigator();
@@ -234,6 +235,11 @@ export default function App() {
           <Stack.Screen
             name="Scraps"
             component={Scraps}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MyChallenges"
+            component={MyChallenges}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

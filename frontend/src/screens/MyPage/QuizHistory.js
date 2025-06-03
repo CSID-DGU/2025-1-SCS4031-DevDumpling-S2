@@ -14,6 +14,7 @@ const QuizHistory = () => {
     const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
     const [quizHistory, setQuizHistory] = useState([]);
+    const [quizDetails, setQuizDetails] = useState({});
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ totalAnswers: 0, correctAnswers: 0, correctRate: 0 });
 
@@ -42,6 +43,30 @@ const QuizHistory = () => {
                 });
                 console.log('퀴즈 기록 응답: ', response.data);
                 setQuizHistory(response.data);
+
+                // 각 퀴즈의 상세 정보 가져오기
+                const quizPromises = response.data.map(async (item) => {
+                    try {
+                        const quizResponse = await axios.get(`${API_BASE_URL}/api/quiz-results/quiz/${item.quizId}`, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        console.log('퀴즈 상세 응답:', quizResponse.data);
+                        // quiz 필드가 있으면 그걸 저장
+                        return { quizId: item.quizId, quizData: quizResponse.data.quiz || quizResponse.data };
+                    } catch (error) {
+                        console.error(`퀴즈 ${item.quizId} 정보 가져오기 실패:`, error);
+                        return { quizId: item.quizId, quizData: null };
+                    }
+                });
+
+                const quizResults = await Promise.all(quizPromises);
+                console.log('모든 퀴즈 상세 정보:', quizResults);
+                const quizDetailsMap = {};
+                quizResults.forEach(({ quizId, quizData }) => {
+                    quizDetailsMap[quizId] = quizData;
+                });
+                console.log('퀴즈 상세 정보 맵:', quizDetailsMap);
+                setQuizDetails(quizDetailsMap);
             } catch (error) {
                 console.error('퀴즈 기록 불러오기 실패:', error);
                 if (error.response) {
@@ -141,7 +166,14 @@ const QuizHistory = () => {
                         <Text className="text-center text-gray-500">퀴즈 기록이 없습니다.</Text>
                     ) : (
                         quizHistory.map((item, idx) => {
-                            const { quiz, selectedAnswer, isCorrect, createdAt } = item;
+                            const quiz = quizDetails[item.quizId];
+                            console.log(`렌더링 중인 퀴즈 ${item.quizId}:`, quiz);
+                            if (!quiz) {
+                                console.log(`퀴즈 ${item.quizId} 정보 없음`);
+                                return null;
+                            }
+
+                            const { selectedAnswer, isCorrect, createdAt } = item;
                             const answerText = getOptionText(quiz, quiz.answer);
                             const selectedText = getOptionText(quiz, selectedAnswer);
 
