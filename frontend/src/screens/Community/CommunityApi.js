@@ -27,7 +27,12 @@ export const createBoardPost = async (boardType, postData) => {
 
 // 게시글 상세 조회
 export const fetchBoardPostDetail = async (boardType, id) => {
-  const res = await axios.get(`${BASE_URL}/boards/${boardType}/${id}`);
+  const token = await AsyncStorage.getItem('userToken');
+  const res = await axios.get(`${BASE_URL}/boards/${boardType}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
 
