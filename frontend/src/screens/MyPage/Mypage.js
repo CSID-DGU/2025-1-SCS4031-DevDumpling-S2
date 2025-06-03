@@ -64,15 +64,19 @@ export default function MypageScreen() {
                                 />
                             </View>
                             <View className="w-[60%] bg-white py-4 px-5 rounded-3xl shadow-sm">
-                                <Text className="text-center text-base font-bold mb-1 text-Fineed-green">
+                                <Text className="text-center text-lg font-bold mb-1 text-Fineed-green mt-2">
                                     {userData ? `${userData.nickname}님,` : '닉네임 정보 없음'}
                                 </Text>
-                                <Text className="text-center text-base font-bold mb-2 text-Fineed-green">
+                                <Text className="text-center text-lg font-bold mb-2 text-Fineed-green">
                                     반가워요!
                                 </Text>
-                                <View className="flex-row items-center justify-center mb-2">
-                                    <Text className="text-center text-base font-bold mb-2 text-Fineed-green"></Text>
-                                </View>
+                                <TouchableOpacity
+                                    className="flex-row items-center justify-center mt-2"
+                                    onPress={() => navigation.navigate('MyDataConsent')}>
+                                        <Text
+                                            className="text-center text-sm font-bold mb-2 text-Fineed-green
+                                            style={{ textDecorationLine: 'underline' }}">마이데이터 변경하기 {'>'}</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -112,7 +116,7 @@ export default function MypageScreen() {
                     <View className="px-4 mb-8">
                         <View className="flex-row mb-4">
                             <TouchableOpacity
-                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3"
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3 h-44"
                                 onPress={() => navigation.navigate('Scraps')}
                             >
                                 <Text className="text-xl font-bold mb-0.5 text-Fineed-green">스크랩한</Text>
@@ -121,7 +125,7 @@ export default function MypageScreen() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                className="flex-1 bg-white rounded-3xl shadow-sm p-8"
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 h-44"
                                 onPress={() => navigation.navigate('MyPosts')}
                             >
                                 <Text className="text-xl font-bold mb-0.5 text-Fineed-green">내가 작성한</Text>
@@ -132,7 +136,7 @@ export default function MypageScreen() {
 
                         <View className="flex-row">
                             <TouchableOpacity
-                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3"
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 mr-3 h-44"
                                 onPress={() => navigation.navigate('MyType')}
                             >
                                 <Text className="text-xl font-bold mb-0.5 text-Fineed-green">내 금융 유형</Text>
@@ -140,7 +144,7 @@ export default function MypageScreen() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                className="flex-1 bg-white rounded-3xl shadow-sm p-8"
+                                className="flex-1 bg-white rounded-3xl shadow-sm p-8 h-44"
                                 onPress={() => navigation.navigate('QuizHistory')}
                             >
                                 <Text className="text-xl font-bold mb-0.5 text-Fineed-green">퀴즈 기록</Text>
@@ -150,9 +154,9 @@ export default function MypageScreen() {
                     </View>
 
                     {/* 로그아웃 버튼 */}
-                    <View className="px-5 mb-10 mt-6">
+                    <View className="px-5 mb-10 mt-3">
                         <TouchableOpacity
-                            className="bg-white rounded-3xl shadow-md p-5 items-center"
+                            className="bg-white rounded-3xl shadow-md p-3 items-center"
                             onPress={handleLogout}
                         >
                             <Text className="text-2xl font-bold text-Fineed-green">로그아웃</Text>

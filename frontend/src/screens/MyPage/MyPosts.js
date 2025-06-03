@@ -1,16 +1,86 @@
 import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
 import Header from '../../components/layout/Header';
 import { useNavigation } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format } from 'date-fns';
 
-const MyType = () => {
+const API_BASE_URL = 'http://52.78.59.11:8080';
+
+const MyPosts = () => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
     const navigation = useNavigation();
+    const [myPosts, setMyPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        fetchMyPosts();
+    }, []);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const storedUserData = await AsyncStorage.getItem('userData');
+                if (storedUserData) {
+                    setUserData(JSON.parse(storedUserData));
+                }
+            } catch (error) {
+                console.error('사용자 데이터 불러오기 실패:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    const fetchMyPosts = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                console.error('토큰이 없습니다.');
+                return;
+            }
+
+            console.log('요청 URL:', `${API_BASE_URL}/api/boards/my`);
+            console.log('토큰:', token);
+
+            const response = await axios.get(`${API_BASE_URL}/api/boards/my`, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+
+            console.log('내 게시글 목록:', response.data);
+
+            if (!response.data || !response.data.content || response.data.content.length === 0) {
+                setMyPosts([]);
+                setLoading(false);
+                return;
+            }
+
+            setMyPosts(response.data.content);
+        } catch (error) {
+            console.error('내 게시글 목록 조회 중 오류 발생:', error);
+            if (error.response) {
+                console.error('에러 상태:', error.response.status);
+                console.error('에러 데이터:', error.response.data);
+                console.error('에러 헤더:', error.response.headers);
+            }
+            setMyPosts([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
             <Header />
-            <View className="flex-1 bg-Fineed-background pt-5 px-5 pb-10 mt-20">
+            <View className="flex-1 bg-Fineed-background pt-5 px-5 pb-10">
                 <ScrollView
                     contentContainerClassName="justify-center"
                     contentContainerStyle={{
@@ -18,51 +88,28 @@ const MyType = () => {
                         paddingTop: 16,
                         paddingBottom: 24
                 }}>
-                    {/* 상품 이름 */}
-                    <View className="flex-col items-center justify-center">
-                        <Text className="text-2xl text-black font-bold mb-8">User님의 유형은 도전러예요!</Text>
-
-                        <View className="flex-row items-center justify-center gap-3">
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🐯</Text>
-                                <Text className="text-lg font-bold mb-2">도전러</Text>
-                                <Text className="text-sm">신용·투자에 적극적,</Text>
-                                <Text className="text-sm">소비도 즐겨요</Text>
-                            </View>
-
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🦊</Text>
-                                <Text className="text-lg font-bold mb-2">계획러</Text>
-                                <Text className="text-sm">절약하면서도 투자에</Text>
-                                <Text className="text-sm">관심 많은 합리파</Text>
-                            </View>
-                        </View>
-
-                        <View className="flex-row items-center justify-center gap-3 mb-5">
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🐻</Text>
-                                <Text className="text-lg font-bold mb-2">편안러</Text>
-                                <Text className="text-sm">소비는 즐기지만</Text>
-                                <Text className="text-sm">리스크는 싫어해요</Text>
-                            </View>
-
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🐢</Text>
-                                <Text className="text-lg font-bold mb-2">안심러</Text>
-                                <Text className="text-sm">절약과 안정을</Text>
-                                <Text className="text-sm">추구하는 보수파</Text>
-                            </View>
-                        </View>
-                        <TouchableOpacity
-                            className="bg-Fineed-green text-white px-20 py-4 rounded-2xl"
-                            onPress={() => navigation.navigate('Quiz')}>
-                            <Text className="text-lg font-bold text-center text-white">퀴즈 풀러 가기</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <Text className="text-2xl text-[#014029] font-bold mb-8">{userData ? `${userData.nickname}` : '닉네임 정보 없음'}님이 작성한 게시글</Text>
+                    {loading ? (
+                        <Text className="text-center text-gray-500">로딩 중...</Text>
+                    ) : myPosts.length > 0 ? (
+                        myPosts.map((post, index) => (
+                            <TouchableOpacity 
+                                key={index}
+                                onPress={() => navigation.navigate('BoardDetail', { postId: post.id })}
+                                className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-4"
+                            >
+                                <Text className="text-xs text-gray-500 mb-1">{post.category || '일반'}</Text>
+                                <Text className="text-base font-bold mb-2" numberOfLines={2}>{post.title}</Text>
+                                <Text className="text-xs text-gray-500">{format(new Date(post.createdAt), 'yyyy-MM-dd HH:mm')}</Text>
+                            </TouchableOpacity>
+                        ))
+                    ) : (
+                        <Text className="text-center text-gray-500">작성한 게시글이 없습니다.</Text>
+                    )}
                 </ScrollView>
             </View>
         </>
     );
 };
 
-export default MyType;
+export default MyPosts;
