@@ -10,7 +10,7 @@ const MyType = () => {
     return (
         <>
             <Header />
-            <View className="flex-1 bg-Fineed-background pt-5 px-5 pb-10 mt-20">
+            <View className="flex-1 bg-Fineed-background pt-5 px-5 pb-10">
                 <ScrollView
                     contentContainerClassName="justify-center"
                     contentContainerStyle={{
@@ -18,47 +18,13 @@ const MyType = () => {
                         paddingTop: 16,
                         paddingBottom: 24
                 }}>
-                    {/* 상품 이름 */}
-                    <View className="flex-col items-center justify-center">
-                        <Text className="text-2xl text-black font-bold mb-8">User님의 유형은 도전러예요!</Text>
-
-                        <View className="flex-row items-center justify-center gap-3">
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🐯</Text>
-                                <Text className="text-lg font-bold mb-2">도전러</Text>
-                                <Text className="text-sm">신용·투자에 적극적,</Text>
-                                <Text className="text-sm">소비도 즐겨요</Text>
-                            </View>
-
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🦊</Text>
-                                <Text className="text-lg font-bold mb-2">계획러</Text>
-                                <Text className="text-sm">절약하면서도 투자에</Text>
-                                <Text className="text-sm">관심 많은 합리파</Text>
-                            </View>
-                        </View>
-
-                        <View className="flex-row items-center justify-center gap-3 mb-5">
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🐻</Text>
-                                <Text className="text-lg font-bold mb-2">편안러</Text>
-                                <Text className="text-sm">소비는 즐기지만</Text>
-                                <Text className="text-sm">리스크는 싫어해요</Text>
-                            </View>
-
-                            <View className="w-[160px] items-center justify-center mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                                <Text className="text-2xl font-bold mb-2">🐢</Text>
-                                <Text className="text-lg font-bold mb-2">안심러</Text>
-                                <Text className="text-sm">절약과 안정을</Text>
-                                <Text className="text-sm">추구하는 보수파</Text>
-                            </View>
-                        </View>
-                        <TouchableOpacity
-                            className="bg-Fineed-green text-white px-20 py-4 rounded-2xl"
-                            onPress={() => navigation.navigate('Quiz')}>
-                            <Text className="text-lg font-bold text-center text-white">퀴즈 풀러 가기</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <Text className="text-2xl text-[#014029] font-bold mb-8">User님이 작성한 게시글</Text>
+                    <TouchableOpacity className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md">
+                        <Text className="text-xs text-gray-500 mb-1">자유게시판</Text>
+                        <Text className="text-base font-bold mb-1" numberOfLines={2}>아무도 안 물어봤지만 내 최애 재테크 방법</Text>
+                        <Text className="text-sm mb-2" numberOfLines={1}>난 솔직히 월세 받는 게 최고라고 생각함</Text>
+                        <Text className="text-xs text-gray-500">2025-04-18</Text>
+                    </TouchableOpacity>
                 </ScrollView>
             </View>
         </>
