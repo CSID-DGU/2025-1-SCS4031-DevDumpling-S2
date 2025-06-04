@@ -26,7 +26,39 @@ const AddYouthInfo = ({ navigation }) => {
         familyMember !== '' &&
         militaryService !== '';
 
-
+    const handleSubmit = async () => {
+        if (!isFormValid) {
+            Alert.alert('모든 항목을 입력해주세요.');
+            return;
+        }
+        try {
+            // 입력값을 API 명세에 맞게 변환
+            const payload = {
+                survey_family_monthly_income: Number(familyIncome) * 10000, // 만원 → 원
+                survey_family: Number(familyMember),
+                survey_age: Number(age),
+                survey_army: Number(militaryService),
+                annual_income: Number(income) * 10000, // 만원 → 원
+                gender: gender === 'male' ? 'M' : 'F',
+                survey_region: region
+            };
+            const response = await fetch('http://localhost:8000/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error('추천 상품 요청 실패');
+            const data = await response.json();
+            // data.recommend_asset, data.recommend_loan 등으로 구분된다고 가정
+            navigation.navigate('YouthProduct', {
+                recommendedAsset: data.recommend_asset || [],
+                recommendedLoan: data.recommend_loan || [],
+                recommendDone: true
+            });
+        } catch (e) {
+            Alert.alert('추천 상품을 불러오는 데 실패했습니다.');
+        }
+    };
 
     return (
         <>
@@ -213,14 +245,7 @@ const AddYouthInfo = ({ navigation }) => {
                             className={`m-4 px-4 py-2 w-full rounded-full shadow-md items-center justify-center ${
                             isFormValid ? 'bg-[#014029]' : 'bg-[#D3D3D3]'
                             }`}
-                            onPress={() => {
-                            if (isFormValid) {
-                                console.log('입력 완료!');
-                                navigation.goBack(); // or 다음 화면으로 이동
-                            } else {
-                                Alert.alert('모든 항목을 입력해주세요.');
-                            }
-                            }}
+                            onPress={handleSubmit}
                         >
                             <Text className="text-white text-lg font-bold">입력 완료</Text>
                         </TouchableOpacity>
