@@ -35,6 +35,7 @@ public class BoardController {
         private String content;
         private BoardType boardType;
         private String authorNickname;
+        private String authorKakaoId;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
@@ -44,6 +45,7 @@ public class BoardController {
             this.content = board.getContent();
             this.boardType = board.getBoardType();
             this.authorNickname = board.getUser().getNickname();
+            this.authorKakaoId = board.getUser().getKakaoId();
             this.createdAt = board.getCreatedAt();
             this.updatedAt = board.getUpdatedAt();
         }
@@ -76,14 +78,15 @@ public class BoardController {
     }
 
     // 게시글 상세 조회 (모든 사용자 접근 가능)
-    @GetMapping("/{boardType}/{id}")
-    public ResponseEntity<?> getBoard(
-            @PathVariable BoardType boardType,
-            @PathVariable Long id) {
+    @GetMapping("/{boardType}/{boardId}")
+    public ResponseEntity<?> getBoard(@PathVariable BoardType boardType, @PathVariable Long boardId) {
         try {
-            log.info("[게시판 컨트롤러] 게시글 상세 조회 요청: {}", id);
-            Board board = boardService.getBoardById(id);
-            return ResponseEntity.ok(board);
+            log.info("[게시판 컨트롤러] 게시글 상세 조회 요청: {}", boardId);
+            Board board = boardService.getBoardById(boardId);
+            if (board.getBoardType() != boardType) {
+                return ResponseEntity.badRequest().body("게시판 타입이 일치하지 않습니다.");
+            }
+            return ResponseEntity.ok(new BoardResponse(board));
         } catch (Exception e) {
             log.error("[게시판 컨트롤러] 게시글 상세 조회 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.internalServerError().body("게시글 조회 중 오류가 발생했습니다.");
@@ -101,7 +104,7 @@ public class BoardController {
             User user = userService.findByKakaoId(authentication.getName());
             board.setBoardType(boardType);
             Board createdBoard = boardService.createBoard(board, user);
-            return ResponseEntity.ok(createdBoard);
+            return ResponseEntity.ok(new BoardResponse(createdBoard));
         } catch (Exception e) {
             log.error("[게시판 컨트롤러] 게시글 작성 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.internalServerError().body("게시글 작성 중 오류가 발생했습니다.");
@@ -109,17 +112,17 @@ public class BoardController {
     }
 
     // 게시글 수정 (로그인 필요)
-    @PutMapping("/{boardType}/update/{id}")
+    @PutMapping("/{boardType}/update/{kakaoId}")
     public ResponseEntity<?> updateBoard(
             @PathVariable BoardType boardType,
-            @PathVariable Long id,
+            @PathVariable String kakaoId,
             @RequestBody Board board,
             Authentication authentication) {
         try {
-            log.info("[게시판 컨트롤러] 게시글 수정 요청: {}", id);
+            log.info("[게시판 컨트롤러] 게시글 수정 요청: {}", kakaoId);
             User user = userService.findByKakaoId(authentication.getName());
-            Board updatedBoard = boardService.updateBoard(id, board, user);
-            return ResponseEntity.ok(updatedBoard);
+            Board updatedBoard = boardService.updateBoardByKakaoId(kakaoId, board, user);
+            return ResponseEntity.ok(new BoardResponse(updatedBoard));
         } catch (Exception e) {
             log.error("[게시판 컨트롤러] 게시글 수정 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.internalServerError().body("게시글 수정 중 오류가 발생했습니다.");
@@ -127,15 +130,15 @@ public class BoardController {
     }
 
     // 게시글 삭제 (로그인 필요)
-    @DeleteMapping("/{boardType}/delete/{id}")
+    @DeleteMapping("/{boardType}/delete/{kakaoId}")
     public ResponseEntity<?> deleteBoard(
             @PathVariable BoardType boardType,
-            @PathVariable Long id,
+            @PathVariable String kakaoId,
             Authentication authentication) {
         try {
-            log.info("[게시판 컨트롤러] 게시글 삭제 요청: {}", id);
+            log.info("[게시판 컨트롤러] 게시글 삭제 요청: {}", kakaoId);
             User user = userService.findByKakaoId(authentication.getName());
-            boardService.deleteBoard(id, user);
+            boardService.deleteBoardByKakaoId(kakaoId, user);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error("[게시판 컨트롤러] 게시글 삭제 중 오류 발생: {}", e.getMessage());

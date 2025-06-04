@@ -52,7 +52,15 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public Board getBoardById(Long id) {
-        return boardRepository.findById(id)
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        board.getUser().getNickname();
+        return board;
+    }
+
+    @Transactional(readOnly = true)
+    public Board getBoardByKakaoId(String kakaoId) {
+        return boardRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
     }
 
@@ -66,12 +74,12 @@ public class BoardService {
     }
 
     @Transactional
-    public Board updateBoard(Long id, Board board, User user) {
+    public Board updateBoardByKakaoId(String kakaoId, Board board, User user) {
         if (user.getKakaoId() == null) {
             throw new RuntimeException("카카오 로그인 사용자만 게시글을 수정할 수 있습니다.");
         }
-        Board existingBoard = getBoardById(id);
-        if (!existingBoard.getUser().getId().equals(user.getId())) {
+        Board existingBoard = getBoardByKakaoId(kakaoId);
+        if (!existingBoard.getUser().getKakaoId().equals(user.getKakaoId())) {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
         existingBoard.setTitle(board.getTitle());
@@ -80,12 +88,12 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long id, User user) {
+    public void deleteBoardByKakaoId(String kakaoId, User user) {
         if (user.getKakaoId() == null) {
             throw new RuntimeException("카카오 로그인 사용자만 게시글을 삭제할 수 있습니다.");
         }
-        Board board = getBoardById(id);
-        if (!board.getUser().getId().equals(user.getId())) {
+        Board board = getBoardByKakaoId(kakaoId);
+        if (!board.getUser().getKakaoId().equals(user.getKakaoId())) {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
         boardRepository.delete(board);

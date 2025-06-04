@@ -17,6 +17,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardService boardService;
 
+    @Transactional
     public Comment createComment(Long boardId, String content, User user) {
         Board board = boardService.getBoardById(boardId);
         Comment comment = Comment.builder()
