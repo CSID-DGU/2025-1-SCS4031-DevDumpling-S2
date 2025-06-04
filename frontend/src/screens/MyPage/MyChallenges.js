@@ -108,14 +108,19 @@ const MyChallenges = () => {
                         <Text className="text-center text-gray-500">참여 중인 챌린지가 없습니다.</Text>
                     ) : (
                         challenges.map((challenge, idx) => (
-                            <View key={challenge.id} className="flex-row px-5 py-4 rounded-2xl bg-white shadow-md mb-8">
+                            <TouchableOpacity 
+                                key={challenge.id} 
+                                className="flex-row px-5 py-4 rounded-2xl items-center bg-white shadow-md mb-8"
+                                onPress={() => navigation.navigate('ChallengeDetailScreen', { challengeId: challenge.id })}
+                            >
                                 {getCategoryImage(challenge.categoryId) ? (
                                     <Image
                                         source={{ uri: getCategoryImage(challenge.categoryId) }}
-                                        className="w-12 h-12 rounded-full mr-4"
+                                        className="w-10 h-10 mr-4"
+                                        resizeMode="cover"
                                     />
                                 ) : (
-                                    <View className="w-12 h-12 bg-gray-400 rounded-full mr-4" />
+                                    <View className="w-10 h-10 bg-gray-400 rounded-full mr-4" />
                                 )}
                                 <View className="flex-col justify-center">
                                     <Text className="text-lg text-black font-bold mb-1">
@@ -125,7 +130,7 @@ const MyChallenges = () => {
                                         {personalRanks[challenge.id] ? `현재 ${personalRanks[challenge.id]}위` : '랭킹 정보 없음'}
                                     </Text>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         ))
                     )}
                 </ScrollView>

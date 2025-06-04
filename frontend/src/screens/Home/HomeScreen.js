@@ -189,13 +189,77 @@ export default function HomeScreen() {
   const fetchChallenges = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get(`${API_BASE_URL}/challenges`, {
-        headers: { Authorization: `Bearer ${token}` }
+      if (!token) {
+        console.log('토큰이 없어 챌린지를 불러올 수 없습니다.');
+        setChallengeLoading(false);
+        return;
+      }
+
+      // 1. 참여 중인 챌린지 목록 가져오기
+      const participatingResponse = await axios.get(`${API_BASE_URL}/api/challenges/participating`, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
       });
-      setChallenges(response.data);
-      setCategories(Array.from(new Set(response.data.map(challenge => challenge.category))));
+
+      console.log('참여 중인 챌린지 전체 응답:', participatingResponse);
+      console.log('참여 중인 챌린지 데이터:', participatingResponse.data);
+
+      // 응답 데이터 구조 확인 및 처리
+      let challengeIds = [];
+      if (participatingResponse && participatingResponse.data) {
+        if (Array.isArray(participatingResponse.data)) {
+          challengeIds = participatingResponse.data;
+        } else if (participatingResponse.data.content && Array.isArray(participatingResponse.data.content)) {
+          challengeIds = participatingResponse.data.content;
+        } else if (participatingResponse.data.challenges && Array.isArray(participatingResponse.data.challenges)) {
+          challengeIds = participatingResponse.data.challenges;
+        }
+      }
+
+      if (challengeIds.length === 0) {
+        console.log('참여 중인 챌린지가 없습니다.');
+        setChallenges([]);
+        setCategories([]);
+        setChallengeLoading(false);
+        return;
+      }
+
+      // 2. 각 챌린지의 상세 정보 가져오기
+      const challengeDetails = await Promise.all(
+        challengeIds.map(async (challenge) => {
+          try {
+            const challengeId = typeof challenge === 'object' ? challenge.id : challenge;
+            const detailResponse = await axios.get(`${API_BASE_URL}/api/challenges/${challengeId}`, {
+              headers: { 
+                Authorization: `Bearer ${token}`,
+                'Accept': 'application/json'
+              }
+            });
+            console.log(`챌린지 ${challengeId} 상세 정보:`, detailResponse.data);
+            return detailResponse.data;
+          } catch (error) {
+            console.error(`챌린지 ${challenge} 상세 정보 로드 실패:`, error);
+            return null;
+          }
+        })
+      );
+
+      // null이 아닌 챌린지만 필터링
+      const validChallenges = challengeDetails.filter(challenge => challenge !== null);
+      
+      setChallenges(validChallenges);
+      setCategories(Array.from(new Set(validChallenges.map(challenge => challenge.category))));
+      
     } catch (error) {
       console.error('챌린지 로드 중 오류:', error);
+      if (error.response) {
+        console.error('에러 상태:', error.response.status);
+        console.error('에러 데이터:', error.response.data);
+      }
+      setChallenges([]);
+      setCategories([]);
     } finally {
       setChallengeLoading(false);
     }

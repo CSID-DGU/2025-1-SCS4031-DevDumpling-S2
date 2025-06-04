@@ -103,7 +103,13 @@ const MyPosts = () => {
                         myPosts.map((post, index) => (
                             <TouchableOpacity 
                                 key={index}
-                                onPress={() => navigation.navigate('CommunityPosts', { boardType: post.board_type, postId: post.id })}
+                                onPress={() => {
+                                    const boardType = post.board_type || 'FREE'; // 기본값으로 FREE 설정
+                                    navigation.navigate('CommunityPosts', { 
+                                        boardType: boardType, 
+                                        postId: post.id 
+                                    });
+                                }}
                                 className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-4"
                             >
                                 {/* <Text className="text-xs text-gray-500 mb-1">
