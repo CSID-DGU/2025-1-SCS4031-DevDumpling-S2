@@ -48,45 +48,6 @@ export default function CommunityWriteScreen({ navigation }) {
         <>
             <Header />
             <View className="flex-1 bg-[#EFEFEF] pt-12 px-4">
-
-                {/* 카테고리 탭 */}
-                <View
-                    className="flex-row items-center justify-between bg-[#014029] rounded-2xl mb-4"
-                    style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: horizontalPadding,
-                    }}>
-                    {/* 중앙 타이틀 */}
-                    <Text className="text-white text-sm font-semibold text-center">커뮤니티 글쓰기</Text>
-                </View>
-
-                {/* 카테고리 드롭다운 버튼 */}
-                <View className="mb-4">
-                    <TouchableOpacity
-                        onPress={() => setDropdownOpen(!isDropdownOpen)}
-                        className="bg-white px-4 py-2 rounded-full self-start">
-                            <Text className="text-sm text-black">{category} ⌄</Text>
-                        </TouchableOpacity>
-
-                        {/* 드롭다운 리스트 */}
-                        {isDropdownOpen && (
-                            <View className="bg-white mt-2 rounded-xl shadow p-2 w-40">
-                                {categories.map((item) => (
-                                    <TouchableOpacity
-                                        key={item}
-                                        onPress={() => {
-                                            setCategory(item);
-                                            setDropdownOpen(false);
-                                        }}
-                                        className="py-2"
-                                    >
-                                        <Text className="text-sm text-black text-center">{item}</Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
-                        )}
-                </View>
-
                 {/* 게시글 작성 */}
                 <ScrollView
                     className="flex-1"
@@ -96,6 +57,41 @@ export default function CommunityWriteScreen({ navigation }) {
                         paddingBottom: 100,
                     }}
                 >
+
+                    {/* 카테고리 탭 */}
+                    <View
+                        className="flex-row items-center bg-[#014029] rounded-2xl mb-4 p-4">
+                        {/* 중앙 타이틀 */}
+                        <Text className="text-white text-sm font-semibold text-center">커뮤니티 글쓰기</Text>
+                    </View>
+
+                    {/* 카테고리 드롭다운 버튼 */}
+                    <View className="mb-4">
+                        <TouchableOpacity
+                            onPress={() => setDropdownOpen(!isDropdownOpen)}
+                            className="bg-white px-4 py-2 rounded-full self-start">
+                                <Text className="text-sm text-black">{category} ⌄</Text>
+                            </TouchableOpacity>
+
+                            {/* 드롭다운 리스트 */}
+                            {isDropdownOpen && (
+                                <View className="bg-white mt-2 rounded-xl shadow p-2 w-40">
+                                    {categories.map((item) => (
+                                        <TouchableOpacity
+                                            key={item}
+                                            onPress={() => {
+                                                setCategory(item);
+                                                setDropdownOpen(false);
+                                            }}
+                                            className="py-2"
+                                        >
+                                            <Text className="text-sm text-black text-center">{item}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            )}
+                    </View>
+
                     {/* 제목 입력 */}
                     <TextInput
                         placeholder="제목을 입력하세요"

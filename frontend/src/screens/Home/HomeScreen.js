@@ -25,6 +25,10 @@ export default function HomeScreen() {
     dataCollection: false,
     sensitiveInfo: false
   });
+  const [userData, setUserData] = useState(null);
+  const [challenges, setChallenges] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [challengeLoading, setChallengeLoading] = useState(true);
 
   useEffect(() => {
     checkMydataConsent();
@@ -164,6 +168,115 @@ export default function HomeScreen() {
       console.error('약관 동의 제출 중 오류:', error);
     }
   };
+
+  useEffect(() => {
+    fetchUserData();
+    fetchChallenges();
+  }, [navigation]);
+
+  const fetchUserData = async () => {
+    try {
+      const storedUserData = await AsyncStorage.getItem('userData');
+      if (storedUserData) {
+        setUserData(JSON.parse(storedUserData));
+        console.log('HomeScreen userData:', JSON.parse(storedUserData));
+      }
+    } catch (error) {
+      console.error('사용자 데이터 불러오기 실패:', error);
+    }
+  };
+
+  const fetchChallenges = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        console.log('토큰이 없어 챌린지를 불러올 수 없습니다.');
+        setChallengeLoading(false);
+        return;
+      }
+
+      // 1. 카테고리 정보 가져오기
+      const catRes = await axios.get(`${API_BASE_URL}/api/challenges/categories`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCategories(catRes.data);
+
+      // 2. 참여 중인 챌린지 목록 가져오기
+      const chalRes = await axios.get(`${API_BASE_URL}/api/challenges/participating`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log('참여 중인 챌린지 전체 응답:', chalRes.data);
+
+      let challengeList = [];
+      if (chalRes.data) {
+        if (Array.isArray(chalRes.data)) {
+          challengeList = chalRes.data;
+        } else if (chalRes.data.content && Array.isArray(chalRes.data.content)) {
+          challengeList = chalRes.data.content;
+        } else if (chalRes.data.challenges && Array.isArray(chalRes.data.challenges)) {
+          challengeList = chalRes.data.challenges;
+        }
+      }
+      
+      console.log('처리된 챌린지 목록:', JSON.stringify(challengeList, null, 2));
+      
+      if (challengeList.length === 0) {
+        console.log('참여 중인 챌린지가 없습니다.');
+        setChallenges([]);
+        setChallengeLoading(false);
+        return;
+      }
+
+      // 3. 각 챌린지의 상세 정보 가져오기
+      const challengeDetails = await Promise.all(
+        challengeList.map(async (challenge) => {
+          try {
+            // challenge 객체 구조 확인
+            console.log('처리할 챌린지 데이터:', JSON.stringify(challenge, null, 2));
+            
+            let challengeId;
+            if (typeof challenge === 'object' && challenge !== null) {
+              challengeId = challenge.id || challenge.challengeId;
+            } else {
+              challengeId = challenge;
+            }
+
+            if (!challengeId) {
+              console.error('유효하지 않은 챌린지 데이터:', JSON.stringify(challenge, null, 2));
+              return null;
+            }
+
+            console.log(`챌린지 ID ${challengeId}로 상세 정보 요청`);
+            const detailResponse = await axios.get(`${API_BASE_URL}/api/challenges/${challengeId}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log(`챌린지 ${challengeId} 상세 정보:`, detailResponse.data);
+            return detailResponse.data;
+          } catch (error) {
+            console.error(`챌린지 ${JSON.stringify(challenge)} 상세 정보 로드 실패:`, error);
+            return null;
+          }
+        })
+      );
+
+      // null이 아닌 챌린지만 필터링
+      const validChallenges = challengeDetails.filter(challenge => challenge !== null);
+      
+      setChallenges(validChallenges);
+      
+    } catch (error) {
+      console.error('챌린지 로드 중 오류:', error);
+      if (error.response) {
+        console.error('에러 상태:', error.response.status);
+        console.error('에러 데이터:', error.response.data);
+      }
+      setChallenges([]);
+      setCategories([]);
+    } finally {
+      setChallengeLoading(false);
+    }
+  };
+
   return (
     <View className="flex-1 bg-[#EFEFEF]">
       <Header />
@@ -180,7 +293,13 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('ChallengeHomeScreen')}>
             <Text className="text-[20px] font-bold text-black mb-2">지금 뜨고 있는 챌린지</Text>
           </TouchableOpacity>
-          <ChallengeSection />
+          <ChallengeSection
+            userData={userData}
+            challenges={challenges}
+            categories={categories}
+            challengeLoading={challengeLoading}
+            navigation={navigation}
+          />
         </View>
 
         {/* 금융 상품 보러가기 */}
@@ -188,7 +307,7 @@ export default function HomeScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('ProductsHome')}>
             <Text className="text-[20px] font-bold text-black mb-2">신청 가능한 청년 우대 상품</Text>
           </TouchableOpacity>
-          <RatingSection />
+          <RatingSection userData={userData} />
         </View>
 
         {/* 맞춤 퀴즈 & 추천 기사 */}

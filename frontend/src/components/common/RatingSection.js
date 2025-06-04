@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const RatingSection = () => {
+const RatingSection = ({ userData }) => {
     const { width } = useWindowDimensions();
     const navigation = useNavigation();
 
@@ -21,7 +21,9 @@ const RatingSection = () => {
                     <Text className="text-[12px] text-[#6D6D6D]">더 많은 상품 보러가기 {'>'}</Text>
                 </TouchableOpacity>
             </View>
-            <Text className="text-[12px] text-[#6D6D6D]">로그인하면 더 자세한 정보를 볼 수 있어요</Text>
+            {!userData && (
+                <Text className="text-[12px] text-[#6D6D6D]">로그인하면 더 자세한 정보를 볼 수 있어요</Text>
+            )}
         </View>
     );
 };

@@ -3,11 +3,15 @@ import { View, Text, Image, TouchableOpacity, SafeAreaView, ScrollView, Activity
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../components/layout/Header';
+import axios from 'axios';
 
 export default function MypageScreen() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
+    const [challenges, setChallenges] = useState([]);
+    const [challengeLoading, setChallengeLoading] = useState(true);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -22,9 +26,42 @@ export default function MypageScreen() {
                 setLoading(false);
             }
         };
-
         fetchUserData();
     }, []);
+
+    useEffect(() => {
+        const fetchChallenges = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                if (!token) return;
+
+                // 카테고리 정보
+                const catRes = await axios.get('http://52.78.59.11:8080/api/challenges/categories', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setCategories(catRes.data);
+
+                // 참여중인 챌린지 목록
+                const chalRes = await axios.get('http://52.78.59.11:8080/api/challenges/participating', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const challengeList = Array.isArray(chalRes.data.content)
+                    ? chalRes.data.content
+                    : [];
+                setChallenges(challengeList);
+            } catch (error) {
+                console.error('챌린지 데이터 불러오기 실패:', error);
+            } finally {
+                setChallengeLoading(false);
+            }
+        };
+        fetchChallenges();
+    }, []);
+
+    const getCategoryImage = (categoryId) => {
+        const category = categories.find(cat => cat.id === categoryId);
+        return category ? category.imageUrl : null; // 실제 필드명에 맞게 수정
+    };
 
     const handleLogout = async () => {
         try {
@@ -85,31 +122,51 @@ export default function MypageScreen() {
                     <View className="px-5 mb-4">
                         <TouchableOpacity
                             className="flex-row items-center mb-3"
-                            onPress={() => navigation.navigate('Challenges')}
+                            onPress={() => navigation.navigate('MyChallenges')}
                         >
                             <Text className="text-2xl font-bold text-Fineed-green">참여중인 챌린지</Text>
                             <Text className="text-2xl font-bold text-Fineed-green ml-1">{'>'}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3"
-                            onPress={() => navigation.navigate('ChallengeDetail')}
-                        >
-                            <View className="flex-row p-5">
-                                <View className="w-[36%] flex items-center justify-center pr-3">
-                                    <Image
-                                        source={require('../../../assets/images/piggy-bank.png')}
-                                        className="w-24 h-24"
-                                        resizeMode="contain"
-                                    />
-                                </View>
-                                <View className="h-24 w-px bg-gray-200 mr-3" />
-                                <View className="w-[64%] flex justify-center  pl-1">
-                                    <Text className="text-center text-xl font-bold mb-1 text-Fineed-green">도전!</Text>
-                                    <Text className="text-center text-xl font-bold text-Fineed-green">일주일 저축 챌린지</Text>
-                                </View>
+                        {challengeLoading ? (
+                            <Text className="text-center text-gray-500">로딩 중...</Text>
+                        ) : challenges.length === 0 ? (
+                            <View className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3 p-8 items-center">
+                                <Text className="text-lg text-gray-500">아직 참여중인 챌린지가 없어요</Text>
                             </View>
-                        </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity
+                                className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3"
+                                onPress={() => {
+                                    console.log('Mypage - 챌린지 데이터:', challenges[0]);
+                                    const challengeId = challenges[0]?.challengeId;
+                                    console.log('Mypage - 사용할 challengeId:', challengeId);
+                                    if (challengeId) {
+                                        navigation.navigate('ChallengeDetailScreen', { challengeId });
+                                    } else {
+                                        console.error('Mypage - challengeId가 없습니다:', challenges[0]);
+                                    }
+                                }}
+                            >
+                                <View className="flex-row p-5">
+                                    <View className="w-[36%] flex items-center justify-center pr-3">
+                                        {getCategoryImage(challenges[0].categoryId) ? (
+                                            <Image
+                                                source={{ uri: getCategoryImage(challenges[0].categoryId) }}
+                                                className="w-14 h-14"
+                                                resizeMode="contain"
+                                            />
+                                        ) : (
+                                            <View className="w-14 h-14 bg-gray-200 rounded-full" />
+                                        )}
+                                    </View>
+                                    <View className="h-24 w-px bg-gray-200 mr-3" />
+                                    <View className="w-[64%] flex justify-center  pl-1">
+                                        <Text className="text-center text-xl font-bold text-Fineed-green">{challenges[0].title}</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     {/* 메뉴 버튼 */}

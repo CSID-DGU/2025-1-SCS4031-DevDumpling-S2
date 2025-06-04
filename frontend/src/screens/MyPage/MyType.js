@@ -15,6 +15,7 @@ const MyType = () => {
   const { width } = useWindowDimensions();
   const horizontalPadding = width > 380 ? 16 : 12;
   const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
 
   const [selectedType, setSelectedType] = useState(null);
 
@@ -34,6 +35,23 @@ const MyType = () => {
     fetchUserType();
   }, []);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            const storedUserData = await AsyncStorage.getItem('userData');
+            if (storedUserData) {
+                setUserData(JSON.parse(storedUserData));
+            }
+        } catch (error) {
+            console.error('사용자 데이터 불러오기 실패:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchUserData();
+}, []);
+
   const selectedTypeObj = types.find(type => type.code === selectedType);
 
   return (
@@ -50,7 +68,7 @@ const MyType = () => {
         >
           <View className="flex-col items-center justify-center">
             <Text className="text-2xl text-black font-bold mb-8">
-              User님의 유형은 {selectedTypeObj ? selectedTypeObj.name : '...'}예요!
+              {userData ? `${userData.nickname}` : '닉네임 정보 없음'}님의 유형은 {selectedTypeObj ? selectedTypeObj.name : '...'}예요!
             </Text>
 
             <View className="flex-row flex-wrap items-center justify-center gap-3 mb-5">

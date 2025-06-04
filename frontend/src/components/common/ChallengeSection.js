@@ -1,11 +1,23 @@
-import { View, Text, Image, useWindowDimensions } from 'react-native';
+import { View, Text, Image, useWindowDimensions, TouchableOpacity } from 'react-native';
 
-export default function ChallengeSection() {
+export default function ChallengeSection({ userData, challenges = [], categories = [], challengeLoading = false, navigation }) {
     const { width } = useWindowDimensions();
-    const cardGap = 16;
+    const cardGap = 8;
     const availableWidth = width - 40;
     const mainCardWidth = availableWidth * 0.65;
     const secondCardWidth = availableWidth - mainCardWidth - cardGap;
+
+    console.log('ChallengeSection 전체 데이터:', {
+        userData,
+        challenges,
+        categories,
+        challengeLoading
+    });
+
+    const getCategoryImage = (categoryId) => {
+        const category = categories.find(cat => cat.id === categoryId);
+        return category ? category.imageUrl : null;
+    };
 
     return (
         <View className="my-2">
@@ -48,16 +60,60 @@ export default function ChallengeSection() {
                     </View>
                 </View>
 
-                {/* 참여 안내 카드 */}
+                {/* 참여 안내/참여중인 챌린지 카드 */}
                 <View
                     style={{ width: secondCardWidth }}
-                    className="h-auto bg-white rounded-[20px] p-4 shadow-md flex justify-center items-center"
+                    className="h-auto bg-white rounded-[20px] p-5 shadow-md"
                 >
-                    <Text className="text-[14px] text-[#6D6D6D] text-center mb-2">참여중인 챌린지</Text>
-                    <Text className="text-[14px] text-black text-center leading-6">
-                        로그인하고{'\n'}챌린지에{'\n'}함께해보세요
-                    </Text>
-                    <Text className="text-[14px] text-black text-center mt-2">😊</Text>
+                    <Text className="text-[12px] text-[#6D6D6D] text-center mb-4">참여중인 챌린지</Text>
+                    <View className="flex-1 justify-center items-center">
+                        {userData ? (
+                            challengeLoading ? (
+                                <Text className="text-center text-gray-500">로딩 중...</Text>
+                            ) : challenges.length === 0 ? (
+                                <Text className="text-[14px] text-black text-center leading-6">
+                                    아직 참여중인{'\n'}챌린지가{'\n'} 없어요
+                                </Text>
+                            ) : (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        console.log('ChallengeSection - 전체 challenges:', challenges);
+                                        console.log('ChallengeSection - 첫 번째 챌린지:', challenges[0]);
+                                        const challengeId = challenges[0]?.challengeId;
+                                        console.log('ChallengeSection - 사용할 challengeId:', challengeId);
+                                        if (navigation && challengeId) {
+                                            navigation.navigate('ChallengeDetailScreen', { challengeId });
+                                        } else {
+                                            console.error('ChallengeSection - navigation 또는 challengeId가 없습니다:', { 
+                                                navigation, 
+                                                challengeId,
+                                                firstChallenge: challenges[0]
+                                            });
+                                        }
+                                    }}
+                                    className="items-center"
+                                >
+                                    {getCategoryImage(challenges[0].categoryId) ? (
+                                        <Image
+                                            source={{ uri: getCategoryImage(challenges[0].categoryId) }}
+                                            style={{ width: 40, height: 40, marginBottom: 8 }}
+                                            resizeMode="cover"
+                                        />
+                                    ) : (
+                                        <View style={{ width: 40, height: 40, borderRadius: 24, backgroundColor: '#eee', marginBottom: 8 }} />
+                                    )}
+                                    <Text className="text-[14px] text-black text-center font-bold">{challenges[0].title}</Text>
+                                </TouchableOpacity>
+                            )
+                        ) : (
+                            <>
+                                <Text className="text-[14px] text-black text-center leading-6">
+                                    로그인하고{'\n'}챌린지에{'\n'}함께해보세요
+                                </Text>
+                                <Text className="text-[14px] text-black text-center mt-2">😊</Text>
+                            </>
+                        )}
+                    </View>
                 </View>
             </View>
         </View>

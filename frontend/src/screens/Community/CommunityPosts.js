@@ -37,6 +37,11 @@ export default function CommunityPostsScreen({ route, navigation }) {
                 setComments(commentsData);
             } catch (error) {
                 console.error('게시글 데이터 로딩 실패:', error);
+                if (error.response) {
+                    console.error('에러 상태:', error.response.status);
+                    console.error('에러 데이터:', error.response.data);
+                    console.error('에러 헤더:', error.response.headers);
+                }
                 alert('게시글을 불러오는데 실패했습니다.');
             } finally {
                 setLoading(false);

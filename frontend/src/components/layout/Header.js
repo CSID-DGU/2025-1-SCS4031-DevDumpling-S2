@@ -45,12 +45,14 @@ const Header = () => {
 
     return (
         <View className="flex-row justify-between items-center px-[27px] pt-[57px] pb-[12px]">
-            <Text
-                style={{ fontFamily: 'Pretendard-ExtraBold' }}
-                className="text-[28px] leading-[36px] text-[#014029]"
-            >
-                FINEED
-            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <Text
+                    style={{ fontFamily: 'Pretendard-ExtraBold' }}
+                    className="text-[28px] leading-[36px] text-[#014029]"
+                >
+                    FINEED
+                </Text>
+            </TouchableOpacity>
 
             {isLoggedIn ? (
                 <View className="flex-row items-center">
