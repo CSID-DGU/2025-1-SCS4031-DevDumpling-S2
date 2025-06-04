@@ -41,6 +41,9 @@ public class QuizResultController {
         private String selectedAnswer;
         private Boolean isCorrect;
         private LocalDateTime createdAt;
+        private String question;
+        private String selectedAnswerText;
+        private String answerText;
     }
 
     @PostMapping("/{quizId}/submit")
@@ -146,19 +149,10 @@ public class QuizResultController {
             Authentication authentication) {
         try {
             User user = userService.findByKakaoId(authentication.getName());
-            QuizResult result = quizResultService.findByQuizIdAndUserId(quizId, user.getId());
-            
-            if (result == null) {
+            QuizResultDTO dto = quizResultService.getQuizResultDTOByQuizIdAndUserId(quizId, user.getId());
+            if (dto == null) {
                 return ResponseEntity.notFound().build();
             }
-            
-            QuizResultDTO dto = new QuizResultDTO();
-            dto.setId(result.getId());
-            dto.setQuizId(result.getQuiz().getId());
-            dto.setSelectedAnswer(result.getSelectedAnswer());
-            dto.setIsCorrect(result.getIsCorrect());
-            dto.setCreatedAt(result.getCreatedAt());
-            
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             log.error("[퀴즈 결과] 조회 중 오류 발생: {}", e.getMessage());

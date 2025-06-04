@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -384,19 +385,51 @@ public class ChallengeService {
     public Page<ChallengeSummaryResponse> getUserParticipatingChallenges(User user, Pageable pageable) {
         try {
             LocalDate currentDate = LocalDate.now();
+            log.info("[참여 중인 챌린지 조회] 시작 - 사용자 ID: {}, 현재 날짜: {}", user.getId(), currentDate);
+            
+            // 참여 정보 확인
+            List<Participation> participations = participationRepository.findByUser(user);
+            log.info("[참여 중인 챌린지 조회] 사용자의 전체 참여 정보 수: {}", participations.size());
+            
+            if (participations.isEmpty()) {
+                log.info("[참여 중인 챌린지 조회] 사용자에게 참여 정보가 없습니다.");
+                return Page.empty(pageable);
+            }
+            
+            // 참여 중인 챌린지 ID 목록 로깅
+            List<Long> participatingChallengeIds = participations.stream()
+                .map(p -> p.getChallenge().getChallengeID())
+                .collect(Collectors.toList());
+            log.info("[참여 중인 챌린지 조회] 참여 중인 챌린지 ID 목록: {}", participatingChallengeIds);
+            
+            // 각 챌린지의 상태 로깅
+            for (Participation p : participations) {
+                Challenge c = p.getChallenge();
+                log.info("[참여 중인 챌린지 조회] 챌린지 ID: {}, 시작일: {}, 종료일: {}, 삭제여부: {}, 완료여부: {}", 
+                    c.getChallengeID(), c.getStartDate(), c.getEndDate(), c.isDeleted(), c.isCompleted());
+            }
+            
             Page<Challenge> challenges = challengeRepository.findUserParticipatingChallenges(user, currentDate, pageable);
+            log.info("[참여 중인 챌린지 조회] 조회된 챌린지 수: {}, 전체 페이지 수: {}", 
+                challenges.getTotalElements(), challenges.getTotalPages());
             
             if (challenges == null) {
                 log.error("[참여 중인 챌린지 목록 조회] 데이터베이스 조회 실패 - 사용자: {}", user.getId());
                 throw new IllegalStateException("데이터베이스 조회 실패");
             }
             
+            if (challenges.isEmpty()) {
+                log.info("[참여 중인 챌린지 조회] 조건에 맞는 챌린지가 없습니다. (시작일 <= 현재 <= 종료일, 삭제되지 않음, 완료되지 않음)");
+            }
+            
             return challenges.map(challenge -> {
                 List<Participation> participants = getParticipants(challenge);
+                log.debug("[참여 중인 챌린지 조회] 챌린지 ID: {}, 참여자 수: {}", 
+                    challenge.getChallengeID(), participants.size());
                 return ChallengeSummaryResponse.from(challenge, participants.size());
             });
         } catch (Exception e) {
-            log.error("[참여 중인 챌린지 목록 조회] 오류 발생 - 사용자: {}, 오류: {}", user.getId(), e.getMessage());
+            log.error("[참여 중인 챌린지 목록 조회] 오류 발생 - 사용자: {}, 오류: {}", user.getId(), e.getMessage(), e);
             throw new RuntimeException("참여 중인 챌린지 목록 조회 중 오류가 발생했습니다.", e);
         }
     }

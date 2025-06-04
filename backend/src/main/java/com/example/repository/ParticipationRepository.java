@@ -15,4 +15,5 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     Long countByChallenge(Challenge challenge);
     List<Participation> findByChallenge(Challenge challenge);
     Optional<Participation> findByUserAndChallenge(User user, Challenge challenge);
+    List<Participation> findByUser(User user);
 } 
