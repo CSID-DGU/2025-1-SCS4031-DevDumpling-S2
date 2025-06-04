@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList, Linking, Alert } from 'react-native';
 import Header from '../../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -46,6 +46,21 @@ const YouthProduct = ({ route, navigation }) => {
             month: '2-digit',
             day: '2-digit'
         });
+    };
+
+    const handleJoin = async () => {
+        if (!product.applicationUrl) {
+            Alert.alert('알림', '현재 가입 링크가 제공되지 않습니다.');
+            return;
+        }
+
+        const supported = await Linking.canOpenURL(product.applicationUrl);
+        
+        if (supported) {
+            await Linking.openURL(product.applicationUrl);
+        } else {
+            Alert.alert('오류', '해당 URL을 열 수 없습니다.');
+        }
     };
 
     return (
@@ -178,7 +193,7 @@ const YouthProduct = ({ route, navigation }) => {
                 {product.applicationUrl && (
                     <View className="flex-row justify-center items-center">
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('AddYouthInfo')}
+                            onPress={handleJoin}
                             className="m-4 px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center">
                             <Text className="text-white text-lg font-bold">가입하러 가기</Text>
                         </TouchableOpacity>

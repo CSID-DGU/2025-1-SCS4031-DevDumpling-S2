@@ -16,8 +16,12 @@ const YouthProduct = ({ navigation }) => {
         navigation.navigate('AddYouthInfo');
     };
 
-    const navigateToYouthProduct = (product) => {
-        navigation.navigate('YouthProduct', { product });
+    const navigateToProduct = (product) => {
+        if (selectedCategory === '대출') {
+            navigation.navigate('YouthLoanProduct', { product });
+        } else {
+            navigation.navigate('YouthProduct', { product });
+        }
     };
 
     // 현재 선택된 카테고리에 따른 상품 표시
@@ -104,7 +108,7 @@ const YouthProduct = ({ navigation }) => {
                                         {activeProducts.map((product) => (
                                             <TouchableOpacity
                                                 key={product.productId}
-                                                onPress={() => navigateToYouthProduct(product)}
+                                                onPress={() => navigateToProduct(product)}
                                                 className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-3">
                                                 <Text className="text-xs text-[#6D6D6D] mb-2">{product.category || ''}</Text>
                                                 <Text className="text-2xl font-bold text-[#014029] mb-2">{product.productName}</Text>
@@ -127,7 +131,7 @@ const YouthProduct = ({ navigation }) => {
                                         {inactiveProducts.map((product) => (
                                             <TouchableOpacity
                                                 key={product.productId}
-                                                onPress={() => navigateToYouthProduct(product)}
+                                                onPress={() => navigateToProduct(product)}
                                                 className="bg-[#D9D9D9] p-4 rounded-2xl shadow-md mb-3">
                                                 <Text className="text-xs text-[#6D6D6D] mb-2">{product.category || ''}</Text>
                                                 <Text className="text-2xl font-bold text-[#014029] mb-2">{product.productName}</Text>
@@ -143,11 +147,11 @@ const YouthProduct = ({ navigation }) => {
                                 )}
                             </>
                         ) : (
-                            // 대출 상품 표시 (기존 방식 유지)
+                            // 대출 상품 표시
                             currentProducts.map((product) => (
                                 <TouchableOpacity
                                     key={product.productId}
-                                    onPress={() => navigateToYouthProduct(product)}
+                                    onPress={() => navigateToProduct(product)}
                                     className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-3">
                                     <Text className="text-xs text-[#6D6D6D] mb-2">{product.category || ''}</Text>
                                     <Text className="text-2xl font-bold text-[#014029] mb-2">{product.productName}</Text>

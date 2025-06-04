@@ -1,41 +1,48 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList, Linking, Alert } from 'react-native';
 import Header from '../../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const YouthProduct = ({ navigation }) => {
+const YouthLoanProduct = ({ route, navigation }) => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
     const [expandedBankIds, setExpandedBankIds] = useState([]);
+    const { product } = route.params;
+
     const toggleBank = (id) => {
         setExpandedBankIds(prev => {
             if (prev.includes(id)) {
-                // 이미 열려있으면 닫기
                 return prev.filter(bankId => bankId !== id);
             } else {
-                // 닫혀있으면 열기
                 return [...prev, id];
             }
         });
     };
-    
-    
-    // 은행 별 금리
-    const banks = [
-        {
-        id: 'kb',
-        name: '국민은행',
-        rate: '3.50%',
-        benefit: '자동이체 시 우대금리',
-        },
-        {
-        id: 'shinhan',
-        name: '신한은행',
-        rate: '3.30%',
-        benefit: '마이신한포인트 연계 우대',
-        },
-    ];
-  
+
+    const handleJoin = async () => {
+        if (!product.applicationMethods) {
+            Alert.alert('알림', '현재 가입 링크가 제공되지 않습니다.');
+            return;
+        }
+
+        // applicationMethods가 배열인 경우 첫 번째 URL을 사용
+        const url = Array.isArray(product.applicationMethods) 
+            ? product.applicationMethods[0].split(' ')[1] 
+            : product.applicationMethods;
+
+        if (!url) {
+            Alert.alert('알림', '현재 가입 링크가 제공되지 않습니다.');
+            return;
+        }
+
+        const supported = await Linking.canOpenURL(url);
+        
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('오류', '해당 URL을 열 수 없습니다.');
+        }
+    };
 
     return (
         <>
@@ -50,42 +57,34 @@ const YouthProduct = ({ navigation }) => {
                 }}>
                     {/* 상품 이름 */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                        <Text className="text-xs text-[#6D6D6D]">적금 / 정부지원상품</Text>
-                        <Text className="text-2xl font-bold text-[#014029]">청년도약계좌</Text>
-                        <Text className="text-xs">정부 기여금 지원, 이자소득 비과세, 고정금리 제공</Text>
+                        <Text className="text-xs text-[#6D6D6D]">{product.category || ''}</Text>
+                        <Text className="text-2xl font-bold text-[#014029]">{product.productName}</Text>
+                        <Text className="text-xs">{product.Summary || product.summary || ''}</Text>
                     </View>
 
-                    {/* 상품 혜택 */}
+                    {/* 가입 조건 */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                        <Text className="text-m font-bold mb-2">상품 혜택</Text>
-                        <View className="flex-row gap-5">
-                            <View className="flex-col gap-1 w-14">
-                                <Text className="text-sm font-bold">지원금액</Text>
-                                <Text className="text-sm font-bold">세제혜택</Text>
-                                <Text className="text-sm font-bold">금리</Text>
+                        <Text className="text-m font-bold mb-2">가입 조건</Text>
+                        <View className="flex-col gap-3">
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">나이</Text>
+                                <Text className="text-sm flex-1 flex-wrap">{product.eligibility?.ageRange || '해당없음'}</Text>
                             </View>
-                            <View className="flex-col gap-1 flex-1">
-                                <Text className="text-sm">최대 70만원</Text>
-                                <Text className="text-sm">이자소득 비과세</Text>
-                                <Text className="text-sm">은행별 상이</Text>
-                                <Text className="text-sm">3년 고정, 2년 변동</Text>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">주거 상태</Text>
+                                <Text className="text-sm flex-1 flex-wrap">{product.eligibility?.householdStatus || '해당없음'}</Text>
                             </View>
-                        </View>
-                    </View>
-
-                    {/* 가입 대상 */}
-                    <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                        <Text className="text-m font-bold mb-2">가입 대상</Text>
-                        <View className="flex-row gap-5">
-                            <View className="flex-col gap-1 w-14">
-                                <Text className="text-sm font-bold">나이</Text>
-                                <Text className="text-sm font-bold">소득조건</Text>
-                                <Text className="text-sm font-bold">가구소득</Text>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">소득 상한</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">{product.eligibility?.incomeCeiling || '해당없음'}</Text>
+                                </View>
                             </View>
-                            <View className="flex-col gap-1 flex-1">
-                                <Text className="text-sm">만 19세 ~ 34세</Text>
-                                <Text className="text-sm">연 7,500만원 이하</Text>
-                                <Text className="text-sm">중위소득 180% 이하</Text>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">순자산 상한</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">{product.eligibility?.netAssetCeiling || '해당없음'}</Text>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -93,69 +92,140 @@ const YouthProduct = ({ navigation }) => {
                     {/* 상품 안내 */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
                         <Text className="text-m font-bold mb-2">상품 안내</Text>
-                        <View className="flex-row gap-5">
-                            <View className="flex-col gap-1 w-14">
-                                <Text className="text-sm font-bold">가입기간</Text>
-                                <Text className="text-sm font-bold">가입금액</Text>
-                                <Text className="text-sm font-bold">계약기간</Text>
-                                <Text className="text-sm font-bold">유의사항</Text>
+                        <View className="flex-col gap-3">
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">이자율</Text>
+                                <Text className="text-sm flex-1 flex-wrap">{product.interestRate || '해당없음'}</Text>
                             </View>
-                            <View className="flex-col gap-1 flex-1">
-                                <Text className="text-sm">2025-05-22 ~ 2025-06-13</Text>
-                                <Text className="text-sm">최대 70만원</Text>
-                                <Text className="text-sm">5년</Text>
-                                <Text className="text-sm">중도해지 시 기여금 미지급, 자격 요건 충족 필수</Text>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">대출 한도</Text>
+                                <Text className="text-sm flex-1 flex-wrap">{product.loanLimit || '해당없음'}</Text>
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">대출 기간</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">{product.termDetails || '해당없음'}</Text>
+                                </View>
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">상환 방식</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">{product.repaymentMethod || '해당없음'}</Text>
+                                </View>
                             </View>
                         </View>
                     </View>
 
-                    {/* 은행별 금리 비교 */}
-                    <Text className="text-xl font-bold m-4">은행별 금리 비교</Text>
-                    {banks.map((bank) => (
-                        <TouchableOpacity
-                            key={bank.id}
-                            onPress={() => toggleBank(bank.id)}
-                            className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-4 rounded-2xl shadow-md"
-                        >
-                            <View className="flex-row justify-between items-center">
-                                <Text className="text-m font-bold">{bank.name}</Text>
-                                <Icon
-                                    name={expandedBankIds.includes(bank.id) ? 'chevron-up' : 'chevron-down'}
-                                    size={20}
-                                    color="#333"
-                                />
-                            </View>
-
-                            {expandedBankIds.includes(bank.id) && (
-                                <View className="mt-3">
-                                    <View className="flex-row gap-5">
-                                        <View className="flex-col gap-1 w-14">
-                                            <Text className="text-sm font-bold">기본 금리</Text>
-                                            <Text className="text-sm font-bold">우대 금리</Text>
-                                        </View>
-                                        <View className="flex-col gap-1 flex-1">
-                                            <Text className="text-sm">{bank.rate}</Text>
-                                            <Text className="text-sm">{bank.benefit}</Text>
+                    {/* 대상 주택 요건 - 해당 데이터가 있을 때만 표시 */}
+                    {(product.depositLimitMetro || product.depositLimitOther || product.propertyMaxAreaSqm || 
+                      product.propertyMaxAppraisedValue || product.LTV) && (
+                        <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
+                            <Text className="text-m font-bold mb-2">대상 주택 요건</Text>
+                            <View className="flex-col gap-3">
+                                {product.depositLimitMetro && (
+                                    <View className="flex-row gap-3">
+                                        <Text className="text-sm font-bold w-40">수도권 보증금 대출 한도</Text>
+                                        <Text className="text-sm flex-1 flex-wrap">{product.depositLimitMetro}</Text>
+                                    </View>
+                                )}
+                                {product.depositLimitOther && (
+                                    <View className="flex-row gap-3">
+                                        <Text className="text-sm font-bold w-40">비수도권 보증금 대출 한도</Text>
+                                        <Text className="text-sm flex-1 flex-wrap">{product.depositLimitOther}</Text>
+                                    </View>
+                                )}
+                                {product.propertyMaxAreaSqm && (
+                                    <View className="flex-row gap-3">
+                                        <Text className="text-sm font-bold w-40">대상 주택 최대 면적 (㎡)</Text>
+                                        <View className="flex-1">
+                                            <Text className="text-sm flex-wrap">{product.propertyMaxAreaSqm}</Text>
                                         </View>
                                     </View>
+                                )}
+                                {product.propertyMaxAppraisedValue && (
+                                    <View className="flex-row gap-3">
+                                        <Text className="text-sm font-bold w-40">대상 주택 최대 감정가</Text>
+                                        <View className="flex-1">
+                                            <Text className="text-sm flex-wrap">{product.propertyMaxAppraisedValue}</Text>
+                                        </View>
+                                    </View>
+                                )}
+                                {product.LTV && (
+                                    <View className="flex-row gap-3">
+                                        <Text className="text-sm font-bold w-40">주택담보인정비율 (Loan To Value)</Text>
+                                        <View className="flex-1">
+                                            <Text className="text-sm flex-wrap">{product.LTV}</Text>
+                                        </View>
+                                    </View>
+                                )}
+                            </View>
+                        </View>
+                    )}
+
+                    {/* 가입 방법 */}
+                    <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
+                        <Text className="text-m font-bold mb-2">가입 방법</Text>
+                        <View className="flex-col gap-3">
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">신청 기간</Text>
+                                <Text className="text-sm flex-1 flex-wrap">{product.applicationPeriodDeadline || '해당없음'}</Text>
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">신청 방법</Text>
+                                <Text className="text-sm flex-1 flex-wrap">
+                                    {Array.isArray(product.applicationMethods) 
+                                        ? product.applicationMethods.join(', ') 
+                                        : product.applicationMethods || '해당없음'}
+                                </Text>
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">제출 서류</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">
+                                        {Array.isArray(product.requiredDocuments) 
+                                            ? product.requiredDocuments.join(', ') 
+                                            : product.requiredDocuments || '해당없음'}
+                                    </Text>
                                 </View>
-                            )}
-                        </TouchableOpacity>
-                    ))}
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">취급 은행</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">
+                                        {Array.isArray(product.serviceBanks) 
+                                            ? product.serviceBanks.join(', ') 
+                                            : product.serviceBanks || '해당없음'}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">문의처</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">{product.contacts || '해당없음'}</Text>
+                                </View>
+                            </View>
+                            <View className="flex-row gap-2">
+                                <Text className="text-sm font-bold w-20">신청자 부담 비용</Text>
+                                <View className="flex-1">
+                                    <Text className="text-sm flex-wrap">{product.borrowerCosts || '해당없음'}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
                 </ScrollView>
 
                 <View className="flex-row justify-center items-center">
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('AddYouthInfo')}
-                            className="m-4 px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center">
-                            <Text className="text-white text-lg font-bold">가입하러 가기</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                        onPress={handleJoin}
+                        className="m-4 px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center">
+                        <Text className="text-white text-lg font-bold">가입하러 가기</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </>
     );
 };
 
-export default YouthProduct;
+export default YouthLoanProduct;
 
 
