@@ -42,7 +42,7 @@ import QuizHistory from './src/screens/MyPage/QuizHistory';
 import MyPosts from './src/screens/MyPage/MyPosts';
 import Scraps from './src/screens/MyPage/Scraps';
 import MyChallenges from './src/screens/MyPage/MyChallenges';
-
+import YouthLoanProduct from './src/screens/Products/Youth/YouthLoanProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -240,6 +240,11 @@ export default function App() {
           <Stack.Screen
             name="MyChallenges"
             component={MyChallenges}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="YouthLoanProduct"
+            component={YouthLoanProduct}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
