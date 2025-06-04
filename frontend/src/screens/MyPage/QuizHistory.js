@@ -195,7 +195,7 @@ const QuizHistory = () => {
                                             </Text>
                                             {isCorrect ? (
                                                 <Text className="text-m text-[#014029] font-bold mb-1">
-                                                    A. {answerText}
+                                                    A. {quiz.answerText}
                                                 </Text>
                                             ) : (
                                                 <>
@@ -203,10 +203,10 @@ const QuizHistory = () => {
                                                         className="text-m text-red-500 font-bold mb-1"
                                                         style={{ textDecorationLine: 'line-through' }}
                                                     >
-                                                        A. {selectedText}
+                                                        A. {quiz.selectedAnswerText}
                                                     </Text>
                                                     <Text className="text-m text-[#014029] font-bold mb-1">
-                                                        A. {answerText}
+                                                        A. {quiz.answerText}
                                                     </Text>
                                                 </>
                                             )}
