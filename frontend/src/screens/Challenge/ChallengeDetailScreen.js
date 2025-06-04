@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  SafeAreaView
+} from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { fetchChallengeDetail, joinChallenge, getCategoryName, fetchChallengeCategories } from './ChallengeApi';
+import {
+  fetchChallengeDetail,
+  joinChallenge,
+  getCategoryName,
+  fetchChallengeCategories
+} from './ChallengeApi';
 import Header from '../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,16 +30,16 @@ export default function ChallengeDetailScreen({ route }) {
   const [error, setError] = useState(null);
   const [categoryImage, setCategoryImage] = useState(null);
   const [isParticipating, setIsParticipating] = useState(false);
-  const [participationChecked, setParticipationChecked] = useState(false); // 참여 상태 확인 완료 여부
+  const [isCreator, setIsCreator] = useState(false);
+  const [participationChecked, setParticipationChecked] = useState(false); // 참여 상태 확인 여부
   const [userData, setUserData] = useState(null);
 
-  // 로그인 상태 확인
+  // 로그인 상태 확인 및 userData 세팅
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
         const userDataString = await AsyncStorage.getItem('userData');
-
         if (token && userDataString) {
           const parsedUserData = JSON.parse(userDataString);
           console.log('로그인된 사용자 정보:', parsedUserData);
@@ -34,25 +48,26 @@ export default function ChallengeDetailScreen({ route }) {
           console.log('로그인된 사용자 정보 없음');
           setUserData(null);
         }
-      } catch (error) {
-        console.error('로그인 상태 확인 오류:', error);
+      } catch (err) {
+        console.error('로그인 상태 확인 오류:', err);
         setUserData(null);
       }
     };
-
     checkLoginStatus();
   }, []);
-  
+
   // 화면이 포커스될 때마다 데이터 다시 로드
   useFocusEffect(
     React.useCallback(() => {
       if (challengeId) {
         setLoading(true);
+        // 초기 상태 리셋
+        setIsParticipating(false);
+        setIsCreator(false);
+        setParticipationChecked(false);
         loadChallengeDetail();
       }
-      return () => {
-        // 화면에서 벗어날 때 정리
-      };
+      return () => { };
     }, [challengeId, userData])
   );
 
@@ -60,83 +75,65 @@ export default function ChallengeDetailScreen({ route }) {
   const loadChallengeDetail = async () => {
     try {
       console.log(`챌린지 상세 정보 로드 시작 (ID: ${challengeId})`);
-      
-      // 1. AsyncStorage에서 참여 상태 확인 (참여 데이터 관리)
-      try {
-        if (userData) {
+
+      // 1. AsyncStorage에서 참여 상태 확인
+      if (userData) {
+        try {
           const userId = userData.id;
-          // 참여 데이터를 더 정확하게 관리하기 위해 {challengeId_userId} 형태로 저장
-          const participatingChallenges = JSON.parse(await AsyncStorage.getItem('participatingChallenges') || '[]');
           const participationKey = `${challengeId}_${userId}`;
-          
+          const stored = await AsyncStorage.getItem('participatingChallenges');
+          const participatingChallenges = stored ? JSON.parse(stored) : [];
           const isParticipatingFromStorage = participatingChallenges.includes(participationKey);
-          console.log(`AsyncStorage에서 참여 상태 확인 (${participationKey}): ${isParticipatingFromStorage}`);
-          
+          console.log(`AsyncStorage 참여 상태 (${participationKey}): ${isParticipatingFromStorage}`);
           if (isParticipatingFromStorage) {
-            console.log('로컬 저장소에서 참여중 상태 확인됨');
             setIsParticipating(true);
           }
-        } else {
-          console.log('사용자 정보 없음, 저장소 확인 스킵');
+        } catch (storageErr) {
+          console.error('AsyncStorage 읽기 오류:', storageErr);
         }
-      } catch (storageErr) {
-        console.error('AsyncStorage 읽기 오류:', storageErr);
       }
-      
-      // 2. 백엔드 API에서 데이터 가져오기
+
+      // 2. 백엔드 API에서 챌린지 상세 정보 가져오기
       const data = await fetchChallengeDetail(challengeId);
       console.log('챌린지 상세 정보 로드됨:', data);
       setChallenge(data);
-      
-      // 3. API 데이터로 참여 상태 확인
-      if (userData && data.participants && Array.isArray(data.participants)) {
-        console.log(`참여자 수: ${data.participants.length}`);
-        console.log('현재 사용자 ID:', userData.id);
-        
-        const userIdString = String(userData.id);
-        let foundParticipation = false;
-        
-        // 각 참여자를 개별적으로 확인하여 로그 출력
-        data.participants.forEach(participant => {
-          const participantIdString = String(participant.userId);
-          console.log(`참여자 ID 비교: ${participantIdString} vs ${userIdString}`);
-          if (participantIdString === userIdString) {
-            console.log('일치하는 참여자 발견!');
-            foundParticipation = true;
-          }
-        });
-        
-        console.log('서버 데이터 기반 참여 상태:', foundParticipation);
-        
-        // 4. 서버 데이터에서 참여 중임이 확인되면 무조건 참여중으로 설정
-        if (foundParticipation) {
-          setIsParticipating(true);
-          
-          // AsyncStorage에도 저장
-          try {
-            if (userData) {
-              const userId = userData.id;
-              const participationKey = `${challengeId}_${userId}`;
-              const participatingChallenges = JSON.parse(await AsyncStorage.getItem('participatingChallenges') || '[]');
-              
+
+      // 3. 서버 응답으로 참여 상태 및 생성자 여부 판단
+      if (userData) {
+        const currentUserId = String(userData.id);
+
+        // 3-1. 생성자 여부 확인
+        if (data.creatorNickname && data.creatorNickname === userData.nickname) {
+          console.log('내가 만든 챌린지 확인됨');
+          setIsCreator(true);
+        }
+
+        // 3-2. participants 배열에서 참여 여부 확인
+        if (Array.isArray(data.participants)) {
+          const found = data.participants.some((p) => String(p.userId) === currentUserId);
+          console.log('서버 데이터 기반 참여 상태:', found);
+          if (found) {
+            setIsParticipating(true);
+            // AsyncStorage에도 저장
+            try {
+              const participationKey = `${challengeId}_${currentUserId}`;
+              const stored = await AsyncStorage.getItem('participatingChallenges');
+              const participatingChallenges = stored ? JSON.parse(stored) : [];
               if (!participatingChallenges.includes(participationKey)) {
                 participatingChallenges.push(participationKey);
-                await AsyncStorage.setItem('participatingChallenges', JSON.stringify(participatingChallenges));
-                console.log(`참여 중인 챌린지 저장됨 (${participationKey}):`, participatingChallenges);
+                await AsyncStorage.setItem(
+                  'participatingChallenges',
+                  JSON.stringify(participatingChallenges)
+                );
+                console.log(`참여 챌린지 저장됨 (${participationKey}):`, participatingChallenges);
               }
-            } else {
-              console.log('사용자 정보 없음, 저장 스킵');
+            } catch (storageErr) {
+              console.error('AsyncStorage 저장 오류:', storageErr);
             }
-          } catch (storageErr) {
-            console.error('AsyncStorage 저장 오류:', storageErr);
           }
         }
-      } else {
-        console.log('참여자 확인 불가: 사용자 정보 또는 참여자 목록 없음');
-        // 참여 상태는 서버에서 false를 받았지만 AsyncStorage에서 이미 true로 설정되어 있다면 그대로 유지
-        // 원래 참여했던 챌린지라면 서버 오류로 인해 데이터가 완전히 사라지지 않도록 보호
       }
-      
+
       setParticipationChecked(true);
       setLoading(false);
     } catch (err) {
@@ -145,15 +142,8 @@ export default function ChallengeDetailScreen({ route }) {
       setLoading(false);
     }
   };
-  
-  // 초기 로드
-  useEffect(() => {
-    if (challengeId && userData) {
-      loadChallengeDetail();
-    }
-  }, [challengeId, userData]);
 
-  // URL 안전하게 처리
+  // URL을 안전하게 처리
   const safeUri = (uri) => {
     if (!uri) return '';
     return uri.startsWith('http') ? uri : `https://${uri}`;
@@ -163,25 +153,20 @@ export default function ChallengeDetailScreen({ route }) {
   useEffect(() => {
     const loadCategoryData = async () => {
       try {
-        // fetchChallengeCategories를 사용하여 백엔드에서 카테고리 정보 가져오기
         const categoriesData = await fetchChallengeCategories();
         console.log('백엔드 카테고리 데이터:', categoriesData);
-
-        // 현재 챌린지의 카테고리에 맞는 이미지 URL 찾기
-        if (challenge && challenge.category && Array.isArray(categoriesData) && categoriesData.length > 0) {
-          const currentCategory = categoriesData.find(cat =>
-            cat.category === challenge.category
+        if (challenge && challenge.category && Array.isArray(categoriesData)) {
+          const matched = categoriesData.find(
+            (cat) => cat.category === challenge.category
           );
-
-          if (currentCategory && currentCategory.imageUrl) {
-            console.log('카테고리 이미지 URL 찾음:', currentCategory.imageUrl);
-            setCategoryImage(currentCategory.imageUrl);
+          if (matched?.imageUrl) {
+            setCategoryImage(matched.imageUrl);
           } else {
-            // 같은 배열에서 다른 방법으로 이미지 찾기 시도
-            console.log('백엔드에서 category가 아닌 다른 키로 카테고리 찾기 시도...');
             for (const cat of categoriesData) {
-              if (cat.name === challenge.category || cat.name === getCategoryName(challenge.category)) {
-                console.log('다른 키를 통해 카테고리 찾음:', cat);
+              if (
+                cat.name === challenge.category ||
+                cat.name === getCategoryName(challenge.category)
+              ) {
                 if (cat.imageUrl) {
                   setCategoryImage(cat.imageUrl);
                   break;
@@ -194,7 +179,6 @@ export default function ChallengeDetailScreen({ route }) {
         console.error('카테고리 정보 로딩 오류:', err);
       }
     };
-
     if (challenge) {
       loadCategoryData();
     }
@@ -214,81 +198,85 @@ export default function ChallengeDetailScreen({ route }) {
       return;
     }
 
+    if (isCreator) {
+      Alert.alert('안내', '내가 만든 챌린지에는 참여할 수 없습니다.');
+      return;
+    }
+
     if (isParticipating) {
       Alert.alert('안내', '이미 참여 중인 챌린지입니다.');
+      return;
+    }
+
+    if (challenge.currentParticipants >= challenge.maxParticipants) {
+      Alert.alert('안내', '이미 마감된 챌린지입니다.');
+      return;
+    }
+
+    if (challenge.status === 'COMPLETED') {
+      Alert.alert('안내', '종료된 챌린지입니다.');
       return;
     }
 
     try {
       setLoading(true);
       console.log(`챌린지 참여 요청 시작 (ID: ${challengeId})`);
-      
+
       const result = await joinChallenge(challengeId);
       console.log('챌린지 참여 API 결과:', result);
 
-      // 이미 참여 중이거나 참여 성공인 경우
       if (result.success || result.alreadyJoined) {
-        console.log('참여 상태를 true로 변경');
         setIsParticipating(true);
-        
+
         // 로컬 상태 업데이트
-        setChallenge(prev => {
+        setChallenge((prev) => {
           if (!prev) return null;
-          
           const updatedParticipants = [...(prev.participants || [])];
-          
-          // 이미 있는지 확인
+          const currentUserId = String(userData.id);
+
           const alreadyExists = updatedParticipants.some(
-            p => String(p.userId) === String(userData.id)
+            (p) => String(p.userId) === currentUserId
           );
-          
-          // 없으면 추가
           if (!alreadyExists) {
-            console.log('참여자 목록에 현재 사용자 추가');
             updatedParticipants.push({
               userId: userData.id,
               nickname: userData.nickname
             });
           }
-          
+
           return {
             ...prev,
-            currentParticipants: (prev.currentParticipants || 0) + (alreadyExists ? 0 : 1),
+            currentParticipants: prev.currentParticipants + (alreadyExists ? 0 : 1),
             participants: updatedParticipants
           };
         });
 
-        // 참여 완료 메시지
-        const message = result.alreadyJoined ? 
-          '이미 참여 중인 챌린지입니다.' : 
-          '챌린지 참여가 완료되었습니다!';
-          
+        const message = result.alreadyJoined
+          ? '이미 참여 중인 챌린지입니다.'
+          : '챌린지 참여가 완료되었습니다!';
         Alert.alert('성공', message);
-        
-        // 데이터를 다시 로드하여 최신 상태 유지
+
+        // 최신 상태 다시 로드
         await loadChallengeDetail();
-        
-        // 상태를 AsyncStorage에 저장하여 영구적으로 유지
+
+        // AsyncStorage에도 저장
         try {
-          if (userData) {
-            const userId = userData.id;
-            const participationKey = `${challengeId}_${userId}`;
-            
-            // 데이터베이스와 일관되게 challengeId_userId 형태로 저장
-            const participatingChallenges = JSON.parse(await AsyncStorage.getItem('participatingChallenges') || '[]');
-            if (!participatingChallenges.includes(participationKey)) {
-              participatingChallenges.push(participationKey);
-              await AsyncStorage.setItem('participatingChallenges', JSON.stringify(participatingChallenges));
-              console.log(`참여 중인 챌린지 저장됨 (${userId}님이 ${challengeId} 챌린지 참여):`, participatingChallenges);
-            }
-          } else {
-            console.log('사용자 정보 없음, 저장 불가');
+          const currentUserId = String(userData.id);
+          const participationKey = `${challengeId}_${currentUserId}`;
+          const stored = await AsyncStorage.getItem('participatingChallenges');
+          const participatingChallenges = stored ? JSON.parse(stored) : [];
+          if (!participatingChallenges.includes(participationKey)) {
+            participatingChallenges.push(participationKey);
+            await AsyncStorage.setItem(
+              'participatingChallenges',
+              JSON.stringify(participatingChallenges)
+            );
+            console.log(`참여 챌린지 저장됨 (${participationKey}):`, participatingChallenges);
           }
         } catch (storageErr) {
           console.error('AsyncStorage 저장 오류:', storageErr);
         }
       } else {
-        // 참여에 실패한 경우
         Alert.alert('오류', '챌린지 참여에 실패했습니다.');
       }
     } catch (err) {
@@ -336,22 +324,21 @@ export default function ChallengeDetailScreen({ route }) {
     if (!participationChecked) {
       return { text: '로딩 중...', disabled: true };
     }
-    
+    if (isCreator) {
+      return { text: '내가 만든 챌린지', disabled: true };
+    }
     if (isParticipating) {
       return { text: '참여중', disabled: true };
     }
-    
     if (challenge.currentParticipants >= challenge.maxParticipants) {
       return { text: '마감되었습니다', disabled: true };
     }
-    
     if (challenge.status === 'COMPLETED') {
       return { text: '종료된 챌린지', disabled: true };
     }
-    
     return { text: '참여하기', disabled: false };
   };
-  
+
   const { text: buttonText, disabled: buttonDisabled } = getButtonStatus();
 
   return (
@@ -364,7 +351,7 @@ export default function ChallengeDetailScreen({ route }) {
             <Text className="text-gray-600 font-medium">{categoryName}</Text>
           </View>
 
-          {/* 제목과 아이콘 */}
+          {/* 제목과 잠금 아이콘 */}
           <View className="flex-row items-center justify-center mt-2 mb-4">
             {challenge.isPrivate && (
               <Icon name="lock-closed" size={20} color="#000" style={{ marginRight: 8 }} />
@@ -372,7 +359,7 @@ export default function ChallengeDetailScreen({ route }) {
             <Text className="text-[24px] font-bold flex-1 text-center">{challenge.title}</Text>
           </View>
 
-          {/* 카테고리 이미지 - 중앙 배치 */}
+          {/* 카테고리 이미지 (중앙 배치) */}
           <View className="items-center justify-center my-6">
             {categoryImage && (
               <Image
@@ -406,9 +393,9 @@ export default function ChallengeDetailScreen({ route }) {
               </View>
               <View className="flex-1">
                 <Text className="font-medium text-[16px]">
-                  {challenge.participants && challenge.participants[0] ? 
-                    challenge.participants[0].nickname : 
-                    ''}
+                  {challenge.participants && challenge.participants[0]
+                    ? challenge.participants[0].nickname
+                    : ''}
                 </Text>
               </View>
             </View>
@@ -420,9 +407,9 @@ export default function ChallengeDetailScreen({ route }) {
               </View>
               <View className="flex-1">
                 <Text className="font-medium text-[16px]">
-                  {challenge.participants && challenge.participants[1] ? 
-                    challenge.participants[1].nickname : 
-                    ''}
+                  {challenge.participants && challenge.participants[1]
+                    ? challenge.participants[1].nickname
+                    : ''}
                 </Text>
               </View>
             </View>
@@ -434,9 +421,9 @@ export default function ChallengeDetailScreen({ route }) {
               </View>
               <View className="flex-1">
                 <Text className="font-medium text-[16px]">
-                  {challenge.participants && challenge.participants[2] ? 
-                    challenge.participants[2].nickname : 
-                    ''}
+                  {challenge.participants && challenge.participants[2]
+                    ? challenge.participants[2].nickname
+                    : ''}
                 </Text>
               </View>
             </View>
@@ -489,7 +476,7 @@ export default function ChallengeDetailScreen({ route }) {
               </View>
             </View>
 
-            <View className="flex-row py-2">
+            <View className="flex-row py-2 border-b border-gray-100">
               <View className="w-1/3">
                 <Text className="text-gray-700">챌린지 공개 여부</Text>
               </View>
@@ -501,7 +488,8 @@ export default function ChallengeDetailScreen({ route }) {
 
           {/* 참여 버튼 */}
           <TouchableOpacity
-            className={`py-4 rounded-[10px] items-center justify-center mb-6 ${buttonDisabled ? 'bg-gray-400' : 'bg-Fineed-green'}`}
+            className={`py-4 rounded-[10px] items-center justify-center mb-6 ${buttonDisabled ? 'bg-gray-400' : 'bg-Fineed-green'
+              }`}
             onPress={handleJoinChallenge}
             disabled={buttonDisabled}
           >
