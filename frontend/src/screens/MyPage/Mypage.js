@@ -137,23 +137,22 @@ export default function MypageScreen() {
                         ) : (
                             <TouchableOpacity
                                 className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3"
-                                onPress={() => navigation.navigate('ChallengeDetail', { challengeId: challenges[0].id })}
+                                onPress={() => navigation.navigate('ChallengeDetailScreen', { challengeId: challenges[0].id })}
                             >
                                 <View className="flex-row p-5">
                                     <View className="w-[36%] flex items-center justify-center pr-3">
                                         {getCategoryImage(challenges[0].categoryId) ? (
                                             <Image
                                                 source={{ uri: getCategoryImage(challenges[0].categoryId) }}
-                                                className="w-24 h-24"
+                                                className="w-14 h-14"
                                                 resizeMode="contain"
                                             />
                                         ) : (
-                                            <View className="w-24 h-24 bg-gray-200 rounded-full" />
+                                            <View className="w-14 h-14 bg-gray-200 rounded-full" />
                                         )}
                                     </View>
                                     <View className="h-24 w-px bg-gray-200 mr-3" />
                                     <View className="w-[64%] flex justify-center  pl-1">
-                                        <Text className="text-center text-xl font-bold mb-1 text-Fineed-green">도전!</Text>
                                         <Text className="text-center text-xl font-bold text-Fineed-green">{challenges[0].title}</Text>
                                     </View>
                                 </View>
