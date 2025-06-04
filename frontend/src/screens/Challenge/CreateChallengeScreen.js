@@ -82,7 +82,23 @@ export default function CreateChallengeScreen() {
         Alert.alert('성공', '챌린지가 생성되었습니다.');
       }
       
-      navigation.replace('ChallengeHomeScreen');
+      // API 응답에서 챌린지 ID를 가져옵니다. (API 명세에 따라 response.id 또는 response.challengeId 등으로 변경 필요)
+      const newChallengeId = response.id; // 또는 response.challengeId
+
+      if (!newChallengeId) {
+        Alert.alert('오류', '챌린지 생성 후 ID를 받지 못했습니다. 홈 화면으로 이동합니다.');
+        navigation.replace('ChallengeHomeScreen');
+        return;
+      }
+
+      if (response.inviteCode) {
+        Alert.alert('성공', `비공개 챌린지가 생성되었습니다.\n초대 코드: ${response.inviteCode}\n챌린지 상세 화면으로 이동합니다.`);
+      } else {
+        Alert.alert('성공', '챌린지가 생성되었습니다. 챌린지 상세 화면으로 이동합니다.');
+      }
+      
+      // ChallengeDetailScreen으로 이동하면서 challengeId를 파라미터로 전달
+      navigation.replace('ChallengeDetailScreen', { challengeId: newChallengeId });
     } catch (error) {
       console.error('챌린지 생성 실패:', error.response?.data || error);
       Alert.alert('실패', '챌린지 생성에 실패했습니다. 입력 정보를 확인해주세요.');
