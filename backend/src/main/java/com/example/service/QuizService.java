@@ -178,33 +178,69 @@ public class QuizService {
 
     @Transactional(readOnly = true)
     public List<Quiz> findByArticleId(Long articleId) {
-        return quizRepository.findByArticleId(articleId);
+        return quizRepository.findByArticleId(articleId).stream()
+            .map(result -> {
+                Quiz quiz = new Quiz();
+                quiz.setId((Long) result[0]);
+                quiz.setQuestion((String) result[1]);
+                quiz.setOptions((String) result[2]);
+                quiz.setAnswer((String) result[3]);
+                quiz.setExplanation((String) result[4]);
+                return quiz;
+            })
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<Quiz> findByUserType(UserType userType) {
-        return quizRepository.findByUserType(userType);
+        return quizRepository.findByUserType(userType).stream()
+            .map(result -> {
+                Quiz quiz = new Quiz();
+                quiz.setId((Long) result[0]);
+                quiz.setQuestion((String) result[1]);
+                quiz.setOptions((String) result[2]);
+                quiz.setAnswer((String) result[3]);
+                quiz.setExplanation((String) result[4]);
+                return quiz;
+            })
+            .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<Quiz> findUnansweredQuizzesByUserType(UserType userType, User user) {
-        // 해당 유형의 모든 퀴즈
-        List<Quiz> allQuizzes = quizRepository.findByUserType(userType);
-        // 사용자가 이미 푼 퀴즈 ID 목록
+        List<Object[]> allQuizzes = quizRepository.findByUserType(userType);
         List<Long> answeredQuizIds = quizResultRepository.findByUser(user).stream()
                 .map(quizResult -> quizResult.getQuiz().getId())
                 .collect(Collectors.toList());
         
-        // 아직 풀지 않은 퀴즈만 필터링
         return allQuizzes.stream()
+                .map(result -> {
+                    Quiz quiz = new Quiz();
+                    quiz.setId((Long) result[0]);
+                    quiz.setQuestion((String) result[1]);
+                    quiz.setOptions((String) result[2]);
+                    quiz.setAnswer((String) result[3]);
+                    quiz.setExplanation((String) result[4]);
+                    return quiz;
+                })
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public Quiz findByArticleIdAndUserType(Long articleId, UserType userType) {
-        List<Quiz> quizzes = quizRepository.findByArticleIdAndUserType(articleId, userType);
-        return quizzes.isEmpty() ? null : quizzes.get(0);
+        List<Object[]> quizzes = quizRepository.findByArticleIdAndUserType(articleId, userType);
+        if (quizzes.isEmpty()) {
+            return null;
+        }
+        Object[] result = quizzes.get(0);
+        Quiz quiz = new Quiz();
+        quiz.setId((Long) result[0]);
+        quiz.setQuestion((String) result[1]);
+        quiz.setOptions((String) result[2]);
+        quiz.setAnswer((String) result[3]);
+        quiz.setExplanation((String) result[4]);
+        return quiz;
     }
 
     @Transactional(readOnly = true)

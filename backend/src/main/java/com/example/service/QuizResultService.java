@@ -70,4 +70,14 @@ public class QuizResultService {
         long correct = getUserCorrectAnswerCount(user);
         return (double) correct / total * 100;
     }
+
+    public QuizResult findById(Long id) {
+        return quizResultRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Quiz result not found with id: " + id));
+    }
+
+    public QuizResult findByQuizIdAndUserId(Long quizId, Long userId) {
+        return quizResultRepository.findByQuizIdAndUserId(quizId, userId)
+                .orElse(null);
+    }
 } 
