@@ -19,8 +19,41 @@ const YouthProduct = ({ navigation, route }) => {
 
     useEffect(() => {
         if (route?.params?.recommendDone) {
-            setRecommendedAsset(route.params.recommendedAsset || []);
-            setRecommendedLoan(route.params.recommendedLoan || []);
+            // 추천 상품 코드로 실제 상품 정보 매칭
+            const assetCodes = route.params.recommendedAssetCodes || [];
+            const loanCodes = route.params.recommendedLoanCodes || [];
+            
+            console.log('받은 추천 상품 코드:', { assetCodes, loanCodes });
+            
+            // 자산형성 상품 매칭
+            const matchedAssets = assetCodes
+                .map(code => {
+                    const found = assetProducts.find(p => String(p.productId) === String(code));
+                    if (!found) {
+                        console.log('자산형성 상품 매칭 실패:', code);
+                    }
+                    return found;
+                })
+                .filter(product => product && product.category);
+            
+            // 대출 상품 매칭
+            const matchedLoans = loanCodes
+                .map(code => {
+                    const found = loanProducts.find(p => String(p.productId) === String(code));
+                    if (!found) {
+                        console.log('대출 상품 매칭 실패:', code);
+                    }
+                    return found;
+                })
+                .filter(product => product && product.category);
+            
+            console.log('매칭된 상품:', { 
+                assetCount: matchedAssets.length, 
+                loanCount: matchedLoans.length 
+            });
+            
+            setRecommendedAsset(matchedAssets);
+            setRecommendedLoan(matchedLoans);
             setRecommendDone(true);
         }
     }, [route?.params]);
@@ -46,29 +79,50 @@ const YouthProduct = ({ navigation, route }) => {
     const categorizeAssetProducts = (products) => {
         const now = new Date();
         const activeProducts = products.filter(product => {
-            if (!product.applicationPeriod) return false;
+            if (!product || !product.applicationPeriod) return false;
             const startDate = new Date(product.applicationPeriod.start);
             const endDate = new Date(product.applicationPeriod.end);
             return startDate <= now && now <= endDate;
-        });
+        }).filter(Boolean);
         const inactiveProducts = products.filter(product => {
+            if (!product) return false;
             if (!product.applicationPeriod) return true;
             const startDate = new Date(product.applicationPeriod.start);
             const endDate = new Date(product.applicationPeriod.end);
             return now < startDate || now > endDate;
-        });
+        }).filter(Boolean);
         return { activeProducts, inactiveProducts };
     };
 
     const currentProducts = getCurrentProducts();
     const { activeProducts, inactiveProducts } = categorizeAssetProducts(currentProducts);
 
+    // 상품 리스트 렌더링 시 undefined 방지용 filter 적용
+    const safeActiveProducts = (activeProducts || []).filter(Boolean);
+    const safeInactiveProducts = (inactiveProducts || []).filter(Boolean);
+    const safeCurrentProducts = (currentProducts || []).filter(Boolean);
+
     // 추천 상품 섹션 렌더링 함수
-    const renderRecommendedSection = (products) => (
-        products.length > 0 && (
+    const renderRecommendedSection = (products) => {
+        if (!Array.isArray(products) || products.length === 0) {
+            return null;
+        }
+
+        const validProducts = products.filter(product => 
+            product && 
+            typeof product === 'object' && 
+            product.productId && 
+            product.category
+        );
+
+        if (validProducts.length === 0) {
+            return null;
+        }
+
+        return (
             <View className="mb-2 gap-4">
-                <Text className="text-base font-semibold mb-3">🎯 추천 상품</Text>
-                {products.map((product) => (
+                <Text className="text-2xl font-bold">🎯 추천 상품</Text>
+                {validProducts.map((product) => (
                     <TouchableOpacity
                         key={product.productId}
                         onPress={() => navigateToProduct(product)}
@@ -84,8 +138,8 @@ const YouthProduct = ({ navigation, route }) => {
                     </TouchableOpacity>
                 ))}
             </View>
-        )
-    );
+        );
+    };
 
     return (
         <>
@@ -99,12 +153,13 @@ const YouthProduct = ({ navigation, route }) => {
                         paddingBottom: 24
                     }}>
                     {/* 추가 정보 안내란 */}
-                    <View className="items-left pb-10">
+                    <View className="items-left pb-5">
                         <TouchableOpacity onPress={navigateToAddYouthInfo}>
                             {recommendDone ? (
                                 <>
                                     <Text className="text-2xl font-bold">추가 정보 입력 완료!</Text>
-                                    <Text className="text-2xl font-bold">딱 맞는 상품을 추천해드릴게요. 정보 확인 및 수정 →</Text>
+                                    <Text className="text-2xl font-bold">딱 맞는 상품을 추천해드릴게요</Text>
+                                    <Text className="text-lg font-bold">다시 입력하기 →</Text>
                                 </>
                             ) : (
                                 <>
@@ -141,22 +196,22 @@ const YouthProduct = ({ navigation, route }) => {
 
                     {/* 상품 리스트 */}
                     <View className="flex-col justify-center gap-5 mb-5">
-                        <Text className="text-xl font-bold">
-                            ✅ 현재 {selectedCategory === '자산형성' ? '가입' : '신청'} 가능한 청년 {selectedCategory} 상품
-                        </Text>
 
                         {/* 추천 상품 섹션 */}
                         {selectedCategory === '자산형성'
                             ? renderRecommendedSection(recommendedAsset)
                             : renderRecommendedSection(recommendedLoan)}
 
+                        <Text className="text-xl font-bold">
+                            ✅ 현재 {selectedCategory === '자산형성' ? '가입' : '신청'} 가능한 청년 {selectedCategory} 상품
+                        </Text>
+
                         {selectedCategory === '자산형성' ? (
                             <>
                                 {/* 현재 가입 기간 중인 상품 */}
-                                {activeProducts.length > 0 && (
+                                {safeActiveProducts.length > 0 && (
                                     <View className="mb-2 gap-4">
-                                        {/* <Text className="text-base font-semibold mb-3">⏰ 지금 신청 가능한 상품</Text> */}
-                                        {activeProducts.map((product) => (
+                                        {safeActiveProducts.map((product) => (
                                             <TouchableOpacity
                                                 key={product.productId}
                                                 onPress={() => navigateToProduct(product)}
@@ -175,11 +230,11 @@ const YouthProduct = ({ navigation, route }) => {
                                 )}
 
                                 {/* 현재 가입 기간이 아닌 상품 */}
-                                {inactiveProducts.length > 0 && (
+                                {safeInactiveProducts.length > 0 && (
                                     <View className="gap-4">
                                         <View className="border-t border-gray-200 w-full mb-5" />
                                         <Text className="text-xl font-bold">❌ 지금은 신청 기간이 아니에요</Text>
-                                        {inactiveProducts.map((product) => (
+                                        {safeInactiveProducts.map((product) => (
                                             <TouchableOpacity
                                                 key={product.productId}
                                                 onPress={() => navigateToProduct(product)}
@@ -199,7 +254,7 @@ const YouthProduct = ({ navigation, route }) => {
                             </>
                         ) : (
                             // 대출 상품 표시
-                            currentProducts.map((product) => (
+                            safeCurrentProducts.map((product) => (
                                 <TouchableOpacity
                                     key={product.productId}
                                     onPress={() => navigateToProduct(product)}

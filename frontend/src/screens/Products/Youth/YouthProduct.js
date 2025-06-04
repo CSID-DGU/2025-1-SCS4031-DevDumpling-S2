@@ -20,22 +20,22 @@ const YouthProduct = ({ route, navigation }) => {
     };
 
     // 은행 정보 파싱
-    const parseBanks = () => {
-        if (!product.providersDetail) return [];
-        try {
-            const banksData = JSON.parse(product.providersDetail.join(''));
-            return banksData.map((bank, index) => ({
-                id: `bank-${index}`,
-                name: bank.bank,
-                rate: bank.interestRate,
-                benefit: bank.specialNote || ''
-            }));
-        } catch (e) {
-            return [];
-        }
-    };
+    // const parseBanks = () => {
+    //     if (!product.providersDetail) return [];
+    //     try {
+    //         const banksData = JSON.parse(product.providersDetail.join(''));
+    //         return banksData.map((bank, index) => ({
+    //             id: `bank-${index}`,
+    //             name: bank.bank,
+    //             rate: bank.interestRate,
+    //             benefit: bank.specialNote || ''
+    //         }));
+    //     } catch (e) {
+    //         return [];
+    //     }
+    // };
 
-    const banks = parseBanks();
+    // const banks = parseBanks();
 
     // 날짜 포맷팅 함수
     const formatDate = (dateString) => {
@@ -151,7 +151,7 @@ const YouthProduct = ({ route, navigation }) => {
                         </View>
                     </View>
 
-                    {/* 은행별 금리 비교 */}
+                    {/* 은행별 금리 비교
                     {banks.length > 0 && (
                         <>
                             <Text className="text-xl font-bold m-4">은행별 금리 비교</Text>
@@ -187,7 +187,7 @@ const YouthProduct = ({ route, navigation }) => {
                                 </TouchableOpacity>
                             ))}
                         </>
-                    )}
+                    )} */}
                 </ScrollView>
 
                 {product.applicationUrl && (

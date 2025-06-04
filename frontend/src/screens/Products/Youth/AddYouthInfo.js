@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, TextInput, Modal, Pressable } from 'react-native';
 import Header from '../../../components/layout/Header';
+import assetProducts from '../../../data/products_1.json';
+import loanProducts from '../../../data/products_2.json';
+
+const API_BASE_URL = 'http://52.78.59.11:8080';
 
 const AddYouthInfo = ({ navigation }) => {
 
@@ -42,20 +46,57 @@ const AddYouthInfo = ({ navigation }) => {
                 gender: gender === 'male' ? 'M' : 'F',
                 survey_region: region
             };
-            const response = await fetch('http://localhost:8000/recommend', {
+            const response = await fetch(`${API_BASE_URL}/recommend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
             if (!response.ok) throw new Error('추천 상품 요청 실패');
             const data = await response.json();
-            // data.recommend_asset, data.recommend_loan 등으로 구분된다고 가정
-            navigation.navigate('YouthProduct', {
-                recommendedAsset: data.recommend_asset || [],
-                recommendedLoan: data.recommend_loan || [],
+            console.log('추천 API 응답:', data);
+            
+            // 추천 상품 코드 분류
+            const assetCodes = [];
+            const loanCodes = [];
+            
+            data.forEach((item) => {
+                if (!item || !item.product_code) {
+                    console.log('유효하지 않은 추천 상품 데이터:', item);
+                    return;
+                }
+                
+                // products_1.json에서 찾으면 자산형성, products_2.json에서 찾으면 대출
+                const isAsset = assetProducts.some(p => p.productId === item.product_code);
+                const isLoan = loanProducts.some(p => p.productId === item.product_code);
+                
+                if (isAsset) {
+                    assetCodes.push(item.product_code);
+                } else if (isLoan) {
+                    loanCodes.push(item.product_code);
+                } else {
+                    console.log('매칭 실패한 상품 코드:', item.product_code);
+                }
+            });
+            
+            // 매칭된 상품이 하나도 없는 경우
+            if (assetCodes.length === 0 && loanCodes.length === 0) {
+                Alert.alert(
+                    '알림',
+                    '추천 상품을 찾을 수 없습니다. 잠시 후 다시 시도해주세요.',
+                    [{ text: '확인', onPress: () => navigation.goBack() }]
+                );
+                return;
+            }
+            
+            console.log('분류된 상품 코드:', { assetCodes, loanCodes });
+            
+            navigation.navigate('YouthProductList', {
+                recommendedAssetCodes: assetCodes,
+                recommendedLoanCodes: loanCodes,
                 recommendDone: true
             });
         } catch (e) {
+            console.log('추천 상품 에러:', e);
             Alert.alert('추천 상품을 불러오는 데 실패했습니다.');
         }
     };
