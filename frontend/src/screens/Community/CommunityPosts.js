@@ -33,7 +33,7 @@ export default function CommunityPostsScreen({ route, navigation }) {
                 setLikes(postData.likes || 0);
                 setScraps(postData.scraps || 0);
                 
-                const commentsData = await fetchComments(boardType, postId);
+                const commentsData = await fetchComments(postId);
                 setComments(commentsData);
             } catch (error) {
                 console.error('게시글 데이터 로딩 실패:', error);

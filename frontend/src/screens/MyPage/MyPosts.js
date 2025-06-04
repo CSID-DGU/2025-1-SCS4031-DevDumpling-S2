@@ -20,6 +20,7 @@ const MyPosts = () => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
     const navigation = useNavigation();
+    console.log('navigation:', navigation);
     const [myPosts, setMyPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState(null);

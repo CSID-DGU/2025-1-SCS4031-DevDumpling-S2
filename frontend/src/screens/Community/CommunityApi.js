@@ -4,6 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BASE_URL = 'http://52.78.59.11:8080/api'; // /api 추가
 
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  // 필요시 headers 등 추가
+});
+
 // 게시글 목록 조회
 export const fetchBoardPosts = async (boardType) => {
   const res = await axios.get(`${BASE_URL}/boards/${boardType}`);
@@ -78,7 +83,7 @@ export const updateComment = async (commentId, commentData) => {
 };
 
 // 댓글 목록 조회
-export const fetchComments = async (boardType, postId) => {
-  const res = await axios.get(`${BASE_URL}/boards/${boardType}/${postId}/comments`);
+export async function fetchComments(postId) {
+  const res = await axiosInstance.get(`/comments/board/${postId}`);
   return res.data;
-};
+}
