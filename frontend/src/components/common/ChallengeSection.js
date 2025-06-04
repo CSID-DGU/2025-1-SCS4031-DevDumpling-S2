@@ -4,7 +4,7 @@ export default function ChallengeSection({ userData, challenges = [], categories
     const { width } = useWindowDimensions();
     const cardGap = 8;
     const availableWidth = width - 40;
-    const mainCardWidth = availableWidth * 0.65;
+    const mainCardWidth = availableWidth * 0.66;
     const secondCardWidth = availableWidth - mainCardWidth - cardGap;
 
     console.log('ChallengeSection 전체 데이터:', {

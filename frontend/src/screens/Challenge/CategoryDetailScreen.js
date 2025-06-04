@@ -98,17 +98,7 @@ export default function CategoryDetailScreen(props) {
         // 변환된 영문 코드로 API 호출
         const data = await fetchChallengesByCategory(englishCategoryCode);
         console.log('받은 챌린지 데이터:', data);
-        
-        // 데이터 구조 확인 및 처리
-        const challengesData = data.content || [];
-        console.log('처리된 챌린지 데이터:', challengesData);
-        
-        // 각 챌린지의 ID 확인
-        challengesData.forEach((challenge, index) => {
-          console.log(`챌린지 ${index} ID:`, challenge.id, '전체 데이터:', challenge);
-        });
-        
-        setChallenges(challengesData);
+        setChallenges(data.content || []);
         setLoading(false);
       } catch (err) {
         console.error('챌린지 로딩 오류:', err);
@@ -121,39 +111,61 @@ export default function CategoryDetailScreen(props) {
   }, [categoryCode, categoryName]);
 
   const renderChallengeItem = ({ item }) => {
-    console.log('렌더링할 챌린지 아이템:', item);
+    console.log('챌린지 아이템 전체 구조:', JSON.stringify(item, null, 2));
 
     // 이미지 소스 가져오기
     let src;
+
+    // 순서대로 이미지 소스 선택:
+    // 1. 챌린지 자체 이미지가 있는 경우
+    // 2. 백엔드에서 가져온 해당 카테고리 이미지가 있는 경우
+    // 3. 로컬에 정의된 카테고리 이미지가 있는 경우
+    // 4. 기본 이미지(SecretChallengeImg) 사용
+
     if (item.imageUrl) {
+      // 1. 챌린지 자체 이미지
       src = { uri: safeUri(item.imageUrl) };
+      console.log('챌린지 자체 이미지 사용:', src);
     } else if (categoryImage) {
+      // 2. 백엔드에서 가져온 카테고리 이미지
       src = { uri: safeUri(categoryImage) };
+      console.log('백엔드 카테고리 이미지 사용:', src);
     } else {
+      // 3. 로컬에 정의된 카테고리 이미지
       const imgSrc = getCategoryImage(item.category);
       src = typeof imgSrc === 'string' ? { uri: safeUri(imgSrc) } : imgSrc;
+      console.log('로컬 카테고리 이미지 사용:', src);
+    }
+    console.log('최종 사용할 이미지 소스:', src);
+
+    // 챌린지 ID 확인
+    console.log('챌린지 ID 타입:', typeof item.id);
+    console.log('챌린지 ID 값:', item.id);
+    console.log('챌린지 ID 값(challengeId):', item.challengeId);
+
+    // 올바른 ID 값 찾기
+    let correctId = null;
+    if (item.id !== undefined && item.id !== null) {
+      correctId = item.id;
+    } else if (item.challengeId !== undefined && item.challengeId !== null) {
+      correctId = item.challengeId;
+    } else {
+      // ID 필드를 찾기 위해 모든 프로퍼티 확인
+      for (const key in item) {
+        if (key.toLowerCase().includes('id') && typeof item[key] === 'number') {
+          correctId = item[key];
+          console.log('발견된 ID 필드:', key, '=', correctId);
+          break;
+        }
+      }
     }
 
-    // ID 처리
-    const challengeId = item.id;
-    console.log('사용할 challengeId:', challengeId, '아이템:', item);
-
-    if (!challengeId) {
-      console.error('챌린지 ID가 없습니다:', item);
-      return null;
-    }
+    console.log('최종 사용할 ID:', correctId, '타입:', typeof correctId);
 
     return (
       <TouchableOpacity
         className="bg-white rounded-[20px] p-4 shadow-sm mb-3"
-        onPress={() => {
-          console.log('챌린지 상세 화면으로 이동:', challengeId);
-          if (!challengeId) {
-            console.error('challengeId가 없습니다!');
-            return;
-          }
-          navigation.navigate('ChallengeDetailScreen', { challengeId });
-        }}
+        onPress={() => navigation.navigate('ChallengeDetailScreen', { challengeId: correctId })}
       >
         <View className="flex-row items-center">
           <Image source={src} style={{ width: 56, height: 56 }} resizeMode="contain" />

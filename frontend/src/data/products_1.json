@@ -1,0 +1,1001 @@
+[
+    { 
+      "productId": "p001",
+      "productName": "청년도약계좌",
+      "summary": "청년의 중장기 자산 형성을 지원하는 정부 지원 적금 상품",
+      "category": "적금 / 정부지원상품",
+      "tags": [
+        "청년",
+        "적금",
+        "정부지원",
+        "우대금리",
+        "비과세",
+        "자산형성"
+      ],
+      "eligibility": {
+        "age": "만 19~34세 (병역이행 시 연장)",
+        "personalIncome": [
+          "연 7",
+          "500만원 이하"
+        ],
+        "householdIncome": "중위소득 180% 이하"
+      },
+      "contractPeriod": "5년",
+      "monthlyDepositLimit": "70만원",
+      "governmentSupport": {
+        "contribution": "월 최대 4.2만원",
+        "taxBenefit": "이자소득 비과세"
+      },
+      "interest": {
+        "baseRate": "은행별 상이",
+        "note": [
+          "3년 고정",
+          "2년 변동"
+        ]
+      },
+      "benefits": [
+        "정부 기여금 지원",
+        "이자소득 비과세",
+        "고정금리 제공"
+      ],
+      "cautions": [
+        "중도해지 시 기여금 미지급",
+        "자격 요건 충족 필수"
+      ],
+      "providersDetail": [
+        "[{\"bank\":\"국민은행\"",
+        "\"interestRate\":\"3.50%\"",
+        "\"url\":\"https://obank.kbstar.com\"",
+        "\"specialNote\":\"자동이체 시 우대금리\"}",
+        "{\"bank\":\"신한은행\"",
+        "\"interestRate\":\"3.30%\"",
+        "\"url\":\"https://bank.shinhan.com\"",
+        "\"specialNote\":\"마이신한포인트 연계 우대\"}]"
+      ],
+      "applicationUrl": "https://ylaccount.kinfa.or.kr/main",
+      "applicationPeriod": {
+        "start": "2025-05-21T15:00:00.000Z",
+        "end": "2025-06-12T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p002",
+      "productName": "서울시 청년수당",
+      "summary": "서울시 거주 미취업 청년에게 월 50만원씩 최대 6개월 지원하는 활동 지원금 사업",
+      "category": "복지 / 문화",
+      "tags": [
+        "청년",
+        "미취업",
+        "활동지원금",
+        "서울시",
+        "월지급",
+        "정기지급"
+      ],
+      "eligibility": {
+        "age": "만 19세~34세 (의무복무 시 최대 3년 연장)",
+        "personalIncome": "고용보험 미가입자 또는 주 30시간 이하 단기근로자",
+        "householdIncome": null
+      },
+      "contractPeriod": "6개월",
+      "monthlyDepositLimit": "월 50만원",
+      "governmentSupport": {
+        "contribution": "월 최대 50만원 현금성 지원",
+        "taxBenefit": "제출한 사용내역 인정 시 비과세 혜택 가능"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "자율성 있는 사용 가능",
+        "취업준비 등 생계/생활 지원"
+      ],
+      "cautions": [
+        "유흥",
+        "귀금속",
+        "상품권 등 개인 목적 사용 금지"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://youth.seoul.go.kr/youthPnsn/step1.do?key=2308160001",
+      "applicationPeriod": {
+        "start": "2025-03-05T15:00:00.000Z",
+        "end": "2025-03-12T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p003",
+      "productName": "청년내일저축계좌",
+      "summary": "일하는 저소득층 청년의 자산 형성을 지원하는 정부 매칭형 적금 사업",
+      "category": "복지 / 문화",
+      "tags": [
+        "청년",
+        "자산형성",
+        "정부지원",
+        "저소득층",
+        "적금형",
+        "비과세"
+      ],
+      "eligibility": {
+        "age": "차상위 초과: 만 19~34세 이하 / 차상위 이하: 만 15~39세 이하",
+        "personalIncome": "차상위 초과: 월 50만~250만 / 차상위 이하: 월 10만원 이상",
+        "householdIncome": "차상위 초과: 중위소득 50~100% 이하 / 차상위 이하: 50% 이하"
+      },
+      "contractPeriod": "3년",
+      "monthlyDepositLimit": "월 10만원 또는 30만원",
+      "governmentSupport": {
+        "contribution": [
+          "차상위 초과: 월 10만원 정액",
+          "차상위 이하: 월 30만원 정액"
+        ],
+        "taxBenefit": "적립금 및 이자에 대해 비과세 가능"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": "기초 자산교육 및 금융상담 서비스 제공"
+      },
+      "benefits": [
+        "최대 수급액 720~1",
+        "440만원",
+        "금융교육 제공"
+      ],
+      "cautions": [
+        "수급 요건 미달 시 환수 가능",
+        "허위신청 및 중복수급 불가"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00000060&wlfareInfoReldBztpCd=01",
+      "applicationPeriod": {
+        "start": "2025-05-01T15:00:00.000Z",
+        "end": "2025-05-20T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p004",
+      "productName": "사회복무요원 장병내일준비적금",
+      "summary": [
+        "사회복무요원이 장병내일준비적금 가입 시",
+        "복무만료 후 국가에서 매칭비율에 따라 사회복귀준비금을 지급하는 자산형 지원제도"
+      ],
+      "category": "복지 / 문화",
+      "tags": [
+        "청년",
+        "자산형성",
+        "장병",
+        "복무자",
+        "적금",
+        "국가지원",
+        "비과세"
+      ],
+      "eligibility": {
+        "age": "잔여복무기간 1개월 이상인 사회복무요원",
+        "personalIncome": "제한없음",
+        "householdIncome": "제한없음"
+      },
+      "contractPeriod": "복무 종료 시까지",
+      "monthlyDepositLimit": "월 최대 55만원 (‘22~‘24년은 40만원)",
+      "governmentSupport": {
+        "contribution": [
+          "입금액의 100%까지 연도별 매칭(‘24년부터)",
+          "복무 종료 후 계좌로 지급"
+        ],
+        "taxBenefit": "이자소득 비과세 적용"
+      },
+      "interest": {
+        "baseRate": "5% 수준의 은행 이자 지급 + 매칭비율 100% 국가 지원",
+        "note": null
+      },
+      "benefits": [
+        "적금 가입 시 복무 종료 후 자산형성 가능",
+        "고금리 + 비과세 + 매칭금액 제공"
+      ],
+      "cautions": [
+        "가입 자격 외 병역요건 미충족 시 지원 불가",
+        "사회복무요원 외 신청 불가"
+      ],
+      "providersDetail": [
+        "[{\"bank\":\"농협\"",
+        "\"interestRate\":\"약 5%\"",
+        "\"specialNote\":\"장병내일준비적금 취급\"}",
+        "{\"bank\":\"신한은행\"",
+        "\"interestRate\":\"약 5%\"",
+        "\"specialNote\":\"장병 대상 상품 운영\"}",
+        "{\"bank\":\"우리은행\"",
+        "\"interestRate\":\"약 5%\"",
+        "\"specialNote\":\"가입 시 병무청 연계 필요\"}]"
+      ],
+      "applicationUrl": null,
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p005",
+      "productName": "청년 주택드림 청약통장",
+      "summary": "무주택 청년의 주택 구입과 자산 형성을 동시에 지원하는 고금리 청약 연계 통장 상품",
+      "category": "주거 / 청약",
+      "tags": [
+        "청년",
+        "주택청약",
+        "무주택자",
+        "우대금리",
+        "주거지원",
+        "자산형성",
+        "소득공제"
+      ],
+      "eligibility": {
+        "age": "만 19세~34세",
+        "personalIncome": [
+          "연소득 5",
+          "000만원 이하 (직전년도 신고소득 기준)"
+        ],
+        "householdIncome": "무주택자"
+      },
+      "contractPeriod": "상시",
+      "monthlyDepositLimit": "월 100만원",
+      "governmentSupport": {
+        "contribution": "청약통장 납입금액의 최대 4.5% 이자 적용 + 대출 연계 시 금리 최저 2.2% 고정금리 대출 지원",
+        "taxBenefit": "소득공제 및 이자소득 비과세 효과 가능 (근로소득자 기준)"
+      },
+      "interest": {
+        "baseRate": [
+          "최대 4.5% (예치기간 기준",
+          "은행별 상이)"
+        ],
+        "note": null
+      },
+      "benefits": [
+        "청약 기능 + 고금리 + 대출 연계형 복합 상품",
+        "소득공제 혜택 포함"
+      ],
+      "cautions": [
+        "무주택자 및 소득 요건 미충족 시 가입 불가",
+        "조건 미달 시 대출 불가 가능성"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://nhuf.molit.go.kr/FP/FP07/FP0701/FP07010301.jsp",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p006",
+      "productName": "직장적응 지원",
+      "summary": "산업단지 입주기업의 관리자와 청년 직원에게 조직문화 교육과 직장 적응 프로그램을 제공하는 고용노동부 일자리 연계 사업",
+      "category": "일자리 / 조직문화",
+      "tags": [
+        "청년",
+        "직장적응",
+        "온보딩",
+        "조직문화",
+        "교육지원",
+        "산업단지",
+        "중간관리자"
+      ],
+      "eligibility": {
+        "age": "만 15세~34세 (신입직원은 채용 1년 이내)",
+        "personalIncome": "제한없음",
+        "householdIncome": "제한없음"
+      },
+      "contractPeriod": "상시",
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": "청년 조직문화 교육 및 온보딩 프로그램 무상 제공 (컨설팅 포함)",
+        "taxBenefit": [
+          "현금성 지원 아님",
+          "교육/훈련비에 해당"
+        ]
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "온보딩 교육",
+        "조직문화 개선",
+        "커뮤니케이션 역량 향상",
+        "비즈니스 매너 제공"
+      ],
+      "cautions": [
+        "산업단지 외 일반기업은 일부 제한",
+        "지역 운영기관별 차이 있음"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://youth-up.kr/growth",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p007",
+      "productName": "청년형 소득공제 장기펀드",
+      "summary": [
+        "19~34세 청년이 장기펀드에 가입할 경우",
+        "납입액의 40%까지 소득공제 혜택을 받을 수 있는 절세 금융상품"
+      ],
+      "category": [
+        "금융 / 세제혜택",
+        "장기투자"
+      ],
+      "tags": [
+        "청년",
+        "펀드",
+        "소득공제",
+        "장기투자",
+        "세제혜택",
+        "재테크"
+      ],
+      "eligibility": {
+        "age": "만 19세 ~ 34세 (병역복무기간 최대 6년 차감 가능)",
+        "personalIncome": [
+          "총급여 5",
+          "000만원 이하 또는 종합소득 3",
+          "800만원 이하"
+        ],
+        "householdIncome": "국내 거주자 (단일 거주지 요건)"
+      },
+      "contractPeriod": "3년 이상 ~ 5년 이하 투자",
+      "monthlyDepositLimit": "연간 600만원 (복수 펀드 및 금융기관 가능)",
+      "governmentSupport": {
+        "contribution": "연 240만원 한도 내에서 40% 종합소득공제 (연 600만원 납입 기준)",
+        "taxBenefit": [
+          "총급여 8천만원 초과자 또는 종합소득 6",
+          "700만원 초과자는 제외"
+        ]
+      },
+      "interest": {
+        "baseRate": null,
+        "note": "3년 이내 환매 시 6.6% 세금 추징 (일부환매 불가)"
+      },
+      "benefits": [
+        "절세효과",
+        "금융기관 다양성",
+        "저축 습관 형성 가능"
+      ],
+      "cautions": [
+        "3년 미만 환매 시 세제혜택 환수",
+        "일부환매 불가"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.kbsec.com/go.able?linkcd=m01010042",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p008",
+      "productName": "청년희망적금",
+      "summary": "19~34세 청년의 자산형성과 저축습관 형성을 위해 정부가 추가 장려금과 비과세 혜택을 제공한 고금리 적금 상품 (운영 종료됨)",
+      "category": "적금 / 정부지원",
+      "tags": [
+        "청년",
+        "적금",
+        "비과세",
+        "희망적금",
+        "저축장려",
+        "서민금융진흥원"
+      ],
+      "eligibility": {
+        "age": "만 19세~34세 (병역복무 인정 시 최대 6년 연장)",
+        "personalIncome": [
+          "종합소득금액 2",
+          "600만원 이하"
+        ],
+        "householdIncome": [
+          "총급여 3",
+          "600만원 이하 및 최근 3년 중 금융소득종합과세 대상자 제외"
+        ]
+      },
+      "contractPeriod": "2년 자유적립",
+      "monthlyDepositLimit": "월 최대 50만원",
+      "governmentSupport": {
+        "contribution": [
+          "1년차 납입금의 2%",
+          "2년차 납입금의 4% 저축장려금"
+        ],
+        "taxBenefit": "이자소득 비과세 + 정부 추가 장려금 제공"
+      },
+      "interest": {
+        "baseRate": "출시은행별 5~6% 수준 (은행별 상이)",
+        "note": [
+          "만기일시지급식 (이자소득 비과세)",
+          "은행이자 + 장려금 분리 지급"
+        ]
+      },
+      "benefits": [
+        "이자소득에 비과세 적용",
+        "납입 기간에 따라 장려금 비율 차등 적용"
+      ],
+      "cautions": [
+        "현재 운영 종료",
+        "가입 불가"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.kinfa.or.kr/financialProduct/youthHopeSavings.do",
+      "applicationPeriod": {
+        "start": "2025-02-20T15:00:00.000Z",
+        "end": "2025-03-03T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p009",
+      "productName": "희망두배 청년통장",
+      "summary": "근로하는 청년이 목돈을 마련해 자립하고 미래계획을 실현할 수 있도록 서울시와 후원기관이 매칭지원금을 함께 적립해주는 자산형성 지원사업",
+      "category": [
+        "복지 / 자산형성",
+        "저축지원"
+      ],
+      "tags": [
+        "청년",
+        "서울시",
+        "자산형성",
+        "매칭저축",
+        "통장"
+      ],
+      "eligibility": {
+        "age": "만 18세 ~ 만 34세 (제대군인 복무기간만큼 연령 상한 가산)",
+        "personalIncome": "세전 월평균 255만원 이하",
+        "householdIncome": [
+          "부·모 또는 배우자 합산 소득 연 1억 미만",
+          "재산 9억 미만"
+        ]
+      },
+      "contractPeriod": "24개월 또는 36개월 중 선택",
+      "monthlyDepositLimit": "월 15만원",
+      "governmentSupport": {
+        "contribution": "본인저축액과 동일하게 서울시 및 후원기관이 월 15만원 추가 적립",
+        "taxBenefit": "이자소득 비과세"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": "본인의 저축 금액의 100%를 추가 적립"
+      },
+      "benefits": [
+        "[2년] 총 720만원",
+        "[3년] 총 1",
+        "080만원 적립",
+        "자동이체"
+      ],
+      "cautions": [
+        "서울시 연속 거주",
+        "적립·근로 50% 이상",
+        "금융교육 연 1회 이상 이수 등 의무사항 있음"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://account.welfare.seoul.kr",
+      "applicationPeriod": {
+        "start": "2025-06-08T15:00:00.000Z",
+        "end": "2025-06-19T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p010",
+      "productName": "청년 소상공인 창업응원금 지원",
+      "summary": "충북 내 청년 (예비)창업자에게 창업응원금 30만원과 교육자료를 제공하여 자생력을 강화하고 창업 초기 정착을 지원하는 사업",
+      "category": [
+        "일자리 / 보조금",
+        "교육지원"
+      ],
+      "tags": [
+        "청년",
+        "창업",
+        "소상공인",
+        "충북",
+        "현금지원",
+        "창업교육",
+        "예비창업"
+      ],
+      "eligibility": {
+        "age": "만 19세 ~ 39세",
+        "personalIncome": "무관",
+        "householdIncome": "충청북도 거주"
+      },
+      "contractPeriod": "1년간 상시 운영",
+      "monthlyDepositLimit": "1회 30만원 현금 지급",
+      "governmentSupport": {
+        "contribution": [
+          "창업응원금 30만원 (1회",
+          "현금) + 창업 교육자료 및 유관사업 연계 제공"
+        ],
+        "taxBenefit": [
+          "비과세 (소득처리 없음)",
+          "현금 일괄 지급 방식"
+        ]
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "현금 지원 + 실무자료 배포",
+        "이메일 또는 방문 접수 가능"
+      ],
+      "cautions": [
+        "서류 누락 시 탈락",
+        "예산 소진 시 지원 불가",
+        "선착순 접수"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.cbsb.kr/home/main.php",
+      "applicationPeriod": {
+        "start": "2024-12-31T15:00:00.000Z",
+        "end": "2025-12-30T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p011",
+      "productName": "전북특별자치도 기술창업 활성화 금융지원",
+      "summary": "전북 내 기술창업자 및 청년창업자에게 창업자금 특례보증을 제공하여 창업 초기 자금부담 완화 및 성공 창업을 유도하는 사업",
+      "category": "일자리 / 보조금",
+      "tags": [
+        "창업",
+        "기술창업",
+        "특례보증",
+        "전북",
+        "청년지원",
+        "금융지원",
+        "창업자금"
+      ],
+      "eligibility": {
+        "age": "제한없음",
+        "personalIncome": "무관",
+        "householdIncome": "전북특별자치도 내 14개 시·군 거주자"
+      },
+      "contractPeriod": "2025년 1월 1일 ~ 2025년 12월 31일",
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": "창업자금 특례보증 제공 (보증비율·한도 등은 별도 약정에 따름)",
+        "taxBenefit": null
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": "보증기관을 통해 창업자금 대출에 대한 특례보증 혜택 제공",
+      "cautions": [
+        "보증 대상 심사 통과 필요",
+        "제출 서류 및 요건 별도 공고문 참조"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20250114005400210216?isNew=N",
+      "applicationPeriod": {
+        "start": "2024-12-31T15:00:00.000Z",
+        "end": "2025-12-30T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p012",
+      "productName": "내일채움공제 (3년형)",
+      "summary": [
+        "중소·중견기업 근로자의 장기 재직을 유도하고 자산 형성을 지원하는 제도. 근로자와 기업이 일정 금액을 공동 적립하여",
+        "일정 근속 후 근로자에게 목돈으로 지급"
+      ],
+      "category": [
+        "일자리 / 장기근속",
+        "자산형성"
+      ],
+      "tags": [
+        "중소기업",
+        "중견기업",
+        "근속지원",
+        "적립형통장"
+      ],
+      "eligibility": {
+        "age": "중소기업 6개월 이상 근속자",
+        "personalIncome": null,
+        "householdIncome": null
+      },
+      "contractPeriod": "3년",
+      "monthlyDepositLimit": "월 12만원 (연간 약 144만원)",
+      "governmentSupport": {
+        "contribution": "정부지원 없음. 기업과 근로자가 공동 적립",
+        "taxBenefit": null
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "총 720만원 (근로자)",
+        "총 1",
+        "800만원 수령 가능 (기업부담금 포함)"
+      ],
+      "cautions": "중소·중견기업 재직자만 가능 (기업 동의 필수)",
+      "providersDetail": null,
+      "applicationUrl": "https://www.kosmes.or.kr/intro/intro_real.html",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p013",
+      "productName": "청년월세지원",
+      "summary": "청년을 대상으로 월세 일부를 보조해주는 제도",
+      "category": "복지 / 주거",
+      "tags": [
+        "청년",
+        "월세",
+        "보조",
+        "생활비"
+      ],
+      "eligibility": {
+        "age": "만 19세~39세",
+        "personalIncome": "본인 가구 중위소득 60%이하",
+        "householdIncome": [
+          "부모님과 별도로 거주",
+          "청년 원가구 기준 중위소득 100% 이하"
+        ]
+      },
+      "contractPeriod": "2026.12월까지 지원",
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": [
+          "월 20만원",
+          "총 240만원"
+        ],
+        "taxBenefit": "비과세"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "월 20만원씩 12개월",
+        "최대 240만원을 현금으로 지급"
+      ],
+      "cautions": [
+        "부모와 합가 하면 지급 중지",
+        "2촌 이내의 주택을 임차하여 살고 있는 경우 지급 대상 제외"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://housing.seoul.go.kr/site/main/content/sh01_060513",
+      "applicationPeriod": {
+        "start": null,
+        "end": "2025-02-24T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p014",
+      "productName": "청년안심주택 공급활성화(임차보증금 무이자지원)",
+      "summary": [
+        "서울시와 SH공사가 공동으로 추진하는 무이자 임차보증금 지원 정책으로",
+        "청년들의 주거비 부담 완화와 안정적인 주거 정착을 돕는 사업"
+      ],
+      "category": [
+        "주거 / 보조금",
+        "대출지원"
+      ],
+      "tags": [
+        "서울시",
+        "청년",
+        "무이자",
+        "임차보증금",
+        "전세지원",
+        "SH공사",
+        "안심주택"
+      ],
+      "eligibility": {
+        "age": "만 19세~39세",
+        "personalIncome": "전년도 도시근로자 가구당 월평균소득의 100%(신혼부부 120%) 이하",
+        "householdIncome": "서울특별시 거주자 또는 서울 내 주택 임차 예정자"
+      },
+      "contractPeriod": "2025년 1월 1일 ~ 2025년 12월 31일",
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": [
+          "1억원 이하: 보증금의 50%",
+          "1억원 초과: 30% (청년 최대 4",
+          "500만원)"
+        ],
+        "taxBenefit": null
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "임차보증금 무이자 지원",
+        "보증보험 가입 포함"
+      ],
+      "cautions": [
+        "소득 및 자산 심사 필수",
+        "계약서 제출 후 약정 및 보증보험 가입 필요"
+      ],
+      "providersDetail": [
+        "[{\"note\":\"청년: 2억 7",
+        "300만원 이하 자산",
+        "SH공사와 협력\"}]"
+      ],
+      "applicationUrl": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch",
+      "applicationPeriod": {
+        "start": "2024-12-31T15:00:00.000Z",
+        "end": "2025-12-30T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p015",
+      "productName": "신한 청년 처음적금",
+      "summary": "신한은행을 주거래로 이용하도록 청년들에게 우대이자율을 제공하는 상품",
+      "category": "적금",
+      "tags": [
+        "신한",
+        "청년",
+        "우대이자율",
+        "적금"
+      ],
+      "eligibility": {
+        "age": "만 18세~39세",
+        "personalIncome": null,
+        "householdIncome": null
+      },
+      "contractPeriod": "12개월",
+      "monthlyDepositLimit": "1천원 ~ 30만원",
+      "governmentSupport": {
+        "contribution": null,
+        "taxBenefit": null
+      },
+      "interest": {
+        "baseRate": 0.0305,
+        "note": "만기일시지급식: 만기 또는 중도해지 요청 시 이자 지급"
+      },
+      "benefits": "청년용 우대이자율 적용 상품",
+      "cautions": "만기 전 해지할 경우 계약한 이율보다 낮은 중도해지 이자율이 적용",
+      "providersDetail": null,
+      "applicationUrl": "https://new-m.pay.naver.com/savings/detail/df1c714f2f85c877657cdbf4f5024096?from=search",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p016",
+      "productName": "청년형 ISA",
+      "summary": [
+        "개인의 종합적 자산관리를 통한 재산형성을 지원하려는 취지로 도입한 절세계좌로",
+        "여러가지 종합적인 금융상품을 한 계좌를 통해서 일괄하여 관리하는 상품"
+      ],
+      "category": "ISA / 비과세",
+      "tags": [
+        "청년",
+        "ISA",
+        "비과세"
+      ],
+      "eligibility": {
+        "age": "만 15세 ~29세",
+        "personalIncome": "직전 3개년 금융소득종합과세 대상자 제외",
+        "householdIncome": null
+      },
+      "contractPeriod": "3년",
+      "monthlyDepositLimit": [
+        "연 2000만원",
+        "5년간 최대 1억 납입 가능"
+      ],
+      "governmentSupport": {
+        "contribution": null,
+        "taxBenefit": [
+          "200만원까지 비과세",
+          "200만원 초과금액 9.9% 분리과세"
+        ]
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": "가입기간 발생한 손익을 통산한 후 순이익에 대해 200만원까지 비과세 혜택",
+      "cautions": "200만원 초과금액 9.9% 분리과세",
+      "providersDetail": null,
+      "applicationUrl": "https://youthassetcenter.kr/?q=YToxOntzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&bmode=view&idx=7676359&t=board",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p017",
+      "productName": "장병 내일 준비 적금",
+      "summary": "의무복무 중인 병사들에게 정부 지원금과 우대 이율을 제공하여 전역 후 목돈 마련을 지원하는 적금 상품",
+      "category": "군인 / 적금",
+      "tags": "군인 / 적금/ 정부지원금",
+      "eligibility": {
+        "age": [
+          "나이 무관 현역병",
+          "상근예비역",
+          "사회복무요원",
+          "대체복무요원"
+        ],
+        "personalIncome": null,
+        "householdIncome": null
+      },
+      "contractPeriod": "군 복무 기간",
+      "monthlyDepositLimit": "월 최대 55만원",
+      "governmentSupport": {
+        "contribution": "적립 금액의 100% 지원",
+        "taxBenefit": "비과세"
+      },
+      "interest": {
+        "baseRate": "복무기간 중 이율 100%",
+        "note": "적립 금액의 100%에 해당하는 사회복귀준비금 제공"
+      },
+      "benefits": "월 최대 55만원 100% 이율 제공",
+      "cautions": "만기 해지 시에만 비과세 혜택을 받을 수 있음",
+      "providersDetail": null,
+      "applicationUrl": "https://www.mnd.go.kr/mbshome/mbs/mnd/subview.jsp?id=mnd_011302060000",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p018",
+      "productName": "경기도 청년기본소득",
+      "summary": [
+        "청년기본소득은 행복추구",
+        "삶의 질 향상 등 청년의 사회적 기본권 보장을 지원하는 경기도형 기본소득제도"
+      ],
+      "category": "지원금 / 복지",
+      "tags": "경기도 지원금",
+      "eligibility": {
+        "age": "신청일 기준 경기도에 주민등록을 두고 있는 24세 청년",
+        "personalIncome": "경기도에 주민등록을 3년 이상 계속 또는 합산 10년 이상 거주한 경우",
+        "householdIncome": null
+      },
+      "contractPeriod": null,
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": "분기별 100만원 지원금 제공",
+        "taxBenefit": "지원금 비과세"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": "1인당 분기별 25만원(최대100만원)을 지역화폐로 기본소득 지원",
+      "cautions": [
+        "성남시는 조례페지",
+        "고양시는 시비 미편성으로 청년 기본소득 지급 불가"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.gg.go.kr/contents/contents.do?ciIdx=1037&menuId=2736",
+      "applicationPeriod": {
+        "start": "2025-06-30T15:00:00.000Z",
+        "end": "2025-07-30T15:00:00.000Z"
+      }
+    },
+    {
+      "productId": "p019",
+      "productName": "국민취업지원제도 (청년특례)",
+      "summary": "취업을 준비하고 있는 청년들을 대상으로 취업지원서비스와 생계를 위한 최소한의 소득 지원",
+      "category": "지원금 / 복지",
+      "tags": [
+        "청년",
+        "취업 지원금"
+      ],
+      "eligibility": {
+        "age": "15~34세 (직업훈련 후 빈일자리 업종에 취업한 Ⅱ유형 청년)",
+        "personalIncome": "중위소득 120% 이하",
+        "householdIncome": "가구원 합산 5억원 이하"
+      },
+      "contractPeriod": null,
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": "훈련참여수당 및 취업성공수당 지원",
+        "taxBenefit": "비과세"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "1개월 이상 직업훈련 수료 후 빈일자리 업종에 취업하여 6개월 근속하는 경우 훈련참여수당 (월 20만원",
+        "최대 120만원) 및 취업성공수당 (40만원) (추가) 지원"
+      ],
+      "cautions": [
+        "빈일자리 업종 : 제조업 (조선업",
+        "뿌리산업 등)",
+        "물류•운송업",
+        "보건",
+        "복지서비스업",
+        "음식점업",
+        "농업",
+        "건설업",
+        "해운업",
+        "수산업",
+        "자원순환업 등 범정부 일자리 TF 지정 10대 업종"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://www.work24.go.kr/ua/z/z/1300/selectEmssRqutIntro.do",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p020",
+      "productName": "해외취업정착지원금",
+      "summary": "해외취업에 성공한 도전적인 청년의 원활한 현지 정착과 장기근속을 위해 지원금 지급",
+      "category": "지원금 / 일자리",
+      "tags": [
+        "청년",
+        "지원금",
+        "일자리"
+      ],
+      "eligibility": {
+        "age": "만 15세~34세",
+        "personalIncome": null,
+        "householdIncome": [
+          "신청자 본인",
+          "부모",
+          "배우자",
+          "자녀의 합산소득이 6분위 이하인 자"
+        ]
+      },
+      "contractPeriod": null,
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": null,
+        "taxBenefit": "비과세"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": [
+        "취업 후 1개월 : 250만원",
+        "취업 후 6개월 : 100만원",
+        "취업 후 12개월 : 150만원 지원"
+      ],
+      "cautions": "지원금에 신청한 동일한 해외취업사실로 지방자치단체 유사사업을 지원받은 경우 참여제한",
+      "providersDetail": null,
+      "applicationUrl": "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch/ythPlcyDetail/20250122005400110355",
+      "applicationPeriod": {
+        "start": null,
+        "end": null
+      }
+    },
+    {
+      "productId": "p021",
+      "productName": "청년수당",
+      "summary": [
+        "서울에 거주하고 있는 만 19세~34세 미취업 또는 단기 근로 청년에게 활동지원금(월 50만원 최대 6개월)을 지급하고",
+        "강점진단 종합지원",
+        "멘토링",
+        "취업지원 프로그램 제공 등 청년 니즈에 맞게 프로그램 연계를 지속 지원하는 사업"
+      ],
+      "category": "취업지원금 / 일자리",
+      "tags": [
+        "청년",
+        "지원금",
+        "일자리"
+      ],
+      "eligibility": {
+        "age": "만19세~34세",
+        "personalIncome": "중위소득 150%이하",
+        "householdIncome": null
+      },
+      "contractPeriod": null,
+      "monthlyDepositLimit": null,
+      "governmentSupport": {
+        "contribution": "월 50만원 지원 (최대 6개월)",
+        "taxBenefit": "비과세"
+      },
+      "interest": {
+        "baseRate": null,
+        "note": null
+      },
+      "benefits": "주민등록상 서울시에 거주하는 최종학력 졸업 후 미취업 상태인 청년 대상 월 50만원 (최대 6개월) 취업지원금 제공",
+      "cautions": [
+        "미취업자만 신청가능",
+        "단, 주30시간 이하 또는 3개월 이하 단기근로자 신청 가능"
+      ],
+      "providersDetail": null,
+      "applicationUrl": "https://youth.seoul.go.kr/youthConts.do?key=2310100061&sc_bbsCtgrySn=2310200011&sc_pbancSeCd=012",
+      "applicationPeriod": {
+        "start": "2025-03-05T15:00:00.000Z",
+        "end": "2025-03-12T15:00:00.000Z"
+      }
+    }
+]
