@@ -195,52 +195,65 @@ export default function HomeScreen() {
         return;
       }
 
-      // 1. 참여 중인 챌린지 목록 가져오기
-      const participatingResponse = await axios.get(`${API_BASE_URL}/api/challenges/participating`, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
+      // 1. 카테고리 정보 가져오기
+      const catRes = await axios.get(`${API_BASE_URL}/api/challenges/categories`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+      setCategories(catRes.data);
 
-      console.log('참여 중인 챌린지 전체 응답:', participatingResponse);
-      console.log('참여 중인 챌린지 데이터:', participatingResponse.data);
+      // 2. 참여 중인 챌린지 목록 가져오기
+      const chalRes = await axios.get(`${API_BASE_URL}/api/challenges/participating`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log('참여 중인 챌린지 전체 응답:', chalRes.data);
 
-      // 응답 데이터 구조 확인 및 처리
-      let challengeIds = [];
-      if (participatingResponse && participatingResponse.data) {
-        if (Array.isArray(participatingResponse.data)) {
-          challengeIds = participatingResponse.data;
-        } else if (participatingResponse.data.content && Array.isArray(participatingResponse.data.content)) {
-          challengeIds = participatingResponse.data.content;
-        } else if (participatingResponse.data.challenges && Array.isArray(participatingResponse.data.challenges)) {
-          challengeIds = participatingResponse.data.challenges;
+      let challengeList = [];
+      if (chalRes.data) {
+        if (Array.isArray(chalRes.data)) {
+          challengeList = chalRes.data;
+        } else if (chalRes.data.content && Array.isArray(chalRes.data.content)) {
+          challengeList = chalRes.data.content;
+        } else if (chalRes.data.challenges && Array.isArray(chalRes.data.challenges)) {
+          challengeList = chalRes.data.challenges;
         }
       }
-
-      if (challengeIds.length === 0) {
+      
+      console.log('처리된 챌린지 목록:', JSON.stringify(challengeList, null, 2));
+      
+      if (challengeList.length === 0) {
         console.log('참여 중인 챌린지가 없습니다.');
         setChallenges([]);
-        setCategories([]);
         setChallengeLoading(false);
         return;
       }
 
-      // 2. 각 챌린지의 상세 정보 가져오기
+      // 3. 각 챌린지의 상세 정보 가져오기
       const challengeDetails = await Promise.all(
-        challengeIds.map(async (challenge) => {
+        challengeList.map(async (challenge) => {
           try {
-            const challengeId = typeof challenge === 'object' ? challenge.id : challenge;
+            // challenge 객체 구조 확인
+            console.log('처리할 챌린지 데이터:', JSON.stringify(challenge, null, 2));
+            
+            let challengeId;
+            if (typeof challenge === 'object' && challenge !== null) {
+              challengeId = challenge.id || challenge.challengeId;
+            } else {
+              challengeId = challenge;
+            }
+
+            if (!challengeId) {
+              console.error('유효하지 않은 챌린지 데이터:', JSON.stringify(challenge, null, 2));
+              return null;
+            }
+
+            console.log(`챌린지 ID ${challengeId}로 상세 정보 요청`);
             const detailResponse = await axios.get(`${API_BASE_URL}/api/challenges/${challengeId}`, {
-              headers: { 
-                Authorization: `Bearer ${token}`,
-                'Accept': 'application/json'
-              }
+              headers: { Authorization: `Bearer ${token}` }
             });
             console.log(`챌린지 ${challengeId} 상세 정보:`, detailResponse.data);
             return detailResponse.data;
           } catch (error) {
-            console.error(`챌린지 ${challenge} 상세 정보 로드 실패:`, error);
+            console.error(`챌린지 ${JSON.stringify(challenge)} 상세 정보 로드 실패:`, error);
             return null;
           }
         })
@@ -250,7 +263,6 @@ export default function HomeScreen() {
       const validChallenges = challengeDetails.filter(challenge => challenge !== null);
       
       setChallenges(validChallenges);
-      setCategories(Array.from(new Set(validChallenges.map(challenge => challenge.category))));
       
     } catch (error) {
       console.error('챌린지 로드 중 오류:', error);

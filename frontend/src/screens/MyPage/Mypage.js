@@ -137,7 +137,16 @@ export default function MypageScreen() {
                         ) : (
                             <TouchableOpacity
                                 className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3"
-                                onPress={() => navigation.navigate('ChallengeDetailScreen', { challengeId: challenges[0].id })}
+                                onPress={() => {
+                                    console.log('Mypage - 챌린지 데이터:', challenges[0]);
+                                    const challengeId = challenges[0]?.challengeId;
+                                    console.log('Mypage - 사용할 challengeId:', challengeId);
+                                    if (challengeId) {
+                                        navigation.navigate('ChallengeDetailScreen', { challengeId });
+                                    } else {
+                                        console.error('Mypage - challengeId가 없습니다:', challenges[0]);
+                                    }
+                                }}
                             >
                                 <View className="flex-row p-5">
                                     <View className="w-[36%] flex items-center justify-center pr-3">
