@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.controller.QuizResultController.QuizResultDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,5 +71,47 @@ public class QuizResultService {
         
         long correct = getUserCorrectAnswerCount(user);
         return (double) correct / total * 100;
+    }
+
+    public QuizResult findById(Long id) {
+        return quizResultRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Quiz result not found with id: " + id));
+    }
+
+    public QuizResult findByQuizIdAndUserId(Long quizId, Long userId) {
+        return quizResultRepository.findByQuizIdAndUserId(quizId, userId)
+                .orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public QuizResultDTO getQuizResultDTOByQuizIdAndUserId(Long quizId, Long userId) {
+        QuizResult result = findByQuizIdAndUserId(quizId, userId);
+        if (result == null) return null;
+        Quiz quiz = result.getQuiz();
+        QuizResultDTO dto = new QuizResultDTO();
+        dto.setId(result.getId());
+        dto.setQuizId(quiz.getId());
+        dto.setSelectedAnswer(result.getSelectedAnswer());
+        dto.setIsCorrect(result.getIsCorrect());
+        dto.setCreatedAt(result.getCreatedAt());
+        dto.setQuestion(quiz.getQuestion());
+        // 선택지 파싱
+        String optionsJson = quiz.getOptions();
+        String selectedAnswerText = null;
+        String answerText = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            java.util.Map<String, String> options = mapper.readValue(optionsJson, java.util.Map.class);
+            String selectedKey = "option" + result.getSelectedAnswer();
+            selectedAnswerText = options.get(selectedKey);
+            String answerNum = quiz.getAnswer().substring(0, 1);
+            String answerKey = "option" + answerNum;
+            answerText = options.get(answerKey);
+        } catch (Exception e) {
+            log.error("[퀴즈 결과] 선택지 파싱 오류: {}", e.getMessage());
+        }
+        dto.setSelectedAnswerText(selectedAnswerText);
+        dto.setAnswerText(answerText);
+        return dto;
     }
 } 

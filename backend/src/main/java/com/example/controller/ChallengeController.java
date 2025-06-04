@@ -285,13 +285,19 @@ public class ChallengeController {
 
     @GetMapping("/participating")
     public ResponseEntity<Page<ChallengeSummaryResponse>> getUserParticipatingChallenges(
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             @PageableDefault(size = 10) Pageable pageable) {
         try {
+            User user = userService.findByKakaoId(authentication.getName());
+            if (user == null) {
+                log.error("[참여 중인 챌린지 목록 조회] 사용자를 찾을 수 없음 - 카카오 ID: {}", authentication.getName());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            
             Page<ChallengeSummaryResponse> challenges = challengeService.getUserParticipatingChallenges(user, pageable);
             return ResponseEntity.ok(challenges);
         } catch (Exception e) {
-            log.error("[참여 중인 챌린지 목록 조회] 오류 발생 - 사용자: {}, 오류: {}", user.getId(), e.getMessage());
+            log.error("[참여 중인 챌린지 목록 조회] 오류 발생 - 사용자: {}, 오류: {}", authentication.getName(), e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 //사용자의 퀴즈 결과 조회
 //최신순으로 정렬된 결과 조회
@@ -22,4 +23,7 @@ public interface QuizResultRepository extends JpaRepository<QuizResult, Long> {
     
     @Query("SELECT COUNT(qr) FROM QuizResult qr WHERE qr.user = :user")
     long countTotalAnswersByUser(@Param("user") User user);
+
+    @Query("SELECT qr FROM QuizResult qr WHERE qr.quiz.id = :quizId AND qr.user.id = :userId")
+    Optional<QuizResult> findByQuizIdAndUserId(@Param("quizId") Long quizId, @Param("userId") Long userId);
 } 
