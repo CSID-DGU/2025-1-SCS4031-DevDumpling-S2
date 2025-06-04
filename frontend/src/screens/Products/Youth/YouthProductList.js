@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import Header from '../../../components/layout/Header';
 
@@ -6,11 +6,24 @@ import Header from '../../../components/layout/Header';
 const assetProducts = require('../../../data/products_1.json');
 const loanProducts = require('../../../data/products_2.json');
 
-const YouthProduct = ({ navigation }) => {
+const YouthProduct = ({ navigation, route }) => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
     const [selectedCategory, setSelectedCategory] = useState('자산형성');
     const categories = ['자산형성', '대출'];
+
+    // 추천 상품 및 추천 완료 상태 관리
+    const [recommendedAsset, setRecommendedAsset] = useState([]);
+    const [recommendedLoan, setRecommendedLoan] = useState([]);
+    const [recommendDone, setRecommendDone] = useState(false);
+
+    useEffect(() => {
+        if (route?.params?.recommendDone) {
+            setRecommendedAsset(route.params.recommendedAsset || []);
+            setRecommendedLoan(route.params.recommendedLoan || []);
+            setRecommendDone(true);
+        }
+    }, [route?.params]);
 
     const navigateToAddYouthInfo = () => {
         navigation.navigate('AddYouthInfo');
@@ -50,6 +63,30 @@ const YouthProduct = ({ navigation }) => {
     const currentProducts = getCurrentProducts();
     const { activeProducts, inactiveProducts } = categorizeAssetProducts(currentProducts);
 
+    // 추천 상품 섹션 렌더링 함수
+    const renderRecommendedSection = (products) => (
+        products.length > 0 && (
+            <View className="mb-2 gap-4">
+                <Text className="text-base font-semibold mb-3">🎯 추천 상품</Text>
+                {products.map((product) => (
+                    <TouchableOpacity
+                        key={product.productId}
+                        onPress={() => navigateToProduct(product)}
+                        className="bg-[#FFF7E6] p-4 rounded-2xl shadow-md mb-3 border border-[#FFD580]">
+                        <Text className="text-xs text-[#6D6D6D] mb-2">{product.category || ''}</Text>
+                        <Text className="text-2xl font-bold text-[#014029] mb-2">{product.productName}</Text>
+                        <Text className="text-sm">{product.summary || product.Summary || ''}</Text>
+                        {product.tags && Array.isArray(product.tags) && product.tags.length > 0 && (
+                            <Text className="text-xs text-[#6D6D6D] mt-2">
+                                #{product.tags.join(' #')}
+                            </Text>
+                        )}
+                    </TouchableOpacity>
+                ))}
+            </View>
+        )
+    );
+
     return (
         <>
             <Header />
@@ -64,8 +101,17 @@ const YouthProduct = ({ navigation }) => {
                     {/* 추가 정보 안내란 */}
                     <View className="items-left pb-10">
                         <TouchableOpacity onPress={navigateToAddYouthInfo}>
-                            <Text className="text-2xl font-bold">추가 정보를 입력하면</Text>
-                            <Text className="text-2xl font-bold">나에게 더 맞는 상품을 볼 수 있어요 →</Text>
+                            {recommendDone ? (
+                                <>
+                                    <Text className="text-2xl font-bold">추가 정보 입력 완료!</Text>
+                                    <Text className="text-2xl font-bold">딱 맞는 상품을 추천해드릴게요. 정보 확인 및 수정 →</Text>
+                                </>
+                            ) : (
+                                <>
+                                    <Text className="text-2xl font-bold">추가 정보를 입력하면</Text>
+                                    <Text className="text-2xl font-bold">나에게 더 맞는 상품을 볼 수 있어요 →</Text>
+                                </>
+                            )}
                         </TouchableOpacity>
                     </View>
 
@@ -98,6 +144,11 @@ const YouthProduct = ({ navigation }) => {
                         <Text className="text-xl font-bold">
                             ✅ 현재 {selectedCategory === '자산형성' ? '가입' : '신청'} 가능한 청년 {selectedCategory} 상품
                         </Text>
+
+                        {/* 추천 상품 섹션 */}
+                        {selectedCategory === '자산형성'
+                            ? renderRecommendedSection(recommendedAsset)
+                            : renderRecommendedSection(recommendedLoan)}
 
                         {selectedCategory === '자산형성' ? (
                             <>
