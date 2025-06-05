@@ -14,8 +14,7 @@ export default function FreeBoardScreen({ navigation }) {
     useEffect(() => {
         fetchBoardPosts('FREE')
             .then(data => {
-                console.log('📦 받아온 게시글 목록:', data);
-                setPosts(data.content);
+                setPosts(Array.isArray(data) ? data : data.content);
             })
             .catch(err => {
                 console.error('❌ 게시글 목록 불러오기 실패:', err);
