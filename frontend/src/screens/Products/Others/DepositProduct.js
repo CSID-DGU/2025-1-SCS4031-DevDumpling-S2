@@ -1,12 +1,63 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList, ActivityIndicator } from 'react-native';
 import Header from '../../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
-const DepositProduct = ({ navigation }) => {
+const DepositProduct = ({ navigation, route }) => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
     const [expandedBankIds, setExpandedBankIds] = useState([]);
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // API에서 예금/적금 상품 데이터 가져오기
+    useEffect(() => {
+        const fetchDepositProduct = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                // API 서버 기본 URL
+                const API_BASE_URL = 'http://52.78.59.11:8080';
+
+                // 상품 ID가 있으면 해당 상품만, 없으면 첫 번째 상품 가져오기
+                const productId = route.params?.productId;
+                console.log('[DepositProduct] 상품 ID:', productId);
+
+                // 예금과 적금 데이터 모두 가져오기
+                const [depositRes, savingRes] = await Promise.all([
+                    axios.get(`${API_BASE_URL}/api/fss/deposit`),
+                    axios.get(`${API_BASE_URL}/api/fss/saving`)
+                ]);
+
+                // 두 배열 합치기
+                const allProducts = [...depositRes.data, ...savingRes.data];
+                console.log(`[DepositProduct] 총 ${allProducts.length}개 상품 로드됨`);
+
+                // 상품 ID가 있으면 해당 상품 찾기, 없으면 첫 번째 상품 사용
+                const selectedProduct = productId
+                    ? allProducts.find(p => p.id === productId)
+                    : allProducts[0];
+
+                if (selectedProduct) {
+                    setProduct(selectedProduct);
+                    console.log('[DepositProduct] 선택된 상품:', selectedProduct.fin_prdt_nm);
+                } else {
+                    // 상품이 없으면 기본 상품 사용 (현재 하드코딩된 데이터)
+                    console.log('[DepositProduct] 상품을 찾을 수 없어 기본 상품 사용');
+                }
+            } catch (err) {
+                console.error('[DepositProduct] API 오류:', err);
+                setError('상품 정보를 불러오는데 실패했습니다.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDepositProduct();
+    }, [route.params?.productId]);
     const toggleBank = (id) => {
         setExpandedBankIds(prev => {
             if (prev.includes(id)) {
@@ -18,24 +69,24 @@ const DepositProduct = ({ navigation }) => {
             }
         });
     };
-    
-    
+
+
     // 은행 별 금리
     const banks = [
         {
-        id: 'kb',
-        name: '국민은행',
-        rate: '3.50%',
-        benefit: '자동이체 시 우대금리',
+            id: 'kb',
+            name: '국민은행',
+            rate: '3.50%',
+            benefit: '자동이체 시 우대금리',
         },
         {
-        id: 'shinhan',
-        name: '신한은행',
-        rate: '3.30%',
-        benefit: '마이신한포인트 연계 우대',
+            id: 'shinhan',
+            name: '신한은행',
+            rate: '3.30%',
+            benefit: '마이신한포인트 연계 우대',
         },
     ];
-  
+
 
     return (
         <>
@@ -47,7 +98,7 @@ const DepositProduct = ({ navigation }) => {
                         paddingHorizontal: horizontalPadding,
                         paddingTop: 16,
                         paddingBottom: 24
-                }}>
+                    }}>
                     {/* 상품 이름 */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
                         <Text className="text-xs text-[#6D6D6D]">적금 / 정부지원상품</Text>
@@ -145,12 +196,12 @@ const DepositProduct = ({ navigation }) => {
                 </ScrollView>
 
                 <View className="flex-row justify-center items-center">
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('AddYouthInfo')}
-                            className="m-4 px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center">
-                            <Text className="text-white text-lg font-bold">가입하러 가기</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('AddYouthInfo')}
+                        className="m-4 px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center">
+                        <Text className="text-white text-lg font-bold">가입하러 가기</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </>
     );
