@@ -102,23 +102,17 @@ const MyPosts = () => {
                         <Text className="text-center text-gray-500">로딩 중...</Text>
                     ) : myPosts.length > 0 ? (
                         myPosts.map((post, index) => (
-                            <TouchableOpacity 
+                            <View 
                                 key={index}
-                                onPress={() => {
-                                    const boardType = post.board_type || 'FREE'; // 기본값으로 FREE 설정
-                                    navigation.navigate('CommunityPosts', { 
-                                        boardType: boardType, 
-                                        postId: post.id 
-                                    });
-                                }}
                                 className="bg-[#F9F9F9] p-4 rounded-2xl shadow-md mb-4"
                             >
                                 {/* <Text className="text-xs text-gray-500 mb-1">
                                     {boardTypeMap[post.board_type] || '일반'}
                                 </Text> */}
                                 <Text className="text-base font-bold mb-2" numberOfLines={2}>{post.title}</Text>
+                                <Text className="text-sm text-black mb-2">{post.content}</Text>
                                 <Text className="text-xs text-gray-500">{format(new Date(post.createdAt), 'yyyy-MM-dd HH:mm')}</Text>
-                            </TouchableOpacity>
+                            </View>
                         ))
                     ) : (
                         <Text className="text-center text-gray-500">작성한 게시글이 없습니다.</Text>
