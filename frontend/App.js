@@ -43,6 +43,10 @@ import MyPosts from './src/screens/MyPage/MyPosts';
 import Scraps from './src/screens/MyPage/Scraps';
 import MyChallenges from './src/screens/MyPage/MyChallenges';
 import YouthLoanProduct from './src/screens/Products/Youth/YouthLoanProduct';
+import CardProduct from './src/screens/Products/Others/CardProduct';
+import LoanProduct from './src/screens/Products/Others/LoanProduct';
+import InsuranceProduct from './src/screens/Products/Others/InsuranceProduct';
+import ETFProduct from './src/screens/Products/Others/ETFProduct';
 
 const Stack = createNativeStackNavigator();
 
@@ -245,6 +249,26 @@ export default function App() {
           <Stack.Screen
             name="YouthLoanProduct"
             component={YouthLoanProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CardProduct"
+            component={CardProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="LoanProduct"
+            component={LoanProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="InsuranceProduct"
+            component={InsuranceProduct}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ETFProduct"
+            component={ETFProduct}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

@@ -27,36 +27,147 @@ const API_BASE_URL = 'http://52.78.59.11:8080';
 const DEFAULT_ICON = 'https://myapp-logos.s3.amazonaws.com/bank-logos/default.png';
 
 // 한글 은행명을 영어로 변환하는 매핑
+// 한글 은행명 → 이미지 파일명(영문 키) 매핑
 const bankNameMapping = {
-    '우리은행': 'wooribank',
-    '카카오뱅크': 'kakaobank',
-    '한국스탠더드차타드은행': 'standardcharteredbank',
-    '신한은행': 'shinhanbank',
-    '하나은행': 'hanabank',
-    'KB국민은행': 'kbbank',
-    '농협은행': 'nhbank',
-    'IBK기업은행': 'ibkbank',
-    'SC제일은행': 'scbank',
-    '새마을금고': 'saemaul',
-    '신한카드': 'shinhancard',
-    'KB국민카드': 'kbcard',
-    '삼성카드': 'samsungcard',
-    '하나카드': 'hanacard',
-    '롯데카드': 'lottecard',
-    '우리카드': 'wooricard',
-    '삼성화재': 'samsungfire',
-    '메리츠화재': 'meritzfire',
-    '한화생명': 'hanwhalife',
-    '삼성생명': 'samsunglife',
-    '교보생명': 'kyobolife',
-    'NH투자증권': 'nhinvestment',
-    '삼성증권': 'samsungsecurities',
-    '미래에셋대우': 'miraeasset',
-    '한국투자증권': 'koreainvestment',
-    '신한투자증권': 'shinhaninvestment',
-    '유진투자증권': 'eugenesecurities',
-    '아이엠뱅크': 'iambank',
+    // 증권사 (1행)
+    'daishin': 'daishin',        // 대신증권 (파일명: daishin.png)
+    '대신증권': 'daishin',
+
+    '대신크라운': 'daishincraon',   // 대신크라운 (파일명: daishincraon.png)
+    'daishin크라운': 'daishincraon',
+
+    '다올투자증권': 'daol',           // 다올투자증권 (파일명: daol.png)
+    'DAOL': 'daol',
+
+    'DB금융투자': 'db',             // DB금융투자 (파일명: db.png)
+    'DB투자증권': 'db',
+
+    '유진투자증권': 'eugene',         // 유진투자증권 (파일명: eugene.png)
+    'Eugene': 'eugene',
+
+    '하나금융투자': 'hana',           // 하나금융투자 (파일명: hana.png)
+    'Hana': 'hana',
+
+    // 증권사 (2행)
+    '한화투자증권': 'hanhwa',         // 한화투자증권 (파일명: hanhwa.png)
+    'Hanwha': 'hanhwa',
+
+    'Hi! 투자증권': 'hi_iam',         // Hi! 투자증권 (파일명: hi_iam.png)
+    '️하이투자증권': 'hi_iam',
+
+    'IBK투자증권': 'ibk',            // IBK투자증권 (파일명: ibk.png)
+    'IBK': 'ibk',
+
+    'KB증권': 'kb',             // KB증권 (파일명: kb.png)
+    '키움증권': 'kiwoom',         // 키움증권 (파일명: kiwoom.png)
+    'Kiwoom': 'kiwoom',
+
+    '한국투자증권': 'koreainvestment',// 한국투자증권 (파일명: koreainvestment.png)
+    'Korea Investment': 'koreainvestment',
+
+    // 증권사 (3행)
+    '교보증권': 'kyobo',          // 교보증권 (파일명: kyobo.png)
+    'Kyobo': 'kyobo',
+
+    'LS투자증권': 'ls',             // LS투자증권 (파일명: ls.png)
+    'LS': 'ls',
+
+    '메리츠증권': 'meritz',         // 메리츠증권 (파일명: meritz.png)
+    'Meritz': 'meritz',
+
+    '미래에셋대우': 'miraeasset',     // 미래에셋대우 (파일명: miraeasset.png)
+    'Mirae Asset': 'miraeasset',
+
+    '농협증권': 'nh',             // 농협증권 (파일명: nh.png)
+    'NH증권': 'nh',
+
+    'NH투자증권': 'nhnamuh',        // NH투자증권 (파일명: nhnamuh.png)
+    'NH Namuh': 'nhnamuh',
+
+    // 증권사 (4행)
+    '삼성증권': 'samsung',        // 삼성증권 (파일명: samsung.png)
+    'Samsung': 'samsung',
+
+    '신한금융투자': 'shinhan',        // 신한금융투자 (파일명: shinhan.png)
+    'Shinhan': 'shinhan',
+
+    'SK증권': 'sk',             // SK증권 (파일명: sk.png)
+    'SK': 'sk',
+
+    '유안타증권': 'yuanta',         // 유안타증권 (파일명: yuanta.png)
+    'Yuanta': 'yuanta',
+
+    // 은행 (1행)
+    'BNK부산은행': 'busanbank',      // BNK부산은행 (파일명: busanbank.png)
+    '부산은행': 'busanbank',
+
+    '하나은행': 'hanabank',       // 하나은행 (파일명: hanabank.png)
+    'Hana Bank': 'hanabank',
+
+    '아이엠뱅크': 'iambank',        // 아이엠뱅크 (파일명: iambank.png)
+    'IM Bank': 'iambank',
+
+    'IBK기업은행': 'ibkbank',        // IBK기업은행 (파일명: ibkbank.png)
+    'IBK': 'ibkbank',
+
+    '광주은행': 'jbbank',         // 광주은행 (파일명: jbbank.png)
+    'Jeonbuk Bank': 'jbbank',
+
+    '제주은행': 'jejubank',       // 제주은행 (파일명: jejubank.png)
+    'Jeju Bank': 'jejubank',
+
+    // 은행 (2행)
+    '카카오뱅크': 'kakaobank',      // 카카오뱅크 (파일명: kakaobank.png)
+    'Kakao Bank': 'kakaobank',
+
+    '케이뱅크': 'kbank',          // 케이뱅크 (파일명: kbank.png)
+    '케이 뱅크': 'kbank',
+
+    'KB국민은행': 'kbbank',         // KB국민은행 (파일명: kbbank.png)
+    'KB Bank': 'kbbank',
+
+    '한국산업은행': 'kdbbank',        // 한국산업은행 (파일명: kdbbank.png)
+    'KDB Bank': 'kdbbank',
+
+    '광주은행': 'kjbank',         // 광주은행 별칭 (파일명: kjbank.png)
+    'KJB': 'kjbank',
+
+    '부산·경남은행': 'knbank',         // BNK경남은행 (파일명: knbank.png)
+    'BNK경남은행': 'knbank',
+
+    // 은행 (3행)
+    '농협은행': 'nonghyupbank',   // 농협은행 (파일명: nonghyupbank.png)
+    'NH Bank': 'nonghyupbank',
+
+    '신한은행': 'shinhanbank',    // 신한은행 (파일명: shinhanbank.png)
+    'Shinhan Bank': 'shinhanbank',
+
+    '한국스탠더드차타드은행': 'standardcharteredbank', // 한국스탠다드차타드은행 (파일명: standardcharteredbank.png)
+    'Standard Chartered': 'standardcharteredbank',
+
+    '수협은행': 'suhyupbank',     // 수협은행 (파일명: suhyupbank.png)
+    'Shuhyup Bank': 'suhyupbank',
+
+    '토스뱅크': 'tossbank',       // 토스뱅크 (파일명: tossbank.png)
+    'Toss Bank': 'tossbank',
+
+    '우리은행': 'wooribank',      // 우리은행 (파일명: wooribank.png)
+    'Woori Bank': 'wooribank',
+    
+    // 카드사
+    '신한카드': 'shinhan',    // 신한카드 (파일명: shinhan.png)
+    'Shinhan Card': 'shinhan',
+    
+    '삼성카드': 'samsung',    // 삼성카드 (파일명: samsung.png)
+    'Samsung Card': 'samsung',
+    
+    '롯데카드': 'lotte',     // 롯데카드 (파일명: lotte.png)
+    'Lotte Card': 'lotte',
+    
+    '현대카드': 'hyundai',    // 현대카드 (파일명: hyundai.png)
+    'Hyundai Card': 'hyundai'
 };
+
 
 const FinancialHome = ({ route, navigation }) => {
     const { width } = useWindowDimensions();
@@ -158,8 +269,8 @@ const FinancialHome = ({ route, navigation }) => {
             // 이미지가 없으면 증권사명을 이용해 이미지 URL 생성
             if (!imageUrl) {
                 let companyName = '';
-                if (selectedCategory === 'ETF' && product.etf_name) {
-                    companyName = product.etf_name;
+                if (selectedCategory === 'ETF' && product.isuNm) {
+                    companyName = product.isuNm;
                 } else if (selectedCategory === '투자' && product.stock_name) {
                     companyName = product.stock_name;
                 }
@@ -392,14 +503,13 @@ const FinancialHome = ({ route, navigation }) => {
                 }
             }
 
-            // setProducts 전에 첫 번째 요소 샘플을 찍어서, fin_co_no 등이 제대로 내려오는지 확인
+            // ───────────────────────────────────────────────────────────────────
+            // 추가: 첫 번째 객체 정보 전체를 콘솔에 출력
+            // ───────────────────────────────────────────────────────────────────
             if (Array.isArray(data) && data.length > 0) {
-                console.log(
-                    `[FinancialHome] [DEBUG] data[0] sample for category="${category}":`,
-                    JSON.stringify(data[0], null, 2)
-                );
+                console.log('[FinancialHome] 첫 번째 객체 전체 정보 →', JSON.stringify(data[0], null, 2));
             } else {
-                console.log(`[FinancialHome] [DEBUG] data 배열 길이: ${data.length}`);
+                console.log('[FinancialHome] 데이터 배열이 비어 있습니다.');
             }
 
             setProducts(data);
@@ -455,7 +565,14 @@ const FinancialHome = ({ route, navigation }) => {
                             {categories.map((cat) => (
                                 <TouchableOpacity
                                     key={cat}
-                                    onPress={() => navigation.replace('FinancialHome', { category: cat })}
+                                    onPress={() => {
+                                        if (cat === '투자') {
+                                            // 투자 탭 클릭 시 알림 표시
+                                            alert('서비스 준비중입니다');
+                                        } else {
+                                            navigation.replace('FinancialHome', { category: cat });
+                                        }
+                                    }}
                                     className={`px-4 py-2 rounded-full shadow-md ${selectedCategory === cat ? 'bg-[#014029]' : 'bg-[#F9F9F9]'
                                         }`}
                                 >
@@ -542,9 +659,35 @@ const FinancialHome = ({ route, navigation }) => {
                                                 navigation.navigate('DepositProduct', {
                                                     productId: product.fin_prdt_cd,
                                                     finCoNo: product.fin_co_no,
+                                                    product: product,
                                                 });
-                                            } else {
-                                                console.log('상품 상세 정보:', product);
+                                            } else if (selectedCategory === '대출') {
+                                                navigation.navigate('LoanProduct', {
+                                                    productId: product.fin_prdt_cd,
+                                                    finCoNo: product.fin_co_no,
+                                                    product: product,
+                                                });
+                                            } else if (selectedCategory === '보험') {
+                                                navigation.navigate('InsuranceProduct', {
+                                                    productId: product.prdCd,
+                                                    cmpyCd: product.cmpyCd,
+                                                    product: product,
+                                                });
+                                            } else if (selectedCategory === '카드') {
+                                                navigation.navigate('CardProduct', {
+                                                    productId: product.id,
+                                                    product: product,
+                                                });
+                                            } else if (selectedCategory === 'ETF') {
+                                                navigation.navigate('ETFProduct', {
+                                                    productId: product.isuCd,
+                                                    product: product,
+                                                });
+                                            } else if (selectedCategory === '투자') {
+                                                navigation.navigate('InvestProduct', {
+                                                    productId: product.stock_symbol,
+                                                    product: product,
+                                                });
                                             }
                                         }}
                                     >
@@ -567,32 +710,16 @@ const FinancialHome = ({ route, navigation }) => {
                                                 }}
                                             />
                                         ) : (
-                                            <View className="w-16 h-16 bg-[#D3DFD9] rounded-full mr-5 items-center justify-center">
-                                                <Text className="text-[#014029] text-xl font-bold">
-                                                    {(() => {
-                                                        if (
-                                                            (selectedCategory === '예·적금' ||
-                                                                selectedCategory === '대출') &&
-                                                            product.kor_co_nm
-                                                        ) {
-                                                            return product.kor_co_nm[0];
-                                                        }
-                                                        if (selectedCategory === '보험' && product.cmpyNm) {
-                                                            return product.cmpyNm[0];
-                                                        }
-                                                        if (selectedCategory === '카드' && product.company) {
-                                                            return product.company[0];
-                                                        }
-                                                        if (selectedCategory === 'ETF' && product.isuNm) {
-                                                            return product.isuNm[0];
-                                                        }
-                                                        if (selectedCategory === '투자' && product.stock_name) {
-                                                            return product.stock_name[0];
-                                                        }
-                                                        return '?';
-                                                    })()}
-                                                </Text>
-                                            </View>
+                                            <Image
+                                                source={{ uri: DEFAULT_ICON }}
+                                                className="w-16 h-16 rounded-full mr-5"
+                                                style={{
+                                                    backgroundColor: '#f0f0f0',
+                                                    borderWidth: 1,
+                                                    borderColor: '#ddd',
+                                                }}
+                                                resizeMode="cover"
+                                            />
                                         )}
 
                                         {/* ─────────────────────────────────────────────────────
@@ -690,10 +817,10 @@ const FinancialHome = ({ route, navigation }) => {
                                                     {product.flucRt != null && (
                                                         <Text
                                                             className={`ml-2 text-sm font-semibold ${product.flucRt > 0
-                                                                    ? 'text-red-500'
-                                                                    : product.flucRt < 0
-                                                                        ? 'text-blue-500'
-                                                                        : 'text-[#333333]'
+                                                                ? 'text-red-500'
+                                                                : product.flucRt < 0
+                                                                    ? 'text-blue-500'
+                                                                    : 'text-[#333333]'
                                                                 }`}
                                                         >
                                                             {product.flucRt > 0

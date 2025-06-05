@@ -1,5 +1,21 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// 파일명: Products/Others/DepositProduct.js
+// 설명:
+//  • 예·적금 상품을 선택했을 때 상세 정보를 보여주는 화면
+//  • FinancialHome에서 넘겨준 `product` 객체가 있으면 그것을 우선 사용하고,
+//    없으면 API를 재호출하여 같은 fin_prdt_cd 상품을 찾아 사용
+//  • API 응답: /api/fss/deposit, /api/fss/saving → { result: { baseList: [...] } }
+// ─────────────────────────────────────────────────────────────────────────────
+
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, useWindowDimensions, FlatList, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    useWindowDimensions,
+    ActivityIndicator,
+} from 'react-native';
 import Header from '../../../components/layout/Header';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
@@ -7,86 +23,165 @@ import axios from 'axios';
 const DepositProduct = ({ navigation, route }) => {
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
-    const [expandedBankIds, setExpandedBankIds] = useState([]);
-    const [product, setProduct] = useState(null);
+
+    // FinancialHome에서 넘겨준 상품 객체(product)가 있으면 사용
+    // 그렇지 않으면 productId(fin_prdt_cd)를 이용해서 다시 API에서 찾아야 함
+    const passedProduct = route.params?.product || null;
+    const productId = route.params?.productId || null; // fin_prdt_cd
+
+    const [product, setProduct] = useState(passedProduct);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // API에서 예금/적금 상품 데이터 가져오기
+    // 은행별 금리 비교(예시 데이터)
+    // 실제로는 API가 제공하는 값이 있으면 그쪽을 쓰시면 됩니다.
+    const [expandedBankIds, setExpandedBankIds] = useState([]);
+    const banks = [
+        {
+            id: 'woori',
+            name: '우리은행',
+            rate: '3.50%', // 예시
+            benefit: '인터넷 신규가입 우대금리',
+        },
+        {
+            id: 'shinhan',
+            name: '신한은행',
+            rate: '3.30%',
+            benefit: '스마트뱅킹 이체 우대',
+        },
+        // 필요에 따라 더 추가
+    ];
+
+    // 날짜 포맷함수: YYYYMMDD 또는 YYYYMM → 사람이 읽을 수 있는 문자열로 변환
+    const formatDate = (raw) => {
+        if (!raw) return '-';
+        // raw 가 "20250530" (YYYYMMDD)인 경우
+        if (raw.length === 8) {
+            const yy = raw.substring(0, 4);
+            const mm = raw.substring(4, 6);
+            const dd = raw.substring(6, 8);
+            return `${yy}-${mm}-${dd}`;
+        }
+        // raw 가 "202505" (YYYYMM)인 경우
+        if (raw.length === 6) {
+            const yy = raw.substring(0, 4);
+            const mm = raw.substring(4, 6);
+            return `${yy}년 ${mm}월`;
+        }
+        return raw;
+    };
+
+    // 텍스트가 길면 특정 길이까지만 잘라서 뒤에 "..." 붙이기
+    const truncateText = (text, maxLen = 50) => {
+        if (!text) return '-';
+        if (text.length <= maxLen) return text;
+        return text.substring(0, maxLen) + '...';
+    };
+
+    // 은행별 금리 항목을 펼치거나 닫기
+    const toggleBank = (id) => {
+        setExpandedBankIds((prev) => {
+            if (prev.includes(id)) {
+                return prev.filter((bankId) => bankId !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
+    };
+
+    // 상품이 이미 넘어왔으면(ApiFetch 불필요) 바로 렌더링
+    // 그렇지 않으면 API에서 모든 예금/적금 배열을 가져와서 productId로 필터링
     useEffect(() => {
+        if (passedProduct) {
+            return;
+        }
+
+        // passedProduct가 없을 때만 실행
         const fetchDepositProduct = async () => {
+            setLoading(true);
+            setError(null);
+
             try {
-                setLoading(true);
-                setError(null);
+                const API = axios.create({ baseURL: 'http://52.78.59.11:8080', timeout: 30000 });
 
-                // API 서버 기본 URL
-                const API_BASE_URL = 'http://52.78.59.11:8080';
+                // 1) 예금 데이터 > result.baseList 로 가져오기
+                const depositRes = await API.get('/api/fss/deposit');
+                const depositList = Array.isArray(depositRes.data?.result?.baseList)
+                    ? depositRes.data.result.baseList
+                    : [];
+                console.log(`[DepositProduct] 예금 데이터 개수: ${depositList.length}`);
 
-                // 상품 ID가 있으면 해당 상품만, 없으면 첫 번째 상품 가져오기
-                const productId = route.params?.productId;
-                console.log('[DepositProduct] 상품 ID:', productId);
+                // 2) 적금 데이터 > result.baseList 로 가져오기
+                const savingRes = await API.get('/api/fss/saving');
+                const savingList = Array.isArray(savingRes.data?.result?.baseList)
+                    ? savingRes.data.result.baseList
+                    : [];
+                console.log(`[DepositProduct] 적금 데이터 개수: ${savingList.length}`);
 
-                // 예금과 적금 데이터 모두 가져오기
-                const [depositRes, savingRes] = await Promise.all([
-                    axios.get(`${API_BASE_URL}/api/fss/deposit`),
-                    axios.get(`${API_BASE_URL}/api/fss/saving`)
-                ]);
+                // 3) 두 배열 합치기
+                const allProducts = [...depositList, ...savingList];
+                console.log(`[DepositProduct] 총 상품 개수: ${allProducts.length}`);
 
-                // 두 배열 합치기
-                const allProducts = [...depositRes.data, ...savingRes.data];
-                console.log(`[DepositProduct] 총 ${allProducts.length}개 상품 로드됨`);
+                // 4) productId에 해당하는 상품 찾기
+                let selected = null;
+                if (productId) {
+                    selected = allProducts.find((p) => p && p.fin_prdt_cd === productId);
+                }
+                if (!selected && allProducts.length > 0) {
+                    selected = allProducts[0];
+                }
 
-                // 상품 ID가 있으면 해당 상품 찾기, 없으면 첫 번째 상품 사용
-                const selectedProduct = productId
-                    ? allProducts.find(p => p.id === productId)
-                    : allProducts[0];
-
-                if (selectedProduct) {
-                    setProduct(selectedProduct);
-                    console.log('[DepositProduct] 선택된 상품:', selectedProduct.fin_prdt_nm);
+                if (selected) {
+                    setProduct(selected);
+                    console.log('[DepositProduct] 선택된 상품 객체 →\n', JSON.stringify(selected, null, 2));
                 } else {
-                    // 상품이 없으면 기본 상품 사용 (현재 하드코딩된 데이터)
-                    console.log('[DepositProduct] 상품을 찾을 수 없어 기본 상품 사용');
+                    console.warn('[DepositProduct] 해당 상품을 찾을 수 없습니다. productId:', productId);
+                    setError('선택하신 상품 정보를 찾을 수 없습니다.');
                 }
             } catch (err) {
-                console.error('[DepositProduct] API 오류:', err);
-                setError('상품 정보를 불러오는데 실패했습니다.');
+                console.error('[DepositProduct] API 호출 오류 →', err);
+                setError('상품 정보를 불러오는 중 오류가 발생했습니다.');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDepositProduct();
-    }, [route.params?.productId]);
-    const toggleBank = (id) => {
-        setExpandedBankIds(prev => {
-            if (prev.includes(id)) {
-                // 이미 열려있으면 닫기
-                return prev.filter(bankId => bankId !== id);
-            } else {
-                // 닫혀있으면 열기
-                return [...prev, id];
-            }
-        });
-    };
+    }, [passedProduct, productId]);
 
+    if (loading) {
+        return (
+            <>
+                <Header />
+                <View className="flex-1 justify-center items-center bg-white">
+                    <ActivityIndicator size="large" color="#014029" />
+                    <Text className="mt-2">상품 정보를 불러오는 중…</Text>
+                </View>
+            </>
+        );
+    }
 
-    // 은행 별 금리
-    const banks = [
-        {
-            id: 'kb',
-            name: '국민은행',
-            rate: '3.50%',
-            benefit: '자동이체 시 우대금리',
-        },
-        {
-            id: 'shinhan',
-            name: '신한은행',
-            rate: '3.30%',
-            benefit: '마이신한포인트 연계 우대',
-        },
-    ];
+    if (error) {
+        return (
+            <>
+                <Header />
+                <View className="flex-1 justify-center items-center bg-white px-5">
+                    <Text className="text-red-500">{error}</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        className="mt-4 px-4 py-2 bg-[#014029] rounded-full"
+                    >
+                        <Text className="text-white">뒤로가기</Text>
+                    </TouchableOpacity>
+                </View>
+            </>
+        );
+    }
 
+    // 상품 정보가 아직 없으면 빈 화면
+    if (!product) {
+        return null;
+    }
 
     return (
         <>
@@ -97,71 +192,94 @@ const DepositProduct = ({ navigation, route }) => {
                     contentContainerStyle={{
                         paddingHorizontal: horizontalPadding,
                         paddingTop: 16,
-                        paddingBottom: 24
-                    }}>
-                    {/* 상품 이름 */}
+                        paddingBottom: 24,
+                    }}
+                >
+                    {/* ─────────────────────────────────────────────────────────────
+             상품 기본 정보
+          ───────────────────────────────────────────────────────────── */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                        <Text className="text-xs text-[#6D6D6D]">적금 / 정부지원상품</Text>
-                        <Text className="text-2xl font-bold text-[#014029]">청년도약계좌</Text>
-                        <Text className="text-xs">정부 기여금 지원, 이자소득 비과세, 고정금리 제공</Text>
+                        <Text className="text-xs text-[#6D6D6D]">예·적금 상품</Text>
+                        <Text className="text-2xl font-bold text-[#014029] mb-1">
+                            {product.fin_prdt_nm || '상품명 정보 없음'}
+                        </Text>
+                        <Text className="text-xs">{product.kor_co_nm || '금융사 정보 없음'}</Text>
                     </View>
 
-                    {/* 상품 혜택 */}
+                    {/* ─────────────────────────────────────────────────────────────
+             상품 혜택 (가입방법 / 만기이자 / 특별조건)
+          ───────────────────────────────────────────────────────────── */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
                         <Text className="text-m font-bold mb-2">상품 혜택</Text>
                         <View className="flex-row gap-5">
                             <View className="flex-col gap-1 w-14">
-                                <Text className="text-sm font-bold">지원금액</Text>
-                                <Text className="text-sm font-bold">세제혜택</Text>
-                                <Text className="text-sm font-bold">금리</Text>
+                                <Text className="text-sm font-bold">가입방법</Text>
+                                <Text className="text-sm font-bold">만기이자</Text>
+                                <Text className="text-sm font-bold">특별조건</Text>
                             </View>
                             <View className="flex-col gap-1 flex-1">
-                                <Text className="text-sm">최대 70만원</Text>
-                                <Text className="text-sm">이자소득 비과세</Text>
-                                <Text className="text-sm">은행별 상이</Text>
-                                <Text className="text-sm">3년 고정, 2년 변동</Text>
+                                {/* join_way, mtrt_int, spcl_cnd 필드 매핑 */}
+                                <Text className="text-sm">
+                                    {product.join_way ? product.join_way.replace(/\n/g, ', ') : '정보 없음'}
+                                </Text>
+                                <Text className="text-sm">
+                                    {product.mtrt_int ? product.mtrt_int.replace(/\n/g, ' ') : '정보 없음'}
+                                </Text>
+                                <Text className="text-sm">{product.spcl_cnd || '해당사항 없음'}</Text>
                             </View>
                         </View>
                     </View>
 
-                    {/* 가입 대상 */}
+                    {/* ─────────────────────────────────────────────────────────────
+             가입 대상 및 정보 (가입자격 / 가입제한 / 기타사항)
+          ───────────────────────────────────────────────────────────── */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
-                        <Text className="text-m font-bold mb-2">가입 대상</Text>
+                        <Text className="text-m font-bold mb-2">가입 대상 및 정보</Text>
                         <View className="flex-row gap-5">
                             <View className="flex-col gap-1 w-14">
-                                <Text className="text-sm font-bold">나이</Text>
-                                <Text className="text-sm font-bold">소득조건</Text>
-                                <Text className="text-sm font-bold">가구소득</Text>
+                                <Text className="text-sm font-bold">가입대상</Text>
+                                <Text className="text-sm font-bold">가입제한</Text>
+                                <Text className="text-sm font-bold">기타사항</Text>
                             </View>
                             <View className="flex-col gap-1 flex-1">
-                                <Text className="text-sm">만 19세 ~ 34세</Text>
-                                <Text className="text-sm">연 7,500만원 이하</Text>
-                                <Text className="text-sm">중위소득 180% 이하</Text>
+                                <Text className="text-sm">{product.join_member || '정보 없음'}</Text>
+                                <Text className="text-sm">
+                                    {product.join_deny === '1' ? '제한 있음' : '제한 없음'}
+                                </Text>
+                                <Text className="text-sm">{truncateText(product.etc_note)}</Text>
                             </View>
                         </View>
                     </View>
 
-                    {/* 상품 안내 */}
+                    {/* ─────────────────────────────────────────────────────────────
+             상품 안내 (공시일자 / 공시기간 / 최대한도 / 기타정보)
+          ───────────────────────────────────────────────────────────── */}
                     <View className="flex-col justify-center gap-1 mb-5 bg-[#F9F9F9] p-6 rounded-2xl shadow-md">
                         <Text className="text-m font-bold mb-2">상품 안내</Text>
                         <View className="flex-row gap-5">
                             <View className="flex-col gap-1 w-14">
-                                <Text className="text-sm font-bold">가입기간</Text>
-                                <Text className="text-sm font-bold">가입금액</Text>
-                                <Text className="text-sm font-bold">계약기간</Text>
-                                <Text className="text-sm font-bold">유의사항</Text>
+                                <Text className="text-sm font-bold">공시일자</Text>
+                                <Text className="text-sm font-bold">공시기간</Text>
+                                <Text className="text-sm font-bold">최대한도</Text>
+                                <Text className="text-sm font-bold">기타정보</Text>
                             </View>
                             <View className="flex-col gap-1 flex-1">
-                                <Text className="text-sm">2025-05-22 ~ 2025-06-13</Text>
-                                <Text className="text-sm">최대 70만원</Text>
-                                <Text className="text-sm">5년</Text>
-                                <Text className="text-sm">중도해지 시 기여금 미지급, 자격 요건 충족 필수</Text>
+                                <Text className="text-sm">{formatDate(product.dcls_strt_day)}</Text>
+                                <Text className="text-sm">{formatDate(product.dcls_month)}</Text>
+                                <Text className="text-sm">
+                                    {product.max_limit !== null && product.max_limit !== undefined
+                                        ? product.max_limit
+                                        : '한도 없음'}
+                                </Text>
+                                <Text className="text-sm">{truncateText(product.etc_note)}</Text>
                             </View>
                         </View>
                     </View>
 
-                    {/* 은행별 금리 비교 */}
-                    <Text className="text-xl font-bold m-4">은행별 금리 비교</Text>
+                    {/* ─────────────────────────────────────────────────────────────
+             은행별 금리 비교 (예시, 실제 API 필드가 있다면 그 필드를 사용하세요)
+          ───────────────────────────────────────────────────────────── */}
+                    <Text className="text-xl font-bold mb-4">은행별 금리 비교</Text>
                     {banks.map((bank) => (
                         <TouchableOpacity
                             key={bank.id}
@@ -181,8 +299,8 @@ const DepositProduct = ({ navigation, route }) => {
                                 <View className="mt-3">
                                     <View className="flex-row gap-5">
                                         <View className="flex-col gap-1 w-14">
-                                            <Text className="text-sm font-bold">기본 금리</Text>
-                                            <Text className="text-sm font-bold">우대 금리</Text>
+                                            <Text className="text-sm font-bold">기본금리</Text>
+                                            <Text className="text-sm font-bold">우대금리</Text>
                                         </View>
                                         <View className="flex-col gap-1 flex-1">
                                             <Text className="text-sm">{bank.rate}</Text>
@@ -193,20 +311,26 @@ const DepositProduct = ({ navigation, route }) => {
                             )}
                         </TouchableOpacity>
                     ))}
-                </ScrollView>
 
-                <View className="flex-row justify-center items-center">
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('AddYouthInfo')}
-                        className="m-4 px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center">
-                        <Text className="text-white text-lg font-bold">가입하러 가기</Text>
-                    </TouchableOpacity>
-                </View>
+                    {/* ─────────────────────────────────────────────────────────────
+             가입하러 가기 버튼 (실제 가입 페이지로 이동)
+          ───────────────────────────────────────────────────────────── */}
+                    <View className="flex-row justify-center items-center mb-10">
+                        <TouchableOpacity
+                            onPress={() => {
+                                // 실제 가입 URL로 이동하거나, 해당 은행 앱으로 링크를 걸어줄 수 있습니다.
+                                // 예: 은행별 인터넷 뱅킹 가입 페이지 열기 등
+                                console.log('가입하러 가기 클릭됨');
+                            }}
+                            className="px-4 py-2 w-full rounded-full bg-[#014029] shadow-md items-center justify-center"
+                        >
+                            <Text className="text-white text-lg font-bold">가입하러 가기</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </View>
         </>
     );
 };
 
 export default DepositProduct;
-
-
