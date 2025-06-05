@@ -1,4 +1,5 @@
 import { View, Text, Image, useWindowDimensions, TouchableOpacity } from 'react-native';
+import { getCategoryName } from '../../screens/Challenge/ChallengeApi';
 
 export default function ChallengeSection({ userData, challenges = [], categories = [], challengeLoading = false, navigation }) {
     const { width } = useWindowDimensions();
@@ -14,9 +15,60 @@ export default function ChallengeSection({ userData, challenges = [], categories
         challengeLoading
     });
 
-    const getCategoryImage = (categoryId) => {
-        const category = categories.find(cat => cat.id === categoryId);
-        return category ? category.imageUrl : null;
+    // URL을 안전하게 처리
+    const safeUri = (uri) => {
+        if (!uri) return '';
+        return uri.startsWith('http') ? uri : `https://${uri}`;
+    };
+
+    // 카테고리 이미지 가져오기
+    const getCategoryImage = (challenge) => {
+        if (!challenge || !challenge.category) return null;
+
+        // 1. 카테고리 코드로 직접 매칭
+        const matched = categories.find(
+            cat => cat.category === challenge.category
+        );
+        
+        if (matched?.imageUrl) {
+            console.log('ChallengeSection - 카테고리 코드로 매칭 성공:', {
+                challengeId: challenge.id,
+                challengeCategory: challenge.category,
+                matchedCategory: matched.category,
+                imageUrl: matched.imageUrl
+            });
+            return matched.imageUrl;
+        }
+
+        // 2. 카테고리 이름으로 매칭
+        const categoryName = getCategoryName(challenge.category);
+        console.log('ChallengeSection - 카테고리 이름 변환:', {
+            challengeId: challenge.id,
+            original: challenge.category,
+            converted: categoryName
+        });
+
+        const nameMatched = categories.find(
+            cat => cat.name === categoryName || cat.name === challenge.category
+        );
+
+        if (nameMatched?.imageUrl) {
+            console.log('ChallengeSection - 카테고리 이름으로 매칭 성공:', {
+                challengeId: challenge.id,
+                challengeCategory: challenge.category,
+                matchedName: nameMatched.name,
+                imageUrl: nameMatched.imageUrl
+            });
+            return nameMatched.imageUrl;
+        }
+
+        console.log('ChallengeSection - 매칭 실패:', {
+            challengeId: challenge.id,
+            challengeCategory: challenge.category,
+            categoryName: categoryName,
+            availableCategories: categories.map(c => ({ name: c.name, category: c.category }))
+        });
+        return null;
     };
 
     return (
@@ -79,7 +131,7 @@ export default function ChallengeSection({ userData, challenges = [], categories
                                     onPress={() => {
                                         console.log('ChallengeSection - 전체 challenges:', challenges);
                                         console.log('ChallengeSection - 첫 번째 챌린지:', challenges[0]);
-                                        const challengeId = challenges[0]?.challengeId;
+                                        const challengeId = challenges[0]?.challengeId || challenges[0]?.id;
                                         console.log('ChallengeSection - 사용할 challengeId:', challengeId);
                                         if (navigation && challengeId) {
                                             navigation.navigate('ChallengeDetailScreen', { challengeId });
@@ -93,16 +145,28 @@ export default function ChallengeSection({ userData, challenges = [], categories
                                     }}
                                     className="items-center"
                                 >
-                                    {getCategoryImage(challenges[0].categoryId) ? (
-                                        <Image
-                                            source={{ uri: getCategoryImage(challenges[0].categoryId) }}
-                                            style={{ width: 40, height: 40, marginBottom: 8 }}
-                                            resizeMode="cover"
-                                        />
-                                    ) : (
-                                        <View style={{ width: 40, height: 40, borderRadius: 24, backgroundColor: '#eee', marginBottom: 8 }} />
+                                    {challenges[0] && (
+                                        <>
+                                            <Image
+                                                source={(() => {
+                                                    const imageUrl = getCategoryImage(challenges[0]);
+                                                    return imageUrl ? { uri: safeUri(imageUrl) } : require('../../../assets/images/plane-ticket.png');
+                                                })()}
+                                                style={{ width: 40, height: 40, marginBottom: 8 }}
+                                                resizeMode="contain"
+                                                onError={(e) => {
+                                                    console.error('ChallengeSection - 이미지 로드 실패:', {
+                                                        challengeId: challenges[0].id,
+                                                        category: challenges[0].category,
+                                                        error: e.nativeEvent
+                                                    });
+                                                }}
+                                            />
+                                            <Text className="text-[14px] text-black text-center font-bold">
+                                                {challenges[0].title}
+                                            </Text>
+                                        </>
                                     )}
-                                    <Text className="text-[14px] text-black text-center font-bold">{challenges[0].title}</Text>
                                 </TouchableOpacity>
                             )
                         ) : (

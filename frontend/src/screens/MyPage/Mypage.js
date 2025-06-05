@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../components/layout/Header';
 import axios from 'axios';
+import { getCategoryName } from '../Challenge/ChallengeApi';
 
 export default function MypageScreen() {
     const navigation = useNavigation();
@@ -12,6 +13,13 @@ export default function MypageScreen() {
     const [categories, setCategories] = useState([]);
     const [challenges, setChallenges] = useState([]);
     const [challengeLoading, setChallengeLoading] = useState(true);
+    const [categoryImages, setCategoryImages] = useState({});
+
+    // URL을 안전하게 처리
+    const safeUri = (uri) => {
+        if (!uri) return '';
+        return uri.startsWith('http') ? uri : `https://${uri}`;
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -39,16 +47,35 @@ export default function MypageScreen() {
                 const catRes = await axios.get('http://52.78.59.11:8080/api/challenges/categories', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
+                console.log('Mypage - 카테고리 데이터:', catRes.data);
                 setCategories(catRes.data);
 
                 // 참여중인 챌린지 목록
                 const chalRes = await axios.get('http://52.78.59.11:8080/api/challenges/participating', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
+                console.log('Mypage - 참여중인 챌린지 응답:', chalRes.data);
+
                 const challengeList = Array.isArray(chalRes.data.content)
                     ? chalRes.data.content
                     : [];
-                setChallenges(challengeList);
+                
+                // 챌린지 ID 확인 및 로깅
+                console.log('Mypage - 처리할 챌린지 목록:', challengeList.map(c => ({
+                    id: c.id,
+                    challengeId: c.challengeId,
+                    title: c.title,
+                    category: c.category
+                })));
+
+                // id 또는 challengeId가 있는지 확인하고 설정
+                const processedChallenges = challengeList.map(challenge => ({
+                    ...challenge,
+                    id: challenge.id || challenge.challengeId
+                }));
+
+                setChallenges(processedChallenges);
+
             } catch (error) {
                 console.error('챌린지 데이터 불러오기 실패:', error);
             } finally {
@@ -58,10 +85,72 @@ export default function MypageScreen() {
         fetchChallenges();
     }, []);
 
-    const getCategoryImage = (categoryId) => {
-        const category = categories.find(cat => cat.id === categoryId);
-        return category ? category.imageUrl : null; // 실제 필드명에 맞게 수정
-    };
+    // 카테고리 이미지 매핑
+    useEffect(() => {
+        if (challenges.length > 0 && categories.length > 0) {
+            const imageMap = {};
+            challenges.forEach(challenge => {
+                if (!challenge.id) {
+                    console.error('Mypage - 챌린지 ID가 없습니다:', challenge);
+                    return;
+                }
+
+                console.log('Mypage - 처리중인 챌린지:', {
+                    id: challenge.id,
+                    category: challenge.category,
+                    title: challenge.title
+                });
+
+                if (challenge.category) {
+                    // 1. 카테고리 코드로 직접 매칭
+                    const matched = categories.find(
+                        cat => cat.category === challenge.category
+                    );
+                    
+                    if (matched?.imageUrl) {
+                        console.log('Mypage - 카테고리 코드로 매칭 성공:', {
+                            challengeId: challenge.id,
+                            challengeCategory: challenge.category,
+                            matchedCategory: matched.category,
+                            imageUrl: matched.imageUrl
+                        });
+                        imageMap[challenge.id] = matched.imageUrl;
+                    } else {
+                        // 2. 카테고리 이름으로 매칭
+                        const categoryName = getCategoryName(challenge.category);
+                        console.log('Mypage - 카테고리 이름 변환:', {
+                            challengeId: challenge.id,
+                            original: challenge.category,
+                            converted: categoryName
+                        });
+
+                        const nameMatched = categories.find(
+                            cat => cat.name === categoryName || cat.name === challenge.category
+                        );
+
+                        if (nameMatched?.imageUrl) {
+                            console.log('Mypage - 카테고리 이름으로 매칭 성공:', {
+                                challengeId: challenge.id,
+                                challengeCategory: challenge.category,
+                                matchedName: nameMatched.name,
+                                imageUrl: nameMatched.imageUrl
+                            });
+                            imageMap[challenge.id] = nameMatched.imageUrl;
+                        } else {
+                            console.log('Mypage - 매칭 실패:', {
+                                challengeId: challenge.id,
+                                challengeCategory: challenge.category,
+                                categoryName: categoryName,
+                                availableCategories: categories.map(c => ({ name: c.name, category: c.category }))
+                            });
+                        }
+                    }
+                }
+            });
+            console.log('Mypage - 최종 카테고리 이미지 매핑:', imageMap);
+            setCategoryImages(imageMap);
+        }
+    }, [challenges, categories]);
 
     const handleLogout = async () => {
         try {
@@ -111,8 +200,8 @@ export default function MypageScreen() {
                                     className="flex-row items-center justify-center mt-2"
                                     onPress={() => navigation.navigate('MyDataConsent')}>
                                         <Text
-                                            className="text-center text-sm font-bold mb-2 text-Fineed-green
-                                            style={{ textDecorationLine: 'underline' }}">마이데이터 변경하기 {'>'}</Text>
+                                            className="text-center text-sm font-bold mb-2 text-Fineed-green"
+                                            style={{ textDecorationLine: 'underline' }}>마이데이터 변경하기 {'>'}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -139,7 +228,7 @@ export default function MypageScreen() {
                                 className="bg-white rounded-3xl shadow-sm overflow-hidden mb-3"
                                 onPress={() => {
                                     console.log('Mypage - 챌린지 데이터:', challenges[0]);
-                                    const challengeId = challenges[0]?.challengeId;
+                                    const challengeId = challenges[0]?.challengeId || challenges[0]?.id;
                                     console.log('Mypage - 사용할 challengeId:', challengeId);
                                     if (challengeId) {
                                         navigation.navigate('ChallengeDetailScreen', { challengeId });
@@ -150,18 +239,25 @@ export default function MypageScreen() {
                             >
                                 <View className="flex-row p-5">
                                     <View className="w-[36%] flex items-center justify-center pr-3">
-                                        {getCategoryImage(challenges[0].categoryId) ? (
+                                        {categoryImages[challenges[0].id] ? (
                                             <Image
-                                                source={{ uri: getCategoryImage(challenges[0].categoryId) }}
+                                                source={{ uri: safeUri(categoryImages[challenges[0].id]) }}
                                                 className="w-14 h-14"
                                                 resizeMode="contain"
+                                                onError={(e) => {
+                                                    console.error('Mypage - 이미지 로드 실패:', {
+                                                        challengeId: challenges[0].id,
+                                                        category: challenges[0].category,
+                                                        imageUrl: categoryImages[challenges[0].id]
+                                                    });
+                                                }}
                                             />
                                         ) : (
                                             <View className="w-14 h-14 bg-gray-200 rounded-full" />
                                         )}
                                     </View>
                                     <View className="h-24 w-px bg-gray-200 mr-3" />
-                                    <View className="w-[64%] flex justify-center  pl-1">
+                                    <View className="w-[64%] flex justify-center pl-1">
                                         <Text className="text-center text-xl font-bold text-Fineed-green">{challenges[0].title}</Text>
                                     </View>
                                 </View>
