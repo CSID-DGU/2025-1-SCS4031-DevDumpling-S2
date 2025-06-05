@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { getCategoryName } from '../Challenge/ChallengeApi';
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
@@ -17,6 +18,7 @@ const MyChallenges = () => {
     const [challenges, setChallenges] = useState([]);
     const [personalRanks, setPersonalRanks] = useState({});
     const [loading, setLoading] = useState(true);
+    const [categoryImages, setCategoryImages] = useState({});
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -32,6 +34,12 @@ const MyChallenges = () => {
         fetchUserData();
     }, []);
 
+    // URL을 안전하게 처리
+    const safeUri = (uri) => {
+        if (!uri) return '';
+        return uri.startsWith('http') ? uri : `https://${uri}`;
+    };
+
     useEffect(() => {
         const fetchAll = async () => {
             try {
@@ -42,6 +50,7 @@ const MyChallenges = () => {
                 const catRes = await axios.get(`${API_BASE_URL}/api/challenges/categories`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
+                console.log('카테고리 데이터:', catRes.data);
                 setCategories(catRes.data);
 
                 // 2. 참여 중인 챌린지 목록
@@ -53,10 +62,25 @@ const MyChallenges = () => {
                 const challengeList = Array.isArray(chalRes.data.content)
                     ? chalRes.data.content
                     : [];
-                setChallenges(challengeList);
+                
+                // 챌린지 ID 확인 및 로깅
+                console.log('처리할 챌린지 목록:', challengeList.map(c => ({
+                    id: c.id,
+                    challengeId: c.challengeId,
+                    title: c.title,
+                    category: c.category
+                })));
+
+                // id 또는 challengeId가 있는지 확인하고 설정
+                const processedChallenges = challengeList.map(challenge => ({
+                    ...challenge,
+                    id: challenge.id || challenge.challengeId
+                }));
+
+                setChallenges(processedChallenges);
 
                 // 3. 각 챌린지별 내 랭킹
-                const rankPromises = challengeList.map(async (challenge) => {
+                const rankPromises = processedChallenges.map(async (challenge) => {
                     try {
                         const rankRes = await axios.get(`${API_BASE_URL}/api/challenges/${challenge.id}/personalrank`, {
                             headers: { Authorization: `Bearer ${token}` }
@@ -82,10 +106,72 @@ const MyChallenges = () => {
         fetchAll();
     }, []);
 
-    const getCategoryImage = (categoryId) => {
-        const category = categories.find(cat => cat.id === categoryId);
-        return category ? category.imageUrl : null; // imageUrl 필드명은 실제 응답에 맞게 수정
-    };
+    // 카테고리 이미지 매핑
+    useEffect(() => {
+        if (challenges.length > 0 && categories.length > 0) {
+            const imageMap = {};
+            challenges.forEach(challenge => {
+                if (!challenge.id) {
+                    console.error('챌린지 ID가 없습니다:', challenge);
+                    return;
+                }
+
+                console.log('처리중인 챌린지:', {
+                    id: challenge.id,
+                    category: challenge.category,
+                    title: challenge.title
+                });
+
+                if (challenge.category) {
+                    // 1. 카테고리 코드로 직접 매칭
+                    const matched = categories.find(
+                        cat => cat.category === challenge.category
+                    );
+                    
+                    if (matched?.imageUrl) {
+                        console.log('카테고리 코드로 매칭 성공:', {
+                            challengeId: challenge.id,
+                            challengeCategory: challenge.category,
+                            matchedCategory: matched.category,
+                            imageUrl: matched.imageUrl
+                        });
+                        imageMap[challenge.id] = matched.imageUrl;
+                    } else {
+                        // 2. 카테고리 이름으로 매칭
+                        const categoryName = getCategoryName(challenge.category);
+                        console.log('카테고리 이름 변환:', {
+                            challengeId: challenge.id,
+                            original: challenge.category,
+                            converted: categoryName
+                        });
+
+                        const nameMatched = categories.find(
+                            cat => cat.name === categoryName || cat.name === challenge.category
+                        );
+
+                        if (nameMatched?.imageUrl) {
+                            console.log('카테고리 이름으로 매칭 성공:', {
+                                challengeId: challenge.id,
+                                challengeCategory: challenge.category,
+                                matchedName: nameMatched.name,
+                                imageUrl: nameMatched.imageUrl
+                            });
+                            imageMap[challenge.id] = nameMatched.imageUrl;
+                        } else {
+                            console.log('매칭 실패:', {
+                                challengeId: challenge.id,
+                                challengeCategory: challenge.category,
+                                categoryName: categoryName,
+                                availableCategories: categories.map(c => ({ name: c.name, category: c.category }))
+                            });
+                        }
+                    }
+                }
+            });
+            console.log('최종 카테고리 이미지 매핑:', imageMap);
+            setCategoryImages(imageMap);
+        }
+    }, [challenges, categories]);
 
     return (
         <>
@@ -113,11 +199,18 @@ const MyChallenges = () => {
                                 className="flex-row px-5 py-4 rounded-2xl items-center bg-white shadow-md mb-8"
                                 onPress={() => navigation.navigate('ChallengeDetailScreen', { challengeId: challenge.id })}
                             >
-                                {getCategoryImage(challenge.categoryId) ? (
+                                {categoryImages[challenge.id] ? (
                                     <Image
-                                        source={{ uri: getCategoryImage(challenge.categoryId) }}
+                                        source={{ uri: safeUri(categoryImages[challenge.id]) }}
                                         className="w-10 h-10 mr-4"
-                                        resizeMode="cover"
+                                        resizeMode="contain"
+                                        onError={(e) => {
+                                            console.error('이미지 로드 실패:', {
+                                                challengeId: challenge.id,
+                                                category: challenge.category,
+                                                imageUrl: categoryImages[challenge.id]
+                                            });
+                                        }}
                                     />
                                 ) : (
                                     <View className="w-10 h-10 bg-gray-400 rounded-full mr-4" />

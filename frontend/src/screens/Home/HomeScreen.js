@@ -199,13 +199,14 @@ export default function HomeScreen() {
       const catRes = await axios.get(`${API_BASE_URL}/api/challenges/categories`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log('HomeScreen - 카테고리 데이터:', catRes.data);
       setCategories(catRes.data);
 
       // 2. 참여 중인 챌린지 목록 가져오기
       const chalRes = await axios.get(`${API_BASE_URL}/api/challenges/participating`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log('참여 중인 챌린지 전체 응답:', chalRes.data);
+      console.log('HomeScreen - 참여 중인 챌린지 전체 응답:', chalRes.data);
 
       let challengeList = [];
       if (chalRes.data) {
@@ -218,9 +219,23 @@ export default function HomeScreen() {
         }
       }
       
-      console.log('처리된 챌린지 목록:', JSON.stringify(challengeList, null, 2));
+      // 챌린지 ID 확인 및 로깅
+      console.log('HomeScreen - 처리할 챌린지 목록:', challengeList.map(c => ({
+        id: c.id,
+        challengeId: c.challengeId,
+        title: c.title,
+        category: c.category
+      })));
+
+      // id 또는 challengeId가 있는지 확인하고 설정
+      const processedChallenges = challengeList.map(challenge => ({
+        ...challenge,
+        id: challenge.id || challenge.challengeId
+      }));
       
-      if (challengeList.length === 0) {
+      console.log('HomeScreen - 처리된 챌린지 목록:', JSON.stringify(processedChallenges, null, 2));
+      
+      if (processedChallenges.length === 0) {
         console.log('참여 중인 챌린지가 없습니다.');
         setChallenges([]);
         setChallengeLoading(false);
@@ -229,31 +244,25 @@ export default function HomeScreen() {
 
       // 3. 각 챌린지의 상세 정보 가져오기
       const challengeDetails = await Promise.all(
-        challengeList.map(async (challenge) => {
+        processedChallenges.map(async (challenge) => {
           try {
             // challenge 객체 구조 확인
-            console.log('처리할 챌린지 데이터:', JSON.stringify(challenge, null, 2));
+            console.log('HomeScreen - 처리할 챌린지 데이터:', JSON.stringify(challenge, null, 2));
             
-            let challengeId;
-            if (typeof challenge === 'object' && challenge !== null) {
-              challengeId = challenge.id || challenge.challengeId;
-            } else {
-              challengeId = challenge;
-            }
-
+            let challengeId = challenge.id;
             if (!challengeId) {
               console.error('유효하지 않은 챌린지 데이터:', JSON.stringify(challenge, null, 2));
               return null;
             }
 
-            console.log(`챌린지 ID ${challengeId}로 상세 정보 요청`);
+            console.log(`HomeScreen - 챌린지 ID ${challengeId}로 상세 정보 요청`);
             const detailResponse = await axios.get(`${API_BASE_URL}/api/challenges/${challengeId}`, {
               headers: { Authorization: `Bearer ${token}` }
             });
-            console.log(`챌린지 ${challengeId} 상세 정보:`, detailResponse.data);
+            console.log(`HomeScreen - 챌린지 ${challengeId} 상세 정보:`, detailResponse.data);
             return detailResponse.data;
           } catch (error) {
-            console.error(`챌린지 ${JSON.stringify(challenge)} 상세 정보 로드 실패:`, error);
+            console.error(`HomeScreen - 챌린지 ${JSON.stringify(challenge)} 상세 정보 로드 실패:`, error);
             return null;
           }
         })

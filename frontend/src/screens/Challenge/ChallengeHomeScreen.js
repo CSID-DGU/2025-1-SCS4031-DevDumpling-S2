@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { fetchChallengeCategories, fetchParticipatingChallenges } from './ChallengeApi';
+import { fetchChallengeCategories, fetchParticipatingChallenges, getCategoryName } from './ChallengeApi';
 import axios from 'axios';
 const BASE_URL = 'http://52.78.59.11:8080/api';
 import Header from '../../components/layout/Header';
@@ -19,6 +19,7 @@ export default function ChallengeHomeScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [participatingChallenges, setParticipatingChallenges] = useState([]);
   const [userName, setUserName] = useState('');
+  const [categoryImages, setCategoryImages] = useState({});
   const [recommendedChallenges, setRecommendedChallenges] = useState([
     {
       id: 101,
@@ -29,6 +30,12 @@ export default function ChallengeHomeScreen() {
       category: 'TRAVEL'
     }
   ]);
+
+  // URL을 안전하게 처리
+  const safeUri = (uri) => {
+    if (!uri) return '';
+    return uri.startsWith('http') ? uri : `https://${uri}`;
+  };
 
   // 카테고리 코드 변환 함수 (한글 → 영문 코드)
   const getCategoryCode = (name) => {
@@ -76,9 +83,6 @@ export default function ChallengeHomeScreen() {
     return `${base}${code}.png`;
   };
 
-  // 한글 path 가 포함된 이미지 안전 처리
-  const safeUri = (uri) => encodeURI(uri);
-
   // 데이터 불러오기
   useEffect(() => {
     const loadData = async () => {
@@ -87,28 +91,68 @@ export default function ChallengeHomeScreen() {
         const token = await AsyncStorage.getItem('userToken');
         setIsLoggedIn(!!token);
 
+        if (!token) {
+          console.log('ChallengeHomeScreen - 토큰이 없어 챌린지를 불러올 수 없습니다.');
+          setLoading(false);
+          return;
+        }
+
         // 사용자 닉네임 가져오기 - 로컬에 저장된 userData에서 가져오기
-        if (token) {
-          try {
-            const userData = await AsyncStorage.getItem('userData');
-            console.log('userData:', userData);
-            if (userData) {
-              const parsedUserData = JSON.parse(userData);
-              console.log('parsedUserData:', parsedUserData);
-              setUserName(parsedUserData.nickname || '');
-            }
-          } catch (userError) {
-            console.error('사용자 정보 가져오기 실패:', userError);
+        try {
+          const userData = await AsyncStorage.getItem('userData');
+          console.log('ChallengeHomeScreen - userData:', userData);
+          if (userData) {
+            const parsedUserData = JSON.parse(userData);
+            console.log('ChallengeHomeScreen - parsedUserData:', parsedUserData);
+            setUserName(parsedUserData.nickname || '');
           }
+        } catch (userError) {
+          console.error('ChallengeHomeScreen - 사용자 정보 가져오기 실패:', userError);
         }
 
         // API 호출
-        const [categoriesData, participatingChallengesData] = await Promise.all([
-          fetchChallengeCategories(),
-          fetchParticipatingChallenges()
-        ]);
+        console.log('ChallengeHomeScreen - API 호출 시작');
+        
+        // 1. 카테고리 정보 가져오기
+        const catRes = await axios.get(`${BASE_URL}/challenges/categories`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log('ChallengeHomeScreen - 카테고리 응답:', catRes.data);
+        setCategories(catRes.data);
 
-        console.log('Backend categories:', categoriesData);
+        // 2. 참여중인 챌린지 목록 가져오기
+        const chalRes = await axios.get(`${BASE_URL}/challenges/participating`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log('ChallengeHomeScreen - 참여중인 챌린지 전체 응답:', chalRes.data);
+
+        let challengeList = [];
+        if (chalRes.data) {
+          if (Array.isArray(chalRes.data)) {
+            challengeList = chalRes.data;
+          } else if (chalRes.data.content && Array.isArray(chalRes.data.content)) {
+            challengeList = chalRes.data.content;
+          } else if (chalRes.data.challenges && Array.isArray(chalRes.data.challenges)) {
+            challengeList = chalRes.data.challenges;
+          }
+        }
+        
+        // 챌린지 ID 확인 및 로깅
+        console.log('ChallengeHomeScreen - 처리할 챌린지 목록:', challengeList.map(c => ({
+          id: c.id,
+          challengeId: c.challengeId,
+          title: c.title,
+          category: c.category
+        })));
+
+        // id 또는 challengeId가 있는지 확인하고 설정
+        const processedChallenges = challengeList.map(challenge => ({
+          ...challenge,
+          id: challenge.id || challenge.challengeId
+        }));
+
+        console.log('ChallengeHomeScreen - 처리된 챌린지 목록:', processedChallenges);
+        setParticipatingChallenges(processedChallenges);
 
         // 원하는 표시 순서 정리
         const displayOrder = [
@@ -144,7 +188,7 @@ export default function ChallengeHomeScreen() {
         };
 
         // 백엔드 데이터 맵 구성 - 원본명으로 저장
-        categoriesData.forEach(cat => {
+        catRes.data.forEach(cat => {
           backendMap.set(cat.name, cat);
         });
 
@@ -175,12 +219,15 @@ export default function ChallengeHomeScreen() {
         });
 
         setCategories(orderedCategories);
-        setParticipatingChallenges(participatingChallengesData.content || []);
         // TODO: 추천 챌린지 API 완성되면 교체
         setRecommendedChallenges(recommendedChallenges.map(rc => ({ ...rc, description: `${userName}${rc.description}` })));
         setLoading(false);
       } catch (err) {
-        console.error('데이터 불러오기 오류:', err);
+        console.error('ChallengeHomeScreen - 데이터 불러오기 오류:', err);
+        if (err.response) {
+          console.error('ChallengeHomeScreen - 에러 상태:', err.response.status);
+          console.error('ChallengeHomeScreen - 에러 데이터:', err.response.data);
+        }
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
         setLoading(false);
       }
@@ -188,6 +235,73 @@ export default function ChallengeHomeScreen() {
 
     loadData();
   }, []);
+
+  // 카테고리 이미지 매핑
+  useEffect(() => {
+    if (participatingChallenges.length > 0 && categories.length > 0) {
+      const imageMap = {};
+      participatingChallenges.forEach(challenge => {
+        if (!challenge.id) {
+          console.error('ChallengeHomeScreen - 챌린지 ID가 없습니다:', challenge);
+          return;
+        }
+
+        console.log('ChallengeHomeScreen - 처리중인 챌린지:', {
+          id: challenge.id,
+          category: challenge.category,
+          title: challenge.title
+        });
+
+        if (challenge.category) {
+          // 1. 카테고리 코드로 직접 매칭
+          const matched = categories.find(
+            cat => cat.category === challenge.category
+          );
+          
+          if (matched?.imageUrl) {
+            console.log('ChallengeHomeScreen - 카테고리 코드로 매칭 성공:', {
+              challengeId: challenge.id,
+              challengeCategory: challenge.category,
+              matchedCategory: matched.category,
+              imageUrl: matched.imageUrl
+            });
+            imageMap[challenge.id] = matched.imageUrl;
+          } else {
+            // 2. 카테고리 이름으로 매칭
+            const categoryName = getCategoryName(challenge.category);
+            console.log('ChallengeHomeScreen - 카테고리 이름 변환:', {
+              challengeId: challenge.id,
+              original: challenge.category,
+              converted: categoryName
+            });
+
+            const nameMatched = categories.find(
+              cat => cat.name === categoryName || cat.name === challenge.category
+            );
+
+            if (nameMatched?.imageUrl) {
+              console.log('ChallengeHomeScreen - 카테고리 이름으로 매칭 성공:', {
+                challengeId: challenge.id,
+                challengeCategory: challenge.category,
+                matchedName: nameMatched.name,
+                imageUrl: nameMatched.imageUrl
+              });
+              imageMap[challenge.id] = nameMatched.imageUrl;
+            } else {
+              console.log('ChallengeHomeScreen - 매칭 실패:', {
+                challengeId: challenge.id,
+                challengeCategory: challenge.category,
+                categoryName: categoryName,
+                availableCategories: categories.map(c => ({ name: c.name, category: c.category }))
+              });
+            }
+          }
+        }
+      });
+      console.log('ChallengeHomeScreen - 최종 카테고리 이미지 매핑:', imageMap);
+      setCategoryImages(imageMap);
+    }
+  }, [participatingChallenges, categories]);
 
   const handleCategoryPress = (categoryName) => {
     console.log(`${categoryName} 카테고리 선택됨`);
@@ -199,9 +313,8 @@ export default function ChallengeHomeScreen() {
   };
 
   const handleChallengePress = (challengeId) => {
-    // 챌린지 상세 페이지로 이동 (추후 구현)
     console.log(`챌린지 ID: ${challengeId} 선택됨`);
-    // navigation.navigate('ChallengeDetail', { challengeId });
+    navigation.navigate('ChallengeDetailScreen', { challengeId });
   };
 
   if (loading) {
@@ -264,21 +377,32 @@ export default function ChallengeHomeScreen() {
 
           {participatingChallenges.length > 0 ? (
             <View>
-              {participatingChallenges.map((item) => (
+              {participatingChallenges.map((challenge) => (
                 <TouchableOpacity
-                  key={item.id}
+                  key={challenge.id}
                   className="bg-white rounded-[20px] p-4 flex-row items-center shadow-sm mb-3"
-                  onPress={() => handleChallengePress(item.id)}
+                  onPress={() => handleChallengePress(challenge.id)}
                 >
-                  <Image
-                    source={item.imageUrl ? { uri: safeUri(item.imageUrl) } : getCategoryIcon(item.category)}
-                    style={{ width: 56, height: 56 }}
-                    resizeMode="contain"
-                  />
+                  {categoryImages[challenge.id] ? (
+                    <Image
+                      source={{ uri: safeUri(categoryImages[challenge.id]) }}
+                      style={{ width: 56, height: 56 }}
+                      resizeMode="contain"
+                      onError={(e) => {
+                        console.error('ChallengeHomeScreen - 이미지 로드 실패:', {
+                          challengeId: challenge.id,
+                          category: challenge.category,
+                          imageUrl: categoryImages[challenge.id]
+                        });
+                      }}
+                    />
+                  ) : (
+                    <View className="w-14 h-14 bg-gray-200 rounded-full" />
+                  )}
                   <View className="flex-1 ml-3">
-                    <Text className="text-[16px] font-bold text-black mb-1">{item.title}</Text>
+                    <Text className="text-[16px] font-bold text-black mb-1">{challenge.title}</Text>
                     <Text className="text-[12px] text-[#6D6D6D]">
-                      현재 {item.progress || 0}% · 달성률 {item.progress || 0}%
+                      현재 {challenge.progress || 0}% · 달성률 {challenge.progress || 0}%
                     </Text>
                   </View>
                   <View className="ml-2">
