@@ -105,8 +105,7 @@
 | 핀크         | 핀크 혜택          | 퀴즈, 쇼핑 등 미션 달성 시 포인트 제공, 앱 내 활용 가능한 재화 지급   | 외부 앱 설치 유도, 비자발적 참여 유도 가능성                              |
 
 **요약:**  
-기존 서비스는 포인트 중심의 단기 참여 유도에 그치는 경우가 많으며, **사용자 주도형 목표 설정 및 진행 관리 기능은 부족**.  
-본 프로젝트는 **사용자가 직접 금융 목표를 설정하고, 달성 과정을 관리하는 능동적 챌린지 시스템**을 지향.
+기존 서비스는 포인트 중심의 단기 참여 유도에 그치는 경우가 많으며, **사용자 주도형 목표 설정 및 진행 관리 기능은 부족**. 본 프로젝트는 **사용자가 직접 금융 목표를 설정하고, 달성 과정을 관리하는 능동적 챌린지 시스템**을 지향.
 
 
 
@@ -118,8 +117,7 @@
 | 네이버페이     | 금융상품 비교          | 조건별 필터를 통한 상품 비교, 파트너사 연계 가입 유도     | 사용자 금융 상태 미반영, 정보 최신성 미흡                           |
 
 **요약:**  
-기존 플랫폼은 UI 중심의 상품 비교에 초점을 맞추고 있으며, **실사용자 리뷰 기반의 정보 제공 기능은 미흡**.  
-본 프로젝트는 **상품 실사용 경험을 바탕으로 한 리뷰 및 평점 제공 시스템**으로 **신뢰성 있는 상품 선택 환경**을 조성.
+기존 플랫폼은 UI 중심의 상품 비교에 초점을 맞추고 있으며, **실사용자 리뷰 기반의 정보 제공 기능은 미흡**. 본 프로젝트는 **상품 실사용 경험을 바탕으로 한 리뷰 및 평점 제공 시스템**으로 **신뢰성 있는 상품 선택 환경**을 조성.
 
 
 
@@ -131,8 +129,7 @@
 | 카카오페이   | 증권 토론방            | 종목별 토론 커뮤니티, 매매 인증, 실시간 인기글 확인 가능               | 비전문 정보의 범람, 필터링 부족으로 인한 신뢰도 저하                       |
 
 **요약:**  
-기존 서비스는 금융 콘텐츠에 쉽게 접근할 수 있으나, **구조적 학습 요소는 부족**.  
-본 프로젝트는 **AI 기반 기사 요약 및 용어 정리**, **사용자 유형별 맞춤 퀴즈 제공**을 통해 **금융 이해도를 체계적으로 높일 수 있는 학습 환경**을 제공.
+기존 서비스는 금융 콘텐츠에 쉽게 접근할 수 있으나, **구조적 학습 요소는 부족**. 본 프로젝트는 **AI 기반 기사 요약 및 용어 정리**, **사용자 유형별 맞춤 퀴즈 제공**을 통해 **금융 이해도를 체계적으로 높일 수 있는 학습 환경**을 제공.
 
 
 #### 2.2 본 프로젝트의 차별점
@@ -178,7 +175,9 @@
 <div align="center">
   <img src="https://github.com/user-attachments/assets/1e1f8030-7cea-46e9-9c7f-827bfb1ffcb4" alt="마이페이지" style="max-width: 100%; height: auto;">
 </div> 
-  
+
+💚 시연영상 링크
+
 - 상세한 구현 사항은 최종보고서 부록에 기재 
 
 <div align="right">
@@ -187,55 +186,20 @@
   </a>
 </div>
 
+
 ### 4. 개발 환경 및 기술 스택
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px 0;">
-  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
-    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Language & Framework</h4>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black">
-      <img src="https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB">
-      <img src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white">
-      <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white">
-    </div>
-  </div>
+| Language & Framework | Database |
+|:---:|:---:|
+| ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) ![React Native](https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB) ![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white) ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white) | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white) |
 
-  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
-    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Database</h4>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white">
-    </div>
-  </div>
+| DevOps | Development Tools |
+|:---:|:---:|
+| ![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=gradle&logoColor=white) | ![Android Studio](https://img.shields.io/badge/Android%20Studio-3DDC84?style=flat-square&logo=android-studio&logoColor=white) ![VS Code](https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white) ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) |
 
-  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
-    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">DevOps</h4>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      <img src="https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white">
-      <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white">
-      <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=gradle&logoColor=white">
-    </div>
-  </div>
-
-  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
-    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Development Tools</h4>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=flat-square&logo=android-studio&logoColor=white">
-      <img src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white">
-      <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white">
-    </div>
-  </div>
-
-  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; grid-column: 1 / -1;">
-    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Collaboration Tools</h4>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white">
-      <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white">
-      <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white">
-      <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white">
-      <img src="https://img.shields.io/badge/Canva-00C4CC?style=flat-square&logo=canva&logoColor=white">
-    </div>
-  </div>
-</div>
+| Collaboration Tools |
+|:---:|
+| ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white) ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white) ![Canva](https://img.shields.io/badge/Canva-00C4CC?style=flat-square&logo=canva&logoColor=white) |
 
 <div align="right">
   <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
