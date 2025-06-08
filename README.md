@@ -18,7 +18,8 @@
    2-3. [주요 서비스 소개](#3-주요-서비스-소개)  
    2-4. [개발 환경 및 기술 스택](#4-개발-환경-및-기술-스택)  
    2-5. [프로젝트 구조](#5-프로젝트-구조)  
-3. [시작 가이드](#iii-시작-가이드)
+3. [시작 가이드](#iii-시작-가이드)  
+4. [프로젝트 자료](#iv-프로젝트-자료)  
 
 
 
@@ -53,10 +54,12 @@
 <details>
 <summary>세부 담당 보기</summary>
 
-- **김희진**: 전체 서비스 기획/디자인, 커뮤니티/금융상품/마이페이지 프론트엔드 담당
-- **신예성**: 전체 서비스 기획, 컴포넌트 구성, 금융기사/금융퀴즈/챌린지/금융상품조회 프론트엔드 담당
-- **오연진**: 전체 서비스 기획, 백엔드 개발환경 구축, 사용자 분류/금융 기사/금융 퀴즈/챌린지 백엔드 담당
-- **현광수**: 전체 서비스 기획, 커뮤니티/금융상품/추천서비스 백엔드 담당
+| 이름 | 세부 담당 |
+|---|---|
+| **김희진** | 전체 서비스 디자인, 커뮤니티/금융상품/마이페이지 프론트엔드 담당 |
+| **신예성** | 컴포넌트 구성, 금융기사/금융퀴즈/챌린지/금융상품조회 프론트엔드 담당 |
+| **오연진** | 백엔드 개발환경 구축, 사용자 분류/이데이터 생성/금융 기사/금융 퀴즈/챌린지 백엔드 담당 |
+| **현광수** | 커뮤니티/금융상품/추천서비스 백엔드 담당 |
 
 </details>
 
@@ -240,3 +243,18 @@
     ↑ 목차
   </a>
 </div>
+
+## IV. 프로젝트 자료
+
+### 프로젝트 관리
+- 회의록: [노션 회의록 바로가기](https://fluttering-magnesium-c8b.notion.site/1b5684ed836580e1a8a1c60e462121b8?v=1b5684ed83658098855b000c458f34e2&source=copy_link)
+- 프로젝트 일정: [간트차트 바로가기](링크)
+- API 명세서: [API 명세서 바로가기](https://fluttering-magnesium-c8b.notion.site/API-1cf684ed836580569b81ec546423c47c?source=copy_link)
+
+### 발표자료 및 계획서/보고서
+- 수행계획서: [[SW-1] 개발할만두_수행계획서_최종.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5BSW-1%5D%20%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%EC%88%98%ED%96%89%EA%B3%84%ED%9A%8D%EC%84%9C_%EC%B5%9C%EC%A2%85.pdf)
+- 제안발표: [[융합캡스톤디자인]_S2_개발할만두_최종제안서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5B%EC%9C%B5%ED%95%A9%EC%BA%A1%EC%8A%A4%ED%86%A4%EB%94%94%EC%9E%90%EC%9D%B8%5D_S2_%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%EC%B5%9C%EC%A2%85%EC%A0%9C%EC%95%88%EC%84%9C.pdf)
+- 중간발표: [[융합캡스톤디자인]_S2_개발할만두_중간발표 (1).pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5B%EC%9C%B5%ED%95%A9%EC%BA%A1%EC%8A%A4%ED%86%A4%EB%94%94%EC%9E%90%EC%9D%B8%5D_S2_%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%EC%A4%91%EA%B0%84%EB%B0%9C%ED%91%9C%20(1).pdf)
+- 2차 데모: [[융합캡스톤디자인]_S2_개발할만두_2차데모.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5B%EC%9C%B5%ED%95%A9%EC%BA%A1%EC%8A%A4%ED%86%A4%EB%94%94%EC%9E%90%EC%9D%B8%5D_S2_%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_2%EC%B0%A8%EB%8D%B0%EB%AA%A8.pdf)
+- 특허명세서: [개발할만두_특허명세서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%ED%8A%B9%ED%97%88%EB%AA%85%EC%84%B8%EC%84%9C.pdf)
+
