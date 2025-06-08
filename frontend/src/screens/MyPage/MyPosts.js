@@ -8,12 +8,12 @@ import { format } from 'date-fns';
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
+// 백엔드 BoardType 열거형과 일치하도록 수정
 const boardTypeMap = {
-  HOT: 'HOT게시판',
-  INVEST: '투자게시판',
+  FREE: '자유게시판',
+  INVESTMENT: '투자게시판',
   CHALLENGE: '챌린지게시판',
   QUIZ: '퀴즈게시판',
-  FREE: '자유게시판',
 };
 
 const MyPosts = () => {
@@ -48,38 +48,61 @@ const MyPosts = () => {
 
     const fetchMyPosts = async () => {
         try {
+            // 사용자 데이터와 토큰 가져오기
             const token = await AsyncStorage.getItem('userToken');
+            const userDataStr = await AsyncStorage.getItem('userData');
+            
+            console.log('userToken:', token);
+            console.log('userData:', userDataStr);
+            
             if (!token) {
                 console.error('토큰이 없습니다.');
+                setLoading(false);
                 return;
             }
 
-            console.log('요청 URL:', `${API_BASE_URL}/api/boards/my`);
-            console.log('토큰:', token);
-
-            const response = await axios.get(`${API_BASE_URL}/api/boards/my`, {
+            // 요청 구성
+            const url = `${API_BASE_URL}/api/boards/my`;
+            const config = {
                 headers: { 
                     Authorization: `Bearer ${token}`,
-                    'Accept': 'application/json'
-                }
-            });
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                timeout: 10000 // 10초 타임아웃 설정
+            };
+            
+            console.log('내 게시글 목록 요청 URL:', url);
+            console.log('요청 헤더:', JSON.stringify(config.headers));
 
-            console.log('내 게시글 목록:', response.data);
+            // API 요청 실행
+            const response = await axios.get(url, config);
 
+            console.log('내 게시글 목록 응답:', JSON.stringify(response.data));
+
+            // 응답 데이터 처리
             if (!response.data || !response.data.content || response.data.content.length === 0) {
+                console.log('게시글 데이터가 없습니다.');
                 setMyPosts([]);
-                setLoading(false);
                 return;
             }
 
             setMyPosts(response.data.content);
         } catch (error) {
             console.error('내 게시글 목록 조회 중 오류 발생:', error);
+            
+            // 에러 상세 정보 로깅
             if (error.response) {
                 console.error('에러 상태:', error.response.status);
-                console.error('에러 데이터:', error.response.data);
-                console.error('에러 헤더:', error.response.headers);
+                console.error('에러 데이터:', JSON.stringify(error.response.data));
+                console.error('에러 헤더:', JSON.stringify(error.response.headers));
+            } else if (error.request) {
+                console.error('요청은 전송되었으나 응답이 없음:', error.request);
+            } else {
+                console.error('요청 설정 중 오류 발생:', error.message);
             }
+            
+            // 오류 발생 시 빈 배열로 초기화
             setMyPosts([]);
         } finally {
             setLoading(false);

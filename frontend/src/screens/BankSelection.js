@@ -15,7 +15,6 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://52.78.59.11:8080';
 
-// 보험용 기본 아이콘 URL (프로젝트에 맞춰 실제 주소로 교체하세요)
 const DEFAULT_INSURANCE_ICON = 'https://myapp-logos.s3.amazonaws.com/bank-logos/default-insurance.png';
 
 const UserAccountList = () => {
@@ -23,7 +22,13 @@ const UserAccountList = () => {
     const [accounts, setAccounts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('bank'); // 'bank', 'loan', 'investment', 'card', 'insurance'
-    const [selectedAccounts, setSelectedAccounts] = useState({});
+    const [selectedAccounts, setSelectedAccounts] = useState({
+        bank: {},
+        loan: {},
+        investment: {},
+        card: {},
+        insurance: {}
+    });
     const [imageErrors, setImageErrors] = useState({});
 
     useEffect(() => {
@@ -98,14 +103,18 @@ const UserAccountList = () => {
     const toggleSelection = (id) => {
         setSelectedAccounts(prev => ({
             ...prev,
-            [id]: !prev[id],
+            [activeTab]: {
+                ...prev[activeTab],
+                [id]: !prev[activeTab]?.[id]
+            }
         }));
     };
 
     // “동의하기” 버튼 누를 때 호출되는 함수: 선택된 ID 목록을 적절한 키 이름으로 묶어서 POST
     const handleConnect = async () => {
-        // 1) 선택된 ID만 배열로 뽑기
-        const selectedIds = Object.keys(selectedAccounts).filter(id => selectedAccounts[id]);
+        // 1) 현재 활성화된 탭의 선택된 ID만 배열로 뽑기
+        const currentTabSelections = selectedAccounts[activeTab] || {};
+        const selectedIds = Object.keys(currentTabSelections).filter(id => currentTabSelections[id]);
         if (selectedIds.length === 0) {
             alert('하나 이상의 항목을 선택해주세요.');
             return;
@@ -119,27 +128,26 @@ const UserAccountList = () => {
 
         switch (activeTab) {
             case 'bank': {
-                // 은행 탭: 계좌번호 배열 → selectedAccountNumbers
                 consentEndpoint = '/api/dummy/bank/consent/add';
                 requestBody = { selectedAccountNumbers: selectedIds };
                 break;
             }
             case 'loan': {
-                // 대출 탭: 대출번호 배열 → selectedLoanNumbers
+                // 대출 탭: 대출번호 배열 → selectedLoanIds
                 consentEndpoint = '/api/dummy/loans/consent/add';
-                requestBody = { selectedLoanNumbers: selectedIds };
+                requestBody = { selectedLoanIds: selectedIds };
                 break;
             }
             case 'investment': {
-                // 투자 탭: 투자상품 ID 배열 → selectedInvestmentIds
+                // 투자 탭: 투자상품 ID 배열 → selectedAccountNumbers
                 consentEndpoint = '/api/dummy/investments/consent/add';
-                requestBody = { selectedInvestmentIds: selectedIds };
+                requestBody = { selectedAccountNumbers: selectedIds };
                 break;
             }
             case 'card': {
-                // 카드 탭: 카드번호 배열 → selectedCardNumbers
+                // 카드 탭: 카드번호 배열 → selectedCardIds
                 consentEndpoint = '/api/dummy/card/consent/add';
-                requestBody = { selectedCardNumbers: selectedIds };
+                requestBody = { selectedCardIds: selectedIds };
                 break;
             }
             case 'insurance': {
@@ -185,7 +193,7 @@ const UserAccountList = () => {
     // 실제 리스트 항목을 렌더링하는 컴포넌트
     const renderAccountItem = ({ item }) => {
         const id = getItemId(item);
-        const isSelected = selectedAccounts[id] || false;
+        const isSelected = selectedAccounts[activeTab]?.[id] || false;
         const hasImageError = imageErrors[id] || false;
 
         // ── 탭별 아이템 이름을 가져오는 함수 ──
@@ -393,7 +401,8 @@ const UserAccountList = () => {
 
                 <View className="absolute bottom-0 left-0 right-0 p-5">
                     {(() => {
-                        const hasSelected = Object.values(selectedAccounts).some(v => v);
+                        const currentTabSelections = selectedAccounts[activeTab] || {};
+                        const hasSelected = Object.values(currentTabSelections).some(v => v);
                         return (
                             <TouchableOpacity
                                 className={`py-3.5 rounded-full items-center justify-center ${hasSelected ? 'bg-Fineed-green' : 'bg-gray-300'}`}

@@ -6,7 +6,7 @@ import { createBoardPost } from './CommunityApi';
 
 const categoryMap = {
     'HOT게시판': 'HOT',
-    '투자게시판': 'INVEST',
+    '투자게시판': 'INVESTMENT',
     '챌린지게시판': 'CHALLENGE',
     '퀴즈게시판': 'QUIZ',
     '자유게시판': 'FREE',

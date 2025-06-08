@@ -70,7 +70,10 @@ export default function HotBoardScreen({ navigation }) {
                                 key={index}
                                 post={post}
                                 isLastItem={index === posts.length - 1}
-                                onPress={() => {/* TODO: 게시글 상세 페이지로 이동 */}}
+                                onPress={() => navigation.navigate('CommunityPosts', {
+                                    boardType: 'HOT',
+                                    postId: index + 1
+                                })}
                             />
                         ))}
                     </View>

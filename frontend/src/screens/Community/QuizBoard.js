@@ -1,27 +1,30 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import React from 'react';
 import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
-import { fetchBoardPosts } from './CommunityApi';
 
 export default function QuizBoardScreen({ navigation }) {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const posts = [
+        {
+            title: '경제 상식 퀴즈: 주식 용어 맞히기',
+            content: 'PER, PBR, EPS의 뜻은 무엇일까요?',
+            author: '퀴즈마스터',
+        },
+        {
+            title: '가계부 퀴즈: 월평균 생활비는?',
+            content: '대한민국 20대 평균 생활비를 맞혀보세요!',
+            author: '생활퀴즈러',
+        },
+        {
+            title: '투자 상식 OX 퀴즈',
+            content: '분산투자는 위험을 줄여줄까?',
+            author: 'OX퀴즈러',
+        },
+    ];
+
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
-
-    useEffect(() => {
-        fetchBoardPosts('QUIZ')
-            .then(data => {
-                console.log('퀴즈 게시판 API 응답:', data);
-                setPosts(data.content);
-            })
-            .catch(err => {
-                setPosts([]);
-            })
-            .finally(() => setLoading(false));
-    }, []);
 
     return (
         <>
@@ -42,21 +45,17 @@ export default function QuizBoardScreen({ navigation }) {
                         paddingBottom: 24
                     }}>
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
-                        {loading ? (
-                            <ActivityIndicator />
-                        ) : (
-                            posts.map((post, index) => (
-                                <BoardPostItem
-                                    key={post.id}
-                                    post={post}
-                                    isLastItem={index === posts.length - 1}
-                                    onPress={() => navigation.navigate('CommunityPosts', {
-                                        boardType: 'QUIZ',
-                                        postId: post.id
-                                    })}
-                                />
-                            ))
-                        )}
+                        {posts.map((post, index) => (
+                            <BoardPostItem
+                                key={index}
+                                post={post}
+                                isLastItem={index === posts.length - 1}
+                                onPress={() => navigation.navigate('CommunityPosts', {
+                                    boardType: 'QUIZ',
+                                    postId: index + 1,
+                                })}
+                            />
+                        ))}
                     </View>
                 </ScrollView>
 
@@ -67,4 +66,4 @@ export default function QuizBoardScreen({ navigation }) {
             </View>
         </>
     );
-} 
+}

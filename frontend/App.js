@@ -82,6 +82,11 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="CommunityPosts"
+            component={CommunityPosts}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="Login"
             component={Login}
             options={{ headerShown: false }}
@@ -114,11 +119,6 @@ export default function App() {
           <Stack.Screen
             name="CommunityWrite"
             component={CommunityWrite}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="CommunityPosts"
-            component={CommunityPosts}
             options={{ headerShown: false }}
           />
           <Stack.Screen

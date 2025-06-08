@@ -225,7 +225,7 @@ export default function CategoryDetailScreen(props) {
               </Text>
               <TouchableOpacity
                 className="mt-4 bg-Fineed-green py-2 px-4 rounded-lg"
-                onPress={() => navigation.navigate('CreateChallenge')}
+                onPress={() => navigation.navigate('CreateChallengeScreen')}
               >
                 <Text className="text-white">챌린지 만들기</Text>
               </TouchableOpacity>

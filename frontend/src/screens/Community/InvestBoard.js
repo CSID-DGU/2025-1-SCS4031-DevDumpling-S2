@@ -1,24 +1,35 @@
-import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, ScrollView, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
+import React from 'react';
 import Header from '../../components/layout/Header';
 import BoardHeader from '../../components/common/BoardHeader';
 import BoardPostItem from '../../components/common/BoardPostItem';
-import { fetchBoardPosts } from './CommunityApi';
 
 export default function InvestBoardScreen({ navigation }) {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const posts = [
+        {
+            title: '주식초보의 첫 투자 고민',
+            content: '우량주 vs 성장주, 어떤 걸 먼저 공부해야 할까요?',
+            author: '주린이',
+        },
+        {
+            title: 'ETF란 무엇인가요?',
+            content: 'ETF 기초 개념부터 종류까지 쉽게 알려주세요!',
+            author: '투자궁금',
+        },
+        {
+            title: '월급 200, 투자 포트폴리오 추천',
+            content: '적금·펀드·주식 비중을 어떻게 가져가야 할까요?',
+            author: '200벌이',
+        },
+        {
+            title: '배당주 추천 부탁드립니다',
+            content: '안정적인 배당 수익 노리는 중입니다.',
+            author: '배당러',
+        },
+    ];
+
     const { width } = useWindowDimensions();
     const horizontalPadding = width > 380 ? 16 : 12;
-
-    useEffect(() => {
-        fetchBoardPosts('INVEST')
-            .then(data => setPosts(data.content))
-            .catch(err => {
-                setPosts([]);
-            })
-            .finally(() => setLoading(false));
-    }, []);
 
     return (
         <>
@@ -39,21 +50,17 @@ export default function InvestBoardScreen({ navigation }) {
                         paddingBottom: 24
                     }}>
                     <View className="bg-[#F9F9F9] rounded-2xl shadow-md">
-                        {loading ? (
-                            <ActivityIndicator />
-                        ) : (
-                            posts.map((post, index) => (
-                                <BoardPostItem
-                                    key={post.id}
-                                    post={post}
-                                    isLastItem={index === posts.length - 1}
-                                    onPress={() => navigation.navigate('CommunityPosts', {
-                                        boardType: 'INVEST',
-                                        postId: post.id
-                                    })}
-                                />
-                            ))
-                        )}
+                        {posts.map((post, index) => (
+                            <BoardPostItem
+                                key={index}
+                                post={post}
+                                isLastItem={index === posts.length - 1}
+                                onPress={() => navigation.navigate('CommunityPosts', {
+                                    boardType: 'INVESTMENT',
+                                    postId: index + 1,
+                                })}
+                            />
+                        ))}
                     </View>
                 </ScrollView>
 
@@ -64,4 +71,4 @@ export default function InvestBoardScreen({ navigation }) {
             </View>
         </>
     );
-} 
+}
