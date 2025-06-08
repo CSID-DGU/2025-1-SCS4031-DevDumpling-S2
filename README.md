@@ -46,8 +46,20 @@
 |<img src="https://github.com/Kim-Hee-Jin.png" width="150" height="150"/>|<img src="https://github.com/shin-yeseong.png" width="150" height="150"/>|<img src="https://github.com/yonjinoh.png" width="150" height="150"/>|<img src="https://github.com/ISEViper.png" width="150" height="150"/>|
 |:-:|:-:|:-:|:-:|
 |김희진<br>[@Kim-Hee-Jin](https://github.com/Kim-Hee-Jin) |신예성<br>[@shin-yeseong](https://github.com/shin-yeseong)|오연진<br>[@yonjinoh](https://github.com/yonjinoh)|현광수<br>[@ISEViper](https://github.com/ISEViper)|
-|프론트엔드 |프론트엔드 |백엔드, 배포 | 백엔드 |
-|전체 서비스 기획/디자인, 커뮤니티/금융상품/마이페이지  프론트엔드 담당 | 전체 서비스 기획, 컴포넌트 구성, 금융기사/금융퀴즈/챌린지/ 금융상품조회 프론트엔드 담당 | 전체 서비스 기획, 백엔드 개발환경 구축, 사용자 분류/금융 기사/금융 퀴즈/챌린지 백엔드 담담당 |전체 서비스 기획, 커뮤니티/금융상품/추천서비스 백엔드 담당 |
+|디자인, 프론트엔드 |프론트엔드 |백엔드, 배포 | 백엔드 |
+
+**공통:** 전체 서비스 기획 참여
+
+<details>
+<summary>세부 담당 보기</summary>
+
+- **김희진**: 전체 서비스 기획/디자인, 커뮤니티/금융상품/마이페이지 프론트엔드 담당
+- **신예성**: 전체 서비스 기획, 컴포넌트 구성, 금융기사/금융퀴즈/챌린지/금융상품조회 프론트엔드 담당
+- **오연진**: 전체 서비스 기획, 백엔드 개발환경 구축, 사용자 분류/금융 기사/금융 퀴즈/챌린지 백엔드 담당
+- **현광수**: 전체 서비스 기획, 커뮤니티/금융상품/추천서비스 백엔드 담당
+
+</details>
+
 
 <div align="right">
   <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
