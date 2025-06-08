@@ -1,6 +1,10 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=transparent&height=200&text=FINEED&fontSize=120&fontColor=004225&desc=FINance%20Need%20for%20Everyone&descSize=25&descAlignY=75&animation=twinkling&descColor=8B4513" />
-  <p style="margin-top: -10px; color: #666666; font-size: 16px;"></p>
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=ffffff&height=200&text=FINEED&fontSize=140&fontColor=004225&desc=FINance%20Need%20for%20Everyone&descSize=30&descAlignY=85&animation=twinkling&descColor=8B4513" />
+
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/57a290da-9eae-4659-8ef4-24316978f774" alt="앱소개" style="max-width: 100%; height: auto;">
 </div>
 
 
@@ -14,7 +18,7 @@
    2-3. [주요 서비스 소개](#3-주요-서비스-소개)  
    2-4. [개발 환경 및 기술 스택](#4-개발-환경-및-기술-스택)  
    2-5. [프로젝트 구조](#5-프로젝트-구조)  
-3. [시작 가이드](#6-시작-가이드)
+3. [시작 가이드](#iii-시작-가이드)
 
 
 
@@ -43,8 +47,13 @@
 |:-:|:-:|:-:|:-:|
 |김희진<br>[@Kim-Hee-Jin](https://github.com/Kim-Hee-Jin) |신예성<br>[@shin-yeseong](https://github.com/shin-yeseong)|오연진<br>[@yonjinoh](https://github.com/yonjinoh)|현광수<br>[@ISEViper](https://github.com/ISEViper)|
 |프론트엔드 |프론트엔드 |백엔드, 배포 | 백엔드 |
+|전체 서비스 기획/디자인, 커뮤니티/금융상품/마이페이지  프론트엔드 담당 | 전체 서비스 기획, 컴포넌트 구성, 금융기사/금융퀴즈/챌린지/ 금융상품조회 프론트엔드 담당 | 전체 서비스 기획, 백엔드 개발환경 구축, 사용자 분류/금융 기사/금융 퀴즈/챌린지 백엔드 담담당 |전체 서비스 기획, 커뮤니티/금융상품/추천서비스 백엔드 담당 |
 
-
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
+</div>
 
 ## II. 프로젝트 소개
 
@@ -69,7 +78,13 @@
 #### 1.3 최종결과물  
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/c3f4e384-6de5-4daa-81e5-01cf02ebdef7" alt="서비스소개" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/a3f1b82d-acfb-421f-9527-363cf81942f4" alt="서비스소개" style="max-width: 100%; height: auto;">
+</div>
+
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
 </div>
 
 ### 2. 선행 사례 및 관련 기술 분석
@@ -123,71 +138,109 @@
 #### 2.2 본 프로젝트의 차별점
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/6cf7b42f-5716-4420-a570-4048cb10e8bb" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/11398098-be6a-4be7-8cb7-f97056896ae2" style="max-width: 100%; height: auto;">
+</div>
+
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
 </div>
 
 ### 3. 주요 서비스 소개
 
-- 금융 상품 리뷰
-    이미지 첨부
-
-- 금융 챌린지 서비스 (공개/비공개)
-    이미지 첨부 
+- 청년용 금융 상품 추천
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/63ed9ba3-1480-4ffe-8915-6a907eb889b2" alt="금융상품" style="max-width: 100%; height: auto;">
+</div>
 
 - 금융 기사 요약 및 금융 용어 설명
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/5da0fa9d-497a-4ad2-baf2-8ea4d20d9569" alt="AI 금융기사" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/2ea47b45-67e2-4b68-b773-421d3a0a11a6" alt="AI 금융기사" style="max-width: 100%; height: auto;">
 </div>
     
 - 금융 기사 기반 퀴즈
-    이미지 첨부
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/5cbb4cb7-4309-41de-a6d0-abe9d29a291d" alt="퀴즈" style="max-width: 100%; height: auto;">
+</div>
+
+- 금융 챌린지 서비스 (공개/비공개)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/058f84d5-c8db-4b0b-915b-bb6be03d4a79" alt="챌린지" style="max-width: 100%; height: auto;">
+</div>
 
 - 커뮤니티 서비스
-    이미지 첨부
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/2378208e-0488-4418-aa70-6c724d0372c8" alt="커뮤니티티" style="max-width: 100%; height: auto;">
+</div>
    
 - 마이페이지 
-    이미지 첨부  
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1e1f8030-7cea-46e9-9c7f-827bfb1ffcb4" alt="마이페이지" style="max-width: 100%; height: auto;">
+</div> 
   
 - 상세한 구현 사항은 최종보고서 부록에 기재 
 
-
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
+</div>
 
 ### 4. 개발 환경 및 기술 스택
 
-#### Language & Framework
-<div style="display: flex; gap: 5px; flex-wrap: wrap;">
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
-  <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white">
-  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white">
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px 0;">
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Language & Framework</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black">
+      <img src="https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB">
+      <img src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white">
+      <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white">
+    </div>
+  </div>
+
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Database</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white">
+    </div>
+  </div>
+
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">DevOps</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <img src="https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white">
+      <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white">
+      <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=gradle&logoColor=white">
+    </div>
+  </div>
+
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Development Tools</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=flat-square&logo=android-studio&logoColor=white">
+      <img src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=flat-square&logo=visual-studio-code&logoColor=white">
+      <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white">
+    </div>
+  </div>
+
+  <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; grid-column: 1 / -1;">
+    <h4 style="margin-top: 0; color: #333; font-size: 17px; border-bottom: 1px solid #004225; padding-bottom: 8px;">Collaboration Tools</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white">
+      <img src="https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white">
+      <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white">
+      <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white">
+      <img src="https://img.shields.io/badge/Canva-00C4CC?style=flat-square&logo=canva&logoColor=white">
+    </div>
+  </div>
 </div>
 
-#### Database
-<div style="display: flex; gap: 5px; flex-wrap: wrap;">
-  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
-</div>
-
-#### DevOps
-<div style="display: flex; gap: 5px; flex-wrap: wrap;">
-  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-  <img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
-</div>
-
-#### Development Tools
-<div style="display: flex; gap: 5px; flex-wrap: wrap;">
-  <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=for-the-badge&logo=android-studio&logoColor=white">
-  <img src="https://img.shields.io/badge/Visual%20Studio%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white">
-  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white">
-</div>
-
-#### Collaboration Tools
-<div style="display: flex; gap: 5px; flex-wrap: wrap;">
-  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
-  <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
-  <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white">
-  <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
-  <img src="https://img.shields.io/badge/Canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white">
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
 </div>
 
 ### 5. 프로젝트 구조
@@ -196,6 +249,18 @@
   <img src="https://github.com/user-attachments/assets/8563b1bd-dc16-4648-a0a8-0084cf2de549" alt="시스템구조도" style="max-width: 100%; height: auto;">
 </div>
 
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
+</div>
+
 
 ## III. 시작 가이드
 추후 작성
+
+<div align="right">
+  <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
+    ↑ 목차
+  </a>
+</div>
