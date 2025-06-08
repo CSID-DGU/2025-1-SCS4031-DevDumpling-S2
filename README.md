@@ -225,7 +225,7 @@
 ### 5. 프로젝트 구조
 #### 5.1 시스템 구조
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/824df5b4-bc11-416f-be65-22661cd62ad0" alt="시스템구조도" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/810cc320-af07-420e-90aa-8ea37eededcb" alt="시스템구조도" style="max-width: 100%; height: auto;">
 </div>
 
 <div align="right">
