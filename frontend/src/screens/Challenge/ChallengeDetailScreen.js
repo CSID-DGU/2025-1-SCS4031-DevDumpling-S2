@@ -22,6 +22,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ChallengeDetailScreen({ route }) {
   const { challengeId } = route.params;
+  console.log('챌린지 상세화면 로드 - route.params:', route.params);
+  console.log('챌린지 상세화면 로드 - challengeId:', challengeId);
   const navigation = useNavigation();
 
   // 상태 관리
@@ -33,6 +35,7 @@ export default function ChallengeDetailScreen({ route }) {
   const [isCreator, setIsCreator] = useState(false);
   const [participationChecked, setParticipationChecked] = useState(false); // 참여 상태 확인 여부
   const [userData, setUserData] = useState(null);
+  const [targetAmountData, setTargetAmountData] = useState(null); // 목표 금액 데이터 상태
 
   // 로그인 상태 확인 및 userData 세팅
   useEffect(() => {
@@ -65,16 +68,85 @@ export default function ChallengeDetailScreen({ route }) {
         setIsParticipating(false);
         setIsCreator(false);
         setParticipationChecked(false);
+        
+        // AsyncStorage의 모든 챌린지 목표금액 데이터를 먼저 확인
+        const checkAllStorage = async () => {
+          try {
+            const allData = await AsyncStorage.getItem('challengeTargetAmounts');
+            console.log('전체 AsyncStorage 챌린지 목표금액 데이터 (로드 시작 시):', allData);
+            if (allData) {
+              const parsed = JSON.parse(allData);
+              console.log('파싱된 데이터:', parsed);
+              console.log('저장된 모든 챌린지 ID:', Object.keys(parsed));
+            } else {
+              console.log('AsyncStorage에 저장된 챌린지 목표금액 데이터가 없음');
+            }
+          } catch (error) {
+            console.error('AsyncStorage 검사 오류:', error);
+          }
+        };
+        
+        checkAllStorage();
         loadChallengeDetail();
       }
       return () => { };
     }, [challengeId, userData])
   );
 
+  // AsyncStorage에서 목표 금액 데이터 불러오기
+  const loadTargetAmountData = async (id) => {
+    try {
+      // ID를 문자열로 변환
+      const challengeIdStr = String(id);
+      console.log(`AsyncStorage에서 챌린지 ${id} (${typeof id}) 목표금액 로드 시도`);
+      console.log(`문자열로 변환된 ID: ${challengeIdStr} (${typeof challengeIdStr})`);
+      
+      const storedData = await AsyncStorage.getItem('challengeTargetAmounts');
+      
+      // 저장된 모든 데이터 확인 (디버깅용)
+      console.log('모든 저장된 챌린지 목표금액 데이터:', storedData);
+      
+      if (storedData) {
+        const allTargetData = JSON.parse(storedData);
+        console.log('데이터 파싱후:', allTargetData);
+        
+        // 문자열 ID 키로 사용
+        if (allTargetData && allTargetData[challengeIdStr]) {
+          console.log(`챌린지 ${challengeIdStr} 목표금액 가져오기 성공:`, allTargetData[challengeIdStr]);
+          setTargetAmountData(allTargetData[challengeIdStr]);
+          return allTargetData[challengeIdStr];
+        } 
+        // 숫자 ID로도 확인
+        else if (allTargetData && allTargetData[id]) {
+          console.log(`숫자 ID로 챌린지 ${id} 목표금액 가져오기 성공:`, allTargetData[id]);
+          setTargetAmountData(allTargetData[id]);
+          return allTargetData[id];
+        }
+        else {
+          console.log(`챌린지 ${challengeIdStr} 목표금액 정보 없음`);
+          // 파싱된 모든 키값 출력
+          if (allTargetData) {
+            console.log(`저장된 모든 챌린지 ID:`, Object.keys(allTargetData));
+            console.log(`스토리지에 있는 챌린지 ID 타입:`, Object.keys(allTargetData).map(key => typeof key));
+          }
+        }
+      } else {
+        console.log('challengeTargetAmounts 에 저장된 데이터 없음');
+      }
+      return null;
+    } catch (error) {
+      console.error('목표 금액 데이터 읽기 오류:', error);
+      return null;
+    }
+  };
+  
   // 챌린지 상세 정보 불러오기 함수
   const loadChallengeDetail = async () => {
     try {
       console.log(`챌린지 상세 정보 로드 시작 (ID: ${challengeId})`);
+      
+      // 0. 목표 금액 데이터 가져오기 (별도로 AsyncStorage에서 가져옴)
+      await loadTargetAmountData(challengeId);
 
       // 1. AsyncStorage에서 참여 상태 확인
       if (userData) {
@@ -454,7 +526,57 @@ export default function ChallengeDetailScreen({ route }) {
                 <Text className="text-gray-700">목표 금액</Text>
               </View>
               <View className="w-2/3">
-                <Text>{challenge.targetAmount}</Text>
+                <Text>
+                  {(() => {
+                    // 데이터에서 카테고리에 따른 적절한 목표 금액 필드 가져오기
+                    if (!challenge) return '-';
+                    
+                    console.log('챌린지 데이터:', JSON.stringify(challenge, null, 2));
+                    console.log('AsyncStorage에서 가져온 목표 금액 데이터:', targetAmountData);
+                    
+                    const category = challenge.category;
+                    let amount = null;
+                    
+                    // 1. AsyncStorage에서 먼저 목표 금액 정보 확인 (가장 우선순위)
+                    if (targetAmountData) {
+                      if (category === 'FOOD' && targetAmountData.foodTargetAmount) {
+                        amount = targetAmountData.foodTargetAmount;
+                      } else if (category === 'CAFE_SNACK' && targetAmountData.cafeSnackTargetAmount) {
+                        amount = targetAmountData.cafeSnackTargetAmount;
+                      } else if (category === 'SAVINGS' && targetAmountData.targetSavingsAmount) {
+                        amount = targetAmountData.targetSavingsAmount;
+                      } else if (targetAmountData.targetAmount) {
+                        amount = targetAmountData.targetAmount;
+                      }
+                      console.log(`AsyncStorage에서 가져온 목표금액: ${amount}`);
+                    }
+                    
+                    // 2. 서버에서 데이터가 오면 확인 (2순위 확인)
+                    if (!amount) {
+                      if (category === 'FOOD' && challenge.foodTargetAmount) {
+                        amount = challenge.foodTargetAmount;
+                      } else if (category === 'CAFE_SNACK' && challenge.cafeSnackTargetAmount) {
+                        amount = challenge.cafeSnackTargetAmount;
+                      } else if (category === 'SAVINGS' && challenge.targetSavingsAmount) {
+                        amount = challenge.targetSavingsAmount;
+                      } else {
+                        // 기본 타겟 금액 필드 사용 
+                        amount = challenge.targetAmount;
+                      }
+                      console.log(`서버에서 가져온 목표금액: ${amount}`);
+                    }
+                    
+                    // 디버깅용 로깅
+                    console.log(`최종 출력할 카테고리: ${category}, 목표금액: ${amount}`);
+                    
+                    // 금액이 있으면 한국식 포맷으로 표시
+                    if (amount) {
+                      return amount.toLocaleString('ko-KR') + '원';
+                    } else {
+                      return '-';
+                    }
+                  })()}
+                </Text>
               </View>
             </View>
 

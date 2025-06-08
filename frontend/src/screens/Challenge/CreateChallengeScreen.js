@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/layout/Header';
 import { createChallenge } from './ChallengeApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CreateChallengeScreen() {
   const navigation = useNavigation();
@@ -53,18 +54,16 @@ export default function CreateChallengeScreen() {
       return Alert.alert('오류', '챌린지 제목과 설명을 입력해주세요.');
     }
 
+    if (!goalValue) {
+      return Alert.alert('오류', '목표 금액을 입력해주세요.');
+    }
+
     try {
-      console.log('챌린지 생성 요청 데이터:', {
-        title,
-        description,
-        startDate,
-        endDate,
-        maxParticipants: parseInt(maxParticipants, 10),
-        type: isPublic ? 'PUBLIC' : 'PRIVATE',
-        category
-      });
+      // 목표 금액을 정수로 변환
+      const targetAmount = parseInt(goalValue.replace(/,/g, ''), 10);
       
-      const response = await createChallenge({
+      // 카테고리별 적절한 목표 금액 필드 설정 - 백엔드 API 스펙에 맞게 camelCase 사용
+      const challengePayload = {
         title,
         description,
         startDate,
@@ -72,9 +71,43 @@ export default function CreateChallengeScreen() {
         maxParticipants: parseInt(maxParticipants, 10),
         type: isPublic ? 'PUBLIC' : 'PRIVATE',
         category
-      });
+      };
+      
+      // 카테고리별 특정 타겟 금액 필드 추가 (camelCase로 수정)
+      // 백엔드 Enum 값 분석하여 올바른 값 사용
+      switch(category) {
+        case 'FOOD':
+          challengePayload.foodTargetAmount = targetAmount;
+          // Challenge.java의 FoodChallengeGoalType Enum 값 사용
+          challengePayload.foodGoalType = 'TOTAL_FOOD_EXPENSE_LIMIT';
+          break;
+        case 'CAFE_SNACK':
+          challengePayload.cafeSnackTargetAmount = targetAmount;
+          // Challenge.java의 CafeSnackChallengeGoalType Enum 값 사용
+          challengePayload.cafeSnackGoalType = 'TOTAL_CAFE_SNACK_EXPENSE_LIMIT';
+          break;
+        case 'SAVINGS':
+          challengePayload.targetSavingsAmount = targetAmount;
+          // Challenge.java의 SavingsGoalType Enum 값 사용
+          challengePayload.savingsGoalType = 'TOTAL_AMOUNT_IN_PERIOD';
+          break;
+        default:
+          // 다른 카테고리의 경우 일반적인 targetAmount 사용
+          // 하지만 이런 경우에는 기본적으로 다른 카테고리 데이터로 하렬덨
+          // 여기서는 실패를 방지하기 위해 기본적으로 FOOD 형태로 설정
+          challengePayload.foodTargetAmount = targetAmount;
+          challengePayload.foodGoalType = 'TOTAL_FOOD_EXPENSE_LIMIT';
+          break;
+      }
+      
+      console.log('챌린지 생성 요청 데이터:', JSON.stringify(challengePayload));
+      
+      const response = await createChallenge(challengePayload);
       
       console.log('챌린지 생성 성공 응답:', response);
+      console.log('챌린지 생성 응답 구조 확인:', JSON.stringify(response, null, 2));
+      console.log('챌린지 ID 필드 있는지 확인 - id:', response.id);
+      console.log('챌린지 ID 필드 있는지 확인 - challengeId:', response.challengeId);
       
       if (response.inviteCode) {
         Alert.alert('성공', `비공개 챌린지가 생성되었습니다.\n초대 코드: ${response.inviteCode}`);
@@ -82,8 +115,53 @@ export default function CreateChallengeScreen() {
         Alert.alert('성공', '챌린지가 생성되었습니다.');
       }
       
-      // API 응답에서 챌린지 ID를 가져옵니다. (API 명세에 따라 response.id 또는 response.challengeId 등으로 변경 필요)
-      const newChallengeId = response.id; // 또는 response.challengeId
+      // 챌린지 ID와 목표 금액 정보를 AsyncStorage에 저장
+      if (response && response.challengeId) {
+        // ID를 문자열로 변환하여 저장 (중요)
+        const challengeId = String(response.challengeId);
+        console.log('저장할 챌린지 ID:', challengeId, ', 타입:', typeof challengeId);
+        const targetAmountData = {
+          category,
+          targetAmount
+        };
+        
+        // 카테고리 특화된 필드 정보도 저장
+        if (category === 'FOOD') {
+          targetAmountData.foodTargetAmount = targetAmount;
+          targetAmountData.foodGoalType = challengePayload.foodGoalType;
+        } else if (category === 'CAFE_SNACK') {
+          targetAmountData.cafeSnackTargetAmount = targetAmount;
+          targetAmountData.cafeSnackGoalType = challengePayload.cafeSnackGoalType;
+        } else if (category === 'SAVINGS') {
+          targetAmountData.targetSavingsAmount = targetAmount;
+          targetAmountData.savingsGoalType = challengePayload.savingsGoalType;
+        }
+        
+        // AsyncStorage에 저장
+        try {
+          const existingData = await AsyncStorage.getItem('challengeTargetAmounts');
+          const data = existingData ? JSON.parse(existingData) : {};
+          
+          data[challengeId] = targetAmountData;
+          
+          await AsyncStorage.setItem('challengeTargetAmounts', JSON.stringify(data));
+          console.log(`챌린지 ${challengeId} 목표금액 저장 완료:`, targetAmountData);
+          
+          // 저장 후 전체 데이터 확인
+          const verifyData = await AsyncStorage.getItem('challengeTargetAmounts');
+          console.log('저장 후 AsyncStorage 전체 데이터:', verifyData);
+          if (verifyData) {
+            const parsedData = JSON.parse(verifyData);
+            console.log('데이터 파싱 후:', parsedData);
+            console.log('저장된 모든 챌린지 ID:', Object.keys(parsedData));
+          }
+        } catch (storageError) {
+          console.error('목표 금액 저장 오류:', storageError);
+        }
+      }
+      
+      // API 응답에서 챌린지 ID를 가져옵니다
+      const newChallengeId = response.challengeId; // challengeId로 변경
 
       if (!newChallengeId) {
         Alert.alert('오류', '챌린지 생성 후 ID를 받지 못했습니다. 홈 화면으로 이동합니다.');
