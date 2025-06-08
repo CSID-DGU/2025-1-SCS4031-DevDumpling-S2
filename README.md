@@ -225,7 +225,7 @@
 ### 5. 프로젝트 구조
 #### 5.1 시스템 구조
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/8563b1bd-dc16-4648-a0a8-0084cf2de549" alt="시스템구조도" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/824df5b4-bc11-416f-be65-22661cd62ad0" alt="시스템구조도" style="max-width: 100%; height: auto;">
 </div>
 
 <div align="right">
@@ -252,9 +252,8 @@
 - API 명세서: [API 명세서 바로가기](https://fluttering-magnesium-c8b.notion.site/API-1cf684ed836580569b81ec546423c47c?source=copy_link)
 
 ### 발표자료 및 계획서/보고서
-- 수행계획서: [[SW-1] 개발할만두_수행계획서_최종.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5BSW-1%5D%20%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%EC%88%98%ED%96%89%EA%B3%84%ED%9A%8D%EC%84%9C_%EC%B5%9C%EC%A2%85.pdf)
-- 제안발표: [[융합캡스톤디자인]_S2_개발할만두_최종제안서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5B%EC%9C%B5%ED%95%A9%EC%BA%A1%EC%8A%A4%ED%86%A4%EB%94%94%EC%9E%90%EC%9D%B8%5D_S2_%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%EC%B5%9C%EC%A2%85%EC%A0%9C%EC%95%88%EC%84%9C.pdf)
-- 중간발표: [[융합캡스톤디자인]_S2_개발할만두_중간발표 (1).pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5B%EC%9C%B5%ED%95%A9%EC%BA%A1%EC%8A%A4%ED%86%A4%EB%94%94%EC%9E%90%EC%9D%B8%5D_S2_%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%EC%A4%91%EA%B0%84%EB%B0%9C%ED%91%9C%20(1).pdf)
-- 2차 데모: [[융합캡스톤디자인]_S2_개발할만두_2차데모.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%5B%EC%9C%B5%ED%95%A9%EC%BA%A1%EC%8A%A4%ED%86%A4%EB%94%94%EC%9E%90%EC%9D%B8%5D_S2_%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_2%EC%B0%A8%EB%8D%B0%EB%AA%A8.pdf)
-- 특허명세서: [개발할만두_특허명세서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EA%B0%9C%EB%B0%9C%ED%95%A0%EB%A7%8C%EB%91%90_%ED%8A%B9%ED%97%88%EB%AA%85%EC%84%B8%EC%84%9C.pdf)
+- 수행계획서: [수행계획서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%88%98%ED%96%89%EA%B3%84%ED%9A%8D%EC%84%9C.pdf)
+- 제안발표: [제안서PPT.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%A0%9C%EC%95%88%EC%84%9CPPT.pdf)
+- 중간발표: [중간발표PPT.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%A4%91%EA%B0%84%EB%B0%9C%ED%91%9CPPT.pdf)
+- 특허명세서: [특허명세서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%ED%8A%B9%ED%97%88%EB%AA%85%EC%84%B8%EC%84%9C.pdf)
 
