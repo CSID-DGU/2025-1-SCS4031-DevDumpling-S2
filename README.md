@@ -255,5 +255,6 @@
 - 수행계획서: [수행계획서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%88%98%ED%96%89%EA%B3%84%ED%9A%8D%EC%84%9C.pdf)
 - 제안발표: [제안서PPT.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%A0%9C%EC%95%88%EC%84%9CPPT.pdf)
 - 중간발표: [중간발표PPT.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%A4%91%EA%B0%84%EB%B0%9C%ED%91%9CPPT.pdf)
+- 최종발표: [최종발표PPT.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%EC%B5%9C%EC%A2%85%EB%B0%9C%ED%91%9CPPT.pdf)
 - 특허명세서: [특허명세서.pdf 바로가기](https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2/blob/main/Docs/%ED%8A%B9%ED%97%88%EB%AA%85%EC%84%B8%EC%84%9C.pdf)
 
