@@ -237,7 +237,51 @@ https://youtu.be/P-Grkwtkm4U
 
 
 ## III. 시작 가이드
-추후 작성
+
+### Frontend (Expo)
+
+1. **저장소 복제:**
+   ```bash
+   git clone https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2.git
+   cd 2025-1-SCS4031-DevDumpling-S2/frontend
+   ```
+
+2. **의존성 설치:**
+   ```bash
+   npm install
+   ```
+
+3. **애플리케이션 실행:**
+   - 개발 서버를 시작하고 개발자 메뉴를 보려면 다음을 실행하십시오:
+     ```bash
+     npm start
+     ```
+     또는
+     ```bash
+     expo start
+     ```
+   - **모바일 앱에서 확인:**
+     - App Store (iOS) 또는 Google Play Store (Android)에서 **Expo Go** 앱을 설치합니다.
+     - `npm start` 또는 `expo start` 실행 후 나타나는 QR 코드를 Expo Go 앱으로 스캔합니다.
+
+   - **에뮬레이터에서 실행:**
+     - Android 에뮬레이터에서 실행:
+       ```bash
+       npm run android
+       ```
+     - iOS 시뮬레이터에서 실행:
+       ```bash
+       npm run ios
+       ```
+
+   - **웹 브라우저에서 실행:**
+     ```bash
+     npm run web
+     ```
+
+### Backend
+백엔드 서버는 배포되어 있으므로 별도로 실행하지 않아도 프론트엔드 애플리케이션을 바로 사용할 수 있습니다.
+
 
 <div align="right">
   <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
