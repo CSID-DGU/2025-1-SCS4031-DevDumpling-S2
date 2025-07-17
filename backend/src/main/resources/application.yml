@@ -75,30 +75,29 @@ jwt:
 # 카카오 설정 (로컬 기본값)
 kakao:
   client:
-    id: 4e1ac7afeed94bade75bed0f11753757
-    secret: wt0F9Puoyy9a7wGvBloJwQagmMWBSaLp
+    id: {kakao.client.id}
+    secret: {kakao.client.secret}
   redirect-uri: http://localhost:8080/api/auth/kakao/callback
 
 # AI 설정
 gemini:
   api:
-    key: AIzaSyAY9sgET9XTGBPRKlFUTm0ZhNdvUyif-6U
+    key:{AI.gemini.key}
 
 # FSS API 설정
 fss:
   api:
-    key: a20ba820e53668dd39b7f7f91bf451aa
-
+    key: {FSS.key}
+    
 # KRX API 설정
 krx:
   api:
-    key: 90D107060B904DB9AA0A0F8E03F594A97136BFB9
+    key: {KRX.api.key}
 
 # 공공데이터포털 API
 dgk:
   api:
-    key: TNlmYfsf9AvoMTQxqjTwxSp1UPi1mENgDSkAJ0aKGWyV6DGZ8WEaWfhK6yaHByWwfY5bArd%2BMcQxndKCk3arPg%3D%3D
-
+    key: {dgk.api.key}
 ---
 # AWS 환경 설정
 spring:
