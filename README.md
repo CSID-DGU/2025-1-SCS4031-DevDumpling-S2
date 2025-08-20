@@ -279,10 +279,67 @@ https://youtu.be/P-Grkwtkm4U
      npm run web
      ```
 
-### Backend
-백엔드 서버는 배포되어 있으므로 별도로 실행하지 않아도 프론트엔드 애플리케이션을 바로 사용할 수 있습니다.
+### Backend (로컬 실행 가이드)
 
+1. **저장소 복제 및 설정**
+   ```bash
+   git clone https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2.git
+   cd 2025-1-SCS4031-DevDumpling-S2/backend
 
+   # Gradle 래퍼 권한 설정 (Linux/Mac)
+   chmod +x gradlew
+   ```
+   
+2. **MySQL 데이터베이스 설정**
+    ```bash
+    # MySQL 서버 시작
+    sudo systemctl start mysql  # Linux
+    # 또는 MySQL Workbench에서 서버 시작
+    
+    # 데이터베이스 생성
+    mysql -u root -p
+    CREATE DATABASE myapp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    exit; 
+    ```
+    
+3. **환경 변수 설정**
+    ```bash
+    # .env 파일 생성
+    cp .env~ .env
+    
+    # .env 파일 편집하여 데이터베이스 정보 설정
+    echo "SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/myapp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true" >> .env
+    echo "SPRING_DATASOURCE_USERNAME=root" >> .env
+    echo "SPRING_DATASOURCE_PASSWORD=your_mysql_password" >> .env
+    ```
+    
+4. **API 키 설정**
+    ```bash
+    # .env 파일에 추가
+    echo "AWS_ACCESS_KEY=your_aws_access_key" >> .env
+    echo "AWS_SECRET_KEY=your_aws_secret_key" >> .env
+    echo "KAKAO_CLIENT_ID=your_kakao_client_id" >> .env
+    echo "KAKAO_CLIENT_SECRET=your_kakao_client_secret" >> .env
+    echo "GEMINI_API_KEY=your_gemini_api_key" >> .env
+    echo "FSS_API_KEY=your_fss_api_key" >> .env
+    echo "KRX_API_KEY=your_krx_api_key" >> .env
+    echo "DGK_API_KEY=your_dgk_api_key" >> .env
+    ```
+    
+5. **프로젝트 빌드**
+    ```bash
+    # Gradle로 프로젝트 빌드
+    ./gradlew clean build -x test
+    
+    # 또는 테스트 포함 빌드
+    ./gradlew clean build
+    ```
+    
+6. **애플리케이션 실행**    
+    ```bash
+    ./gradlew bootRun
+    ```
+    
 <div align="right">
   <a href="#목차" style="text-decoration: none; color: #666666; font-size: 12px; background-color: #f5f5f5; padding: 3px 8px; border-radius: 3px; display: inline-block;">
     ↑ 목차
