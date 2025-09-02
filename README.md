@@ -240,6 +240,7 @@ https://youtu.be/P-Grkwtkm4U
 
 ### Frontend (Expo)
 
+📌 현재 S3 버킷 사용이 종료되어 몇몇 이미지가 조회되지 않을 수 있습니다.
 1. **저장소 복제:**
    ```bash
    git clone https://github.com/CSID-DGU/2025-1-SCS4031-DevDumpling-S2.git
